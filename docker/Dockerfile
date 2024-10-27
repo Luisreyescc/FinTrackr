@@ -4,5 +4,9 @@ WORKDIR /app
 
 COPY app /app
 
-CMD ["python", "src/app.py"]
+RUN pip install django mysqlclient python-decouple
+
+EXPOSE 8000
+
+CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8000"]
 
