@@ -8,8 +8,6 @@ npm install vuex@next --save
 ```
 ```
 npm install vue-router
-save
-```
 ```
 
 ## Compiles and hot-reloads for development
