@@ -12,7 +12,7 @@ services:
         condition: service_healthy
     env_file:
       - .env
-
+      
   db:
     image: mysql:9.1
     environment:
@@ -20,7 +20,7 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-    ports:
+   ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
@@ -32,6 +32,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  gui:
+    build:
+      context: ./gui
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
 
 volumes:
   db_data:
