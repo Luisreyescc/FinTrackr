@@ -8,14 +8,13 @@ npm install vuex@next --save
 ```
 ```
 npm install vue-router
-save
-```
 ```
 
 ## Compiles and hot-reloads for development
 ```
 npm run serve
 ```
+
 ## See the page in your browser
 ```
 http://localhost:8080/

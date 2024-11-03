@@ -1,6 +1,7 @@
 <template>
-  <img alt="User Profile Pic" src="./assets/profile_picture.png">
-  <RouterView />
+<div id="app">
+    <router-view />
+  </div>
 </template>
 
 <script>
