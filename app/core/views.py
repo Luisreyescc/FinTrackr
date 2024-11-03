@@ -1,4 +1,6 @@
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from core.models import (
     Users,
     Incomes,
@@ -17,6 +19,11 @@ from core.serializers import (
     DebtsSerializer,
     DebtCategoriesSerializer,
 )
+
+
+class HomeView(APIView):
+    def get(self, request):
+        return Response({"message": "Welcome to the Fintrackr API!"})
 
 
 class UsersListView(generics.ListCreateAPIView):
