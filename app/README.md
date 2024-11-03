@@ -18,6 +18,7 @@
   ```bash
   docker-compose up --build
   ```
+- Open another terminal
 - Create migrations for any changes in the models:
 
   ```bash
@@ -28,11 +29,6 @@
   ```bash
   docker-compose exec web python manage.py migrate
   ```
-- Start Django server:
-  ```bash
-  python manage.py runserver
-  ```
-
-Once everything is up and running, you should be able to access your
-application at `http://localhost:8000`. You can access various endpoints
-with the path `/api/manage_name/`.
+  Once everything is up and running, you should be able to access your
+  application at `http://localhost:8000`. You can access various endpoints
+  with the path `/api/manage_name/`.
