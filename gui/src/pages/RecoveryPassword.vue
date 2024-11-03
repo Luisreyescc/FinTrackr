@@ -2,7 +2,7 @@
   <div class="recovery-password-page">
     <!-- Profile Icon -->
     <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
-    <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" />
+    <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" @goToLogin="goToLogin"/>
   </div>
 </template>
 
@@ -16,11 +16,9 @@ export default {
   },
   methods: {
     handleSendCode({ email }) {
-      // Handle send code logic here if needed
       console.log('Sending recovery code to:', email);
     },
     goToLogin() {
-      // Redirect to the login page after password change
       this.$router.push('/');
     }
   }
@@ -46,4 +44,5 @@ export default {
   border-radius: 50%;
   border: 2px solid #ccc;
 }
+
 </style>

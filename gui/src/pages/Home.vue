@@ -11,5 +11,8 @@ export default {
 </script>
 
 <style scoped>
-/* Basic styling for the home page */
+.home-page {
+    padding-top: 60px;
+    text-align: center;
+    }
 </style>

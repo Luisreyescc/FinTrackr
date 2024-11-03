@@ -7,11 +7,12 @@
 
     <!-- Send Code Button -->
     <button class="send-code-btn" @click="sendCode">Send code</button>
-    <!-- Recovery Code Input (Shown after Send Code is clicked) -->
+    <!-- Recovery Code Input, shown after Send Code is clicked -->
     <label v-if="codeSent" for="recovery-code">Recovery Code</label>
     <input v-if="codeSent" v-model="recoveryCode" type="text" id="recovery-code" placeholder="Enter recovery code..." />
     <!-- Change Password Button -->
     <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
+    <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
   </div>
 </template>
 
@@ -96,6 +97,11 @@ button {
 
 .change-password-btn {
   background-color: #333;
+  color: white;
+}
+
+login-btn {
+  background-color: #0033cc;
   color: white;
 }
 
