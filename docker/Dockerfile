@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY app /app
 
-RUN pip install django mysqlclient python-decouple
+RUN pip install django mysqlclient python-decouple djangorestframework
 
 EXPOSE 8000
 
