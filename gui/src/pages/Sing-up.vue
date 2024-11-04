@@ -16,30 +16,27 @@ export default {
     SignUpForm
   },
   methods: {
-   async signUp({ username, email, password }) {
-   // Temporary signup logic
-   if (username && email && password) {	
-     try {
-       const response = await axios.post('https://here_goes_the_backend_url/signup', {
-         username,
-         email,
-         password
-       });
-       // Handle the response from the backend (assuming it sends a success message or token)
-       // 200 is a standard response code that indicates a successful HTTP request, specifically means 'OK'
-       if (response.status === 200) {
-         alert('User registered! Now, redirecting to login...');
-         this.$router.push('/');
-       }
-     } catch (error) {
-       // Handle any errors
-       console.error('Signup failed:', error);
-       alert('There was an issue with your signup. Please try again.');
-     }
-   } else {
-     alert('Please fill all fields requiered.');
-   }
-   },
+    async signUp({ username, email, password }) {
+    if (username && email && password) {    
+        try {
+            const response = await axios.post('http://localhost:8000/api/auth/register/', {
+                username,
+                email,
+                password
+            });
+            if (response.status === 201) {
+                alert('User registered! Now, redirecting to login...');
+                this.$router.push('/');
+            }
+        } catch (error) {
+            console.error('Signup failed:', error);
+            alert('There was an issue with your signup. Please try again.');
+        }
+    } else {
+        alert('Please fill all fields required.');
+    }
+}
+,
     goToLogin() {
       this.$router.push('/');
     }

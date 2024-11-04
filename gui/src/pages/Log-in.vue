@@ -17,25 +17,26 @@ export default {
     LoginForm
   },
   methods: {
-   async login({ username, password }) {
-   // Temporary login logic for now
-   if (username && password) {
-     try {
-       const response = await axios.post('https://here_goes_the_backend_url/signup', {
-         username,
-         password
-       });
-       if (response.status === 200) {
-         this.$router.push('/home');
-       }
-     } catch (error) {
-       console.error('Login failed:', error);
-       alert('Invalid username or password. Please try again.');
-     }
-   } else {
-     alert('Please enter username and password');
-   }
-   },
+    async login({ username, password }) {
+    if (username && password) {
+        try {
+            const response = await axios.post('http://localhost:8000/api/auth/login/', {
+                username,
+                password
+            });
+            if (response.status === 200) {
+                alert('Login successful');
+                this.$router.push('/home');
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('Invalid username or password. Please try again.');
+        }
+    } else {
+        alert('Please enter username and password');
+    }
+}
+,
     goToSignUp() {
       this.$router.push('/signup');
     },
