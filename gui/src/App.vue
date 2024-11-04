@@ -1,12 +1,19 @@
 <template>
-  <img alt="User Profile Pic" src="./assets/profile_picture.png">
-  <RouterView />
+ <div id="app">
+   <AppHeader />
+   <div class="main-content">
+     <router-view />
+   </div>
+ </div>
 </template>
 
 <script>
+import AppHeader from './components/header.vue';
+
 export default {
   name: 'App',
-  components: {
+    components: {
+	AppHeader
   }
 }
 </script>
@@ -18,6 +25,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
