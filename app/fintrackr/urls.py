@@ -20,13 +20,8 @@ from django.urls import path, include
 from core.views import HomeView
 
 urlpatterns = [
-<<<<<<< HEAD
     path("admin/", admin.site.urls),
     path("", HomeView.as_view(), name="home"),
     path("api/", include("core.urls")),
     path('api/auth/', include('auth_app.urls')),
-=======
-    path('admin/', admin.site.urls),
-    path('api/auth/', include('auth_app.urls')),
->>>>>>> backend
 ]
