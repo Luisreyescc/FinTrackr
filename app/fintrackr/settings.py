@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "core",
     "rest_framework",
-    "auth_app"
+    "auth_app", 
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -51,9 +52,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "fintrackr.urls"
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (for development only)
 
 TEMPLATES = [
     {
