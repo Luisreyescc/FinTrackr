@@ -13,6 +13,17 @@ services:
     env_file:
       - .env
 
+  frontend:
+    build:
+      context: ./gui
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gui:/app
+    environment:
+      - VUE_APP_API_URL=http://web:8000
+
   db:
     image: mysql:9.1
     environment:
@@ -21,7 +32,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
       - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
