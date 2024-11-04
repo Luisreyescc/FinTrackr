@@ -1,15 +1,15 @@
 <template>
   <div class="signup-form">
     <label for="username">Username</label>
-    <input v-model="username" type="text" id="username" placeholder="Insert an username..." />
+    <input v-model="username" type="text" id="username" placeholder="Insert a username..." />
     <label for="email">Email</label>
     <input v-model="email" type="email" id="email" placeholder="Insert your email..." />
     <label for="password">Password</label>
-    <input v-model="password" type="password" id="password" placeholder="Insert a password.." />
-    <!-- Buttons -->
+    <input v-model="password" type="password" id="password" placeholder="Insert a password..." />
+    
     <div class="button-group">
-      <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
-      <button class="accept-btn" @click="emitSignUp">Create user</button>
+      <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
+      <button class="accept-btn" @click="emitSignUp">Create User</button>
     </div>
   </div>
 </template>
@@ -19,15 +19,14 @@ export default {
   name: 'SignUpForm',
   data() {
     return {
-	username: '',
-	email: '',
-	password: ''
+      username: '',
+      email: '',
+      password: ''
     };
   },
   methods: {
     emitSignUp() {
-      // Emit an event with username, email and password data to the parent
-      this.$emit('signup', { username: this.username, email: this.email, password: this.password });
+      this.$emit('signUp', { username: this.username, email: this.email, password: this.password });
     }
   }
 };

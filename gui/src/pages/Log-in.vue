@@ -2,15 +2,14 @@
   <div class="login-page">
     <!-- Profile Icon -->
     <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
-    <!-- Login Form -->
-    <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery"/>
+    <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
 
 <script>
 import LoginForm from '../components/login-form.vue';
 import axios from 'axios';
-  
+
 export default {
   name: 'LogIn',
   components: {
@@ -18,30 +17,28 @@ export default {
   },
   methods: {
     async login({ username, password }) {
-    if (username && password) {
+      if (username && password) {
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/login/', {
-                username,
-                password
-            });
-            if (response.status === 200) {
-                alert('Login successful');
-                this.$router.push('/home');
-            }
+          const response = await axios.post('http://localhost:8000/api/auth/login/', {
+            username,
+            password
+          });
+          if (response.status === 200) {
+            alert('Login successful');
+            this.$router.push('/home');
+          }
         } catch (error) {
-            console.error('Login failed:', error);
-            alert('Invalid username or password. Please try again.');
+          console.error('Login failed:', error);
+          alert('Invalid username or password. Please try again.');
         }
-    } else {
+      } else {
         alert('Please enter username and password');
-    }
-}
-,
+      }
+    },
     goToSignUp() {
       this.$router.push('/signup');
     },
     goToRecovery() {
-      // Navigate to the recovery password page
       this.$router.push('/recovery-password');
     }
   }
@@ -49,17 +46,14 @@ export default {
 </script>
 
 <style scoped>
-/* Center the login page */
 .login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  font-family: Arial, sans-serif;
 }
 
-/* Profile icon styling */
 .profile-icon {
   width: 100px;
   height: 100px;
