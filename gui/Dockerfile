@@ -1,12 +1,10 @@
 FROM node:18
 
-WORKDIR /app
+WORKDIR /gui
 
 COPY package*.json ./
 
-RUN npm install
-RUN npm install vuex@next vue-router --save
-RUN npm install axios
+RUN npm install vuex@next vue-router axios
 
 COPY . .
 
