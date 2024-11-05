@@ -1,20 +1,21 @@
 <template>
-  <div class="login-form">
-    <label for="username">Username</label>
-    <input v-model="username" type="text" id="username" placeholder="Insert username..." />
-
-    <label for="password">Password</label>
-    <input v-model="password" type="password" id="password" placeholder="Insert the password.." />
-
-    <!-- Buttons -->
-    <div class="button-group">
-      <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
-      <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
-    </div>
-
-    <!-- Recover Password Link -->
-    <a href="#" class="recover-password" @click.prevent="goToRecovery">Recover password</a>
+<div class="login-form">
+  <h2 class="form-title">Log In</h2>
+  <label for="username">Username</label>
+  <input v-model="username" type="text" id="username" placeholder="Insert username..." />
+  
+  <label for="password">Password</label>
+  <input v-model="password" type="password" id="password" placeholder="Insert the password.." />
+  
+  <!-- Buttons -->
+  <div class="button-group">
+    <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
+    <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
   </div>
+  
+    <!-- Recover Password Link -->
+  <a href="#" class="recover-password" @click.prevent="goToRecovery">Recover password</a>
+</div>
 </template>
 
 <script>
