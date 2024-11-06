@@ -33,7 +33,7 @@ class UsersListView(generics.ListCreateAPIView):
         queryset = Users.objects.all()
         username = self.request.query_params.get('username', None)
         if username is not None:
-            queryset = queryset.filter(user_name=username)  # Cambia 'user_name' por el campo correcto si es necesario
+            queryset = queryset.filter(user_name=username) 
         return queryset
 
 

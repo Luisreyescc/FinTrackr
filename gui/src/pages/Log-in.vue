@@ -19,14 +19,18 @@ export default {
     async login({ username, password }) {
       if (username && password) {
         try {
-          const response = await axios.post('http://localhost:8000/api/auth/login/', {
-            username,
-            password
-          });
-          if (response.status === 200) {
-            alert('Login successful');
-            this.$router.push('/home');
-          }
+          axios.get(`http://localhost:8000/api/users/?username=${username}`).then(res => {
+            // this.loginMessage = res.data;
+            const user = res.data[0];
+            console.log(user);
+            if (user && user.password_hash === password) {
+              alert('Login successful');
+              this.$router.push('/home');
+            } else {
+              alert('Credenciales incorrectas.' + res.data);
+            }
+          })
+          
         } catch (error) {
           console.error('Login failed:', error);
           alert('Invalid username or password. Please try again.');
