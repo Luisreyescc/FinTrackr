@@ -19,12 +19,23 @@ export default {
     async signUp({ username, email, password }) {
       if (username && email && password) {
         try {
-          const response = await axios.post('http://localhost:8000/api/auth/register/', {
-            username,
-            email,
-            password
-          });
-          if (response.status === 201) {
+          const response = await axios.post(
+            'http://localhost:8000/api/users/',
+            {
+              user_name: username,
+              email: email,
+              password_hash: password
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          if (response.status === 500) {
+            alert('Signup failed');
+          } else {
             alert('User registered! Redirecting to login...');
             this.$router.push('/');
           }
