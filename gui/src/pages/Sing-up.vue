@@ -20,7 +20,7 @@ export default {
       if (username && email && password) {
         try {
           const response = await axios.post(
-            'http://localhost:8000/api/users/',
+            'http://localhost:8000/api/auth/register/',
             {
               user_name: username,
               email: email,

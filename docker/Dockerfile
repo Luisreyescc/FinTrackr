@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY app /app
 
-RUN pip install django mysqlclient python-decouple djangorestframework django-cors-headers
+RUN pip install django mysqlclient python-decouple djangorestframework django-cors-headers requests
 
 EXPOSE 8000
 
