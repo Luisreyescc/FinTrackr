@@ -20,7 +20,7 @@ export default {
       if (username && password) {
         try {
           const response = await axios.post(
-            'http://localhost:8000/api/auth/login/', // URL de login del backend
+            'http://localhost:8000/api/login/',  // Login endpoint of the backend
             {
               username: username,
               password: password
@@ -31,8 +31,10 @@ export default {
               }
             }
           );
-          if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
-            alert('Login successful');	    
+          // Check if login was successful
+          if (response.status === 200) {
+            this.$emit('login');  // Trigger login event
+            alert('Login successful');  // Optionally, you can redirect the user here
           } else {
             alert('Invalid credentials');
           }
@@ -45,10 +47,10 @@ export default {
       }
     },
     goToSignUp() {
-      this.$router.push('/signup');
+      this.$router.push('/signup');  // Redirect to sign up page
     },
     goToRecovery() {
-      this.$router.push('/recovery-password');
+      this.$router.push('/recovery-password');  // Redirect to password recovery page
     }
   }
 };
