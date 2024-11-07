@@ -31,13 +31,10 @@ export default {
               }
             }
           );
-
-          if (response.status === 200) {
-            alert('Login successful');
-            this.$router.push('/home');
+          if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
+            alert('Login successful');	    
           } else {
             alert('Invalid credentials');
-            //this.$emit('login');
           }
         } catch (error) {
           console.error('Login failed:', error);
@@ -59,19 +56,19 @@ export default {
 
 <style scoped>
 .login-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
 }
 </style>

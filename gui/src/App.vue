@@ -17,17 +17,25 @@ export default {
   },
   data() {
     return {
-      isLoggedIn: false // Update later
+      isLoggedIn: !!sessionStorage.getItem("isLoggedIn") // Check session storage for login status
     };
   },
   methods: {
     login() {
       this.isLoggedIn = true;
+      sessionStorage.setItem("isLoggedIn", "true"); // Store login state in session
       this.$router.push('/home'); // Redirect to Home page by default after login
     },
     logout() {
       this.isLoggedIn = false;
-      this.$router.push('/'); // Redirect to Log-in page after sign-out
+      sessionStorage.removeItem("isLoggedIn"); // Remove login state from session
+      this.$router.replace('/'); // Redirect to Log-in page after sign-out
+    }
+  },
+  watch: {
+    isLoggedIn(newValue) {
+      // Sync the header's login status when it changes
+      sessionStorage.setItem("isLoggedIn", newValue ? "true" : "false");
     }
   }
 };

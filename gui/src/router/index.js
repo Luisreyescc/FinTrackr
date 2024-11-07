@@ -23,4 +23,26 @@ const router = createRouter({
   routes: routes,
 })
 
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!sessionStorage.getItem("isLoggedIn");
+
+  // Public routes that don't require authentication
+  const publicPages = ['/', '/signup', '/recovery-password'];
+  const isPublicPage = publicPages.includes(to.path);
+
+  // If not logged in and trying to access a protected page, redirect to login
+  if (!isLoggedIn && !isPublicPage) {
+    return next('/');
+  }
+
+  // If logged in and trying to access a public page, redirect to home
+  if (isLoggedIn && isPublicPage) {
+    return next('/home');
+  }
+
+  // If all checks pass, proceed to the requested route
+  next();
+});
+
 export default router;
