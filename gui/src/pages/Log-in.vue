@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
@@ -37,6 +37,7 @@ export default {
             this.$router.push('/home');
           } else {
             alert('Invalid credentials');
+            //this.$emit('login');
           }
         } catch (error) {
           console.error('Login failed:', error);
@@ -63,6 +64,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
