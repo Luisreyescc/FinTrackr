@@ -1,7 +1,7 @@
 <template>
   <div class="recovery-password-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" @goToLogin="goToLogin"/>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 /* Profile icon styling */

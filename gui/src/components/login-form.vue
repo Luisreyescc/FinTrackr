@@ -51,6 +51,7 @@ export default {
   border-radius: 8px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
@@ -58,6 +59,7 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
@@ -68,6 +70,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .button-group {
@@ -82,6 +85,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .sign-in-btn {
@@ -103,6 +107,7 @@ input {
   font-size: 14px;
   color: #555;
   text-decoration: none;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .recover-password:hover {
