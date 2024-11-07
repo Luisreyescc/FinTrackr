@@ -1,8 +1,8 @@
 <template>
   <div class="recovery-password-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
-    <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
+    <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" @goToLogin="goToLogin"/>
   </div>
 </template>
 
@@ -16,11 +16,9 @@ export default {
   },
   methods: {
     handleSendCode({ email }) {
-      // Handle send code logic here if needed
       console.log('Sending recovery code to:', email);
     },
     goToLogin() {
-      // Redirect to the login page after password change
       this.$router.push('/');
     }
   }
@@ -35,7 +33,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 /* Profile icon styling */
@@ -46,4 +44,5 @@ export default {
   border-radius: 50%;
   border: 2px solid #ccc;
 }
+
 </style>

@@ -7,11 +7,12 @@
 
     <!-- Send Code Button -->
     <button class="send-code-btn" @click="sendCode">Send code</button>
-    <!-- Recovery Code Input (Shown after Send Code is clicked) -->
+    <!-- Recovery Code Input, shown after Send Code is clicked -->
     <label v-if="codeSent" for="recovery-code">Recovery Code</label>
     <input v-if="codeSent" v-model="recoveryCode" type="text" id="recovery-code" placeholder="Enter recovery code..." />
     <!-- Change Password Button -->
     <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
+    <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
   </div>
 </template>
 
@@ -60,6 +61,7 @@ export default {
   border-radius: 8px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
@@ -67,6 +69,7 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
@@ -77,6 +80,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 button {
@@ -92,11 +96,19 @@ button {
   background-color: #4CAF50;
   color: white;
   margin-bottom: 15px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .change-password-btn {
   background-color: #333;
   color: white;
+  font-family: "Wix Madefor Display", sans-serif;
+}
+
+login-btn {
+  background-color: #0033cc;
+  color: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 button:hover {
