@@ -1,7 +1,7 @@
 services:
   web:
     build:
-      context: .
+      context: ./app
       dockerfile: docker/Dockerfile
     ports:
       - "8000:8000"
@@ -16,7 +16,7 @@ services:
   frontend:
     build:
       context: ./gui
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     ports:
       - "8080:8080"
     volumes:
