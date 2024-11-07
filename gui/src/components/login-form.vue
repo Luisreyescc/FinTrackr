@@ -1,12 +1,43 @@
 <template>
 <div class="login-form">
   <h2 class="form-title">Log In</h2>
+
   <label for="username">Username</label>
-  <input v-model="username" type="text" id="username" placeholder="Insert username..." />
+  <input 
+    v-model="username" 
+    type="text" 
+    id="username" 
+    placeholder="Insert username..."
+    :class="{ 'input-error': usernameError }"
+    @input="clearError('username')" 
+  />
+  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
   
   <label for="password">Password</label>
-  <input v-model="password" type="password" id="password" placeholder="Insert the password.." />
-  
+  <div class="password-container">
+    <input 
+      v-model="password" 
+      :type="showPassword ? 'text': 'password'" 
+      id="password" 
+      placeholder="Insert the password.."
+      :class="{ 'input-error': passwordError }" 
+      @input="clearError('password')" 
+    />
+    
+    <button 
+      type="button" 
+      class="show-password-btn" 
+      @click="togglePasswordVisibility"
+      aria-label="Show or Hide Password"
+    >
+    <span v-if="showPassword">👁️</span> <!-- Icono de ojo abierto -->
+    <span v-else>🙈</span> <!-- Icono de ojo cerrado -->
+    </button>
+  </div>
+
+
+  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+
   <!-- Buttons -->
   <div class="button-group">
     <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
@@ -24,13 +55,34 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      usernameError: '',
+      passwordError: '',
+      showPassword: false
     };
   },
   methods: {
     emitLogin() {
-      // Emit an event with username and password data to the parent
-      this.$emit('login', { username: this.username, password: this.password });
+      // Clean previous errors
+      this.usernameError = '';
+      this.passwordError = '';
+
+      // Validar campos
+      if (!this.username) this.usernameError = 'Username is required';
+      if (!this.password) this.passwordError = 'Password is required';
+
+      if(!this.usernameError && this.passwordError){
+        // Emit an event with username and password data to the parent
+        this.$emit('login', { username: this.username, password: this.password });
+      }
+    },
+    clearError(field) {
+      if (field === 'username') this.usernameError = '';
+      if (field === 'password') this.passwordError = '';
+    },
+    togglePasswordVisibility(){
+      this.showPassword = !this.showPassword;
+      console.log(this.password);
     },
     goToRecovery() {
       // Emit an event to navigate to the recovery page
@@ -70,6 +122,17 @@ input {
   color: #333;
 }
 
+.input-error{
+  border-color: rgb(8, 34, 183);
+}
+
+.error-message {
+  color: rgb(8, 34, 183);
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
 .button-group {
   display: flex;
   width: 100%;
@@ -105,7 +168,31 @@ input {
   text-decoration: none;
 }
 
+.password-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 108%;
+}
+
+.show-password-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.show-password-btn span {
+  font-size: 18px;
+  display: flex;
+  margin-top: -58%; /* Tamaño del icono */
+}
+
 .recover-password:hover {
   text-decoration: underline;
 }
+
 </style>
