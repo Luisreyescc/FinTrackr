@@ -3,6 +3,7 @@
     <!-- Profile Icon -->
     <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
+    <span v-if="errorMessage" class="error-message">{{ errorMessage }}</span>
   </div>
 </template>
 
@@ -14,6 +15,11 @@ export default {
   name: 'LogIn',
   components: {
     LoginForm
+  },
+  data(){
+    return{
+      errorMessage: ''
+    };
   },
   methods: {
     async login({ username, password }) {
@@ -34,14 +40,14 @@ export default {
           if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
             alert('Login successful');	    
           } else {
-            alert('Invalid credentials');
+            this.errorMessage = "Invalid credentials";
           }
         } catch (error) {
           console.error('Login failed:', error);
-          alert('Invalid username or password. Please try again.');
+          this.errorMessage = "Invalid username or password. Please try again.";
         }
       } else {
-        alert('Please enter username and password');
+        this.errorMessage = "Please enter username and password";
       }
     },
     goToSignUp() {
@@ -62,6 +68,13 @@ export default {
     justify-content: center;
     height: 100vh;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.error-message {
+  color: rgb(8, 34, 183);
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .profile-icon {
