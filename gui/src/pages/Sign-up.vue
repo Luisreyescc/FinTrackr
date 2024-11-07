@@ -1,7 +1,7 @@
 <template>
   <div class="signup-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <sign-up-form @signUp="signUp" @goToLogin="goToLogin" />
   </div>
 </template>
@@ -61,6 +61,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {

@@ -1,20 +1,21 @@
 <template>
-  <div class="login-form">
-    <label for="username">Username</label>
-    <input v-model="username" type="text" id="username" placeholder="Insert username..." />
-
-    <label for="password">Password</label>
-    <input v-model="password" type="password" id="password" placeholder="Insert the password.." />
-
-    <!-- Buttons -->
-    <div class="button-group">
-      <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
-      <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
-    </div>
-
-    <!-- Recover Password Link -->
-    <a href="#" class="recover-password" @click.prevent="goToRecovery">Recover password</a>
+<div class="login-form">
+  <h2 class="form-title">Log In</h2>
+  <label for="username">Username</label>
+  <input v-model="username" type="text" id="username" placeholder="Insert username..." />
+  
+  <label for="password">Password</label>
+  <input v-model="password" type="password" id="password" placeholder="Insert the password.." />
+  
+  <!-- Buttons -->
+  <div class="button-group">
+    <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
+    <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
   </div>
+  
+    <!-- Recover Password Link -->
+  <a href="#" class="recover-password" @click.prevent="goToRecovery">Recover password</a>
+</div>
 </template>
 
 <script>
@@ -50,6 +51,7 @@ export default {
   border-radius: 8px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
@@ -57,6 +59,7 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
@@ -67,6 +70,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .button-group {
@@ -81,6 +85,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .sign-in-btn {
@@ -102,6 +107,7 @@ input {
   font-size: 14px;
   color: #555;
   text-decoration: none;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .recover-password:hover {

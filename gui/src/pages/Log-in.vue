@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_picture.png" alt="Profile Icon" class="profile-icon" />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
@@ -31,10 +31,8 @@ export default {
               }
             }
           );
-
-          if (response.status === 200) {
-            alert('Login successful');
-            this.$router.push('/home');
+          if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
+            alert('Login successful');	    
           } else {
             alert('Invalid credentials');
           }
@@ -58,18 +56,19 @@ export default {
 
 <style scoped>
 .login-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
 }
 </style>
