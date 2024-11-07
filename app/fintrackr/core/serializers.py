@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import *
+from fintrackr.core.models import *
 
 
 class UsersSerializer(serializers.ModelSerializer):
