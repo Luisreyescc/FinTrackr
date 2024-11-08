@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "fintrackr.core",
     "rest_framework",
-    "fintrackr.auth_app", 
-    'corsheaders',
+    "fintrackr.auth_app",
+    "corsheaders",
+    "fintrackr.accounts",
 ]
 
 MIDDLEWARE = [
@@ -52,8 +53,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "fintrackr.urls"

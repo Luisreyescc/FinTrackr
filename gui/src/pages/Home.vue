@@ -1,7 +1,11 @@
 <template>
-<div class="page-container">
-  <div class="illustration">
-      <img src="@/assets/empty_status.svg" alt="Nothing to see here" class="cactus-image" />
+  <div class="page-container">
+    <div class="illustration">
+      <img
+        src="@/assets/empty_status.svg"
+        alt="Nothing to see here"
+        class="cactus-image"
+      />
       <h2 class="headline">Nothing to see here</h2>
     </div>
     <div class="maintenance-message">
@@ -13,7 +17,7 @@
 
 <script>
 export default {
-  name: 'HomePage',
+  name: "HomePage",
 };
 </script>
 

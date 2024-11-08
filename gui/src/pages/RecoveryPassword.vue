@@ -1,27 +1,35 @@
 <template>
   <div class="recovery-password-page">
     <!-- Profile Icon -->
-    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
-    <recovery-form @sendCode="handleSendCode" @changePassword="goToLogin" @goToLogin="goToLogin"/>
+    <img
+      src="@/assets/profile_black.svg"
+      alt="Profile Icon"
+      class="profile-icon"
+    />
+    <recovery-form
+      @sendCode="handleSendCode"
+      @changePassword="goToLogin"
+      @goToLogin="goToLogin"
+    />
   </div>
 </template>
 
 <script>
-import RecoveryForm from '../components/recpassword-form.vue';
+import RecoveryForm from "../components/recpassword-form.vue";
 
 export default {
-  name: 'RecoveryPassword',
+  name: "RecoveryPassword",
   components: {
-    RecoveryForm
+    RecoveryForm,
   },
   methods: {
     handleSendCode({ email }) {
-      console.log('Sending recovery code to:', email);
+      console.log("Sending recovery code to:", email);
     },
     goToLogin() {
-      this.$router.push('/');
-    }
-  }
+      this.$router.push("/");
+    },
+  },
 };
 </script>
 
@@ -44,5 +52,4 @@ export default {
   border-radius: 50%;
   border: 2px solid #ccc;
 }
-
 </style>

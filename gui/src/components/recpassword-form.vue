@@ -1,52 +1,70 @@
 <template>
   <div class="recovery-form">
     <label for="username">Username</label>
-    <input v-model="username" type="text" id="username" placeholder="Insert username..." />
+    <input
+      v-model="username"
+      type="text"
+      id="username"
+      placeholder="Insert username..."
+    />
     <label for="email">E-mail</label>
-    <input v-model="email" type="email" id="email" placeholder="Insert email..." />
+    <input
+      v-model="email"
+      type="email"
+      id="email"
+      placeholder="Insert email..."
+    />
 
     <!-- Send Code Button -->
     <button class="send-code-btn" @click="sendCode">Send code</button>
     <!-- Recovery Code Input, shown after Send Code is clicked -->
     <label v-if="codeSent" for="recovery-code">Recovery Code</label>
-    <input v-if="codeSent" v-model="recoveryCode" type="text" id="recovery-code" placeholder="Enter recovery code..." />
+    <input
+      v-if="codeSent"
+      v-model="recoveryCode"
+      type="text"
+      id="recovery-code"
+      placeholder="Enter recovery code..."
+    />
     <!-- Change Password Button -->
-    <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
+    <button v-if="codeSent" class="change-password-btn" @click="changePassword">
+      Change Password
+    </button>
     <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'RecoveryForm',
+  name: "RecoveryForm",
   data() {
     return {
-      username: '',
-      email: '',
-      recoveryCode: '',
-      codeSent: false // State to track if the code has been sent
+      username: "",
+      email: "",
+      recoveryCode: "",
+      codeSent: false, // State to track if the code has been sent
     };
   },
   methods: {
     sendCode() {
       if (this.username && this.email) {
         this.codeSent = true;
-        alert('A recovery code has been sent to your email!');
+        alert("A recovery code has been sent to your email!");
         // Emit an event to the parent if needed
-        this.$emit('sendCode', { username: this.username, email: this.email });
+        this.$emit("sendCode", { username: this.username, email: this.email });
       } else {
-        alert('Please enter both username and email.');
+        alert("Please enter both username and email.");
       }
     },
     changePassword() {
       if (this.recoveryCode) {
-        alert('Password changed successfully! Redirecting to login...');
-        this.$emit('changePassword');
+        alert("Password changed successfully! Redirecting to login...");
+        this.$emit("changePassword");
       } else {
-        alert('Please enter the recovery code.');
+        alert("Please enter the recovery code.");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -93,7 +111,7 @@ button {
 }
 
 .send-code-btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   margin-bottom: 15px;
   font-family: "Wix Madefor Display", sans-serif;
