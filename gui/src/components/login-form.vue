@@ -9,7 +9,7 @@
       v-model="username" 
       type="text" 
       id="username" 
-      placeholder="Insert username..."
+      placeholder="Insert your username..."
       :class="{ 'input-error': usernameError, 'padded-input': true }"
       @input="clearError('username')"/>
     </div>
@@ -50,6 +50,7 @@
 import '@/css/eye.css';
 import '@/css/eye-alt.css';
 import '@/css/user.css';
+
 export default {
   name: 'LoginForm',
   data() {
@@ -68,7 +69,7 @@ export default {
       this.passwordError = '';
       if (!this.username) this.usernameError = 'Username is required';
       if (!this.password) this.passwordError = 'Password is required';
-      if(!this.usernameError && this.passwordError){
+      if(!this.usernameError && !this.passwordError){
         // Emit an event with username and password data to the parent
         this.$emit('login', { username: this.username, password: this.password });
       }
