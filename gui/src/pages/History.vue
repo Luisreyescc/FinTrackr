@@ -5,7 +5,7 @@
       <h2 class="headline">Nothing to see here</h2>
     </div>
     <div class="maintenance-message">
-      <p>Home page is on maintenance...</p>
+      <p>History page is on maintenance...</p>
       <img src="@/assets/tools.png" alt="Maintenance" class="tools-image" />
     </div>
   </div>
@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'HomePage',
+  name: 'HistoryPage',
 };
 </script>
 
@@ -23,13 +23,12 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 60px); /* Adjusts for header height */
+  min-height: calc(100vh - 60px);
   text-align: center;
   color: #666;
   font-family: "Wix Madefor Display", sans-serif;
 }
 
-/* Styling for the cactus illustration and main message */
 .illustration {
   display: flex;
   flex-direction: column;
@@ -47,7 +46,6 @@ export default {
   color: #666;
 }
 
-/* Styling for the maintenance message */
 .maintenance-message {
   display: flex;
   align-items: center;

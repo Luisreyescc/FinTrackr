@@ -61,6 +61,7 @@ export default {
   border-radius: 8px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
@@ -68,6 +69,7 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
@@ -78,6 +80,7 @@ input {
   border-radius: 4px;
   font-size: 14px;
   color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 button {
@@ -93,16 +96,19 @@ button {
   background-color: #4CAF50;
   color: white;
   margin-bottom: 15px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .change-password-btn {
   background-color: #333;
   color: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 login-btn {
   background-color: #0033cc;
   color: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 button:hover {

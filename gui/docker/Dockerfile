@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install vuex@next vue-router axios
 
-COPY . .
+COPY . /gui
 
 EXPOSE 8080
 
