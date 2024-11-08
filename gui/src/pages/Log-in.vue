@@ -31,12 +31,9 @@ export default {
               }
             }
           );
-          // Check if login was successful
-          if (response.status === 200) {
-            this.$emit('login');  // Trigger login event
-            alert('Login successful');  // Optionally, you can redirect the user here
-          } else {
-            alert('Invalid credentials');
+          if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
+            alert('Login successful');
+          } else { alert('Invalid credentials');
           }
         } catch (error) {
           console.error('Login failed:', error);
@@ -64,6 +61,13 @@ export default {
     justify-content: center;
     height: 100vh;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.error-message {
+  color: rgb(8, 34, 183);
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .profile-icon {

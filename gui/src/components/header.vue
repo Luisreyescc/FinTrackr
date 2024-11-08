@@ -41,7 +41,7 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     editProfile() {
-      alert("Edit Profile clicked");
+      this.$router.push('/edit-profile');
     },
     logout() {
       this.$emit('logout');
@@ -52,8 +52,8 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #5860D0;
-  padding: 15px;
+  background-color: #21255B;
+  padding: 13px;
   color: #FFFFFF;
   width: 100%;
   position: fixed; /* Make the banner stick at the top of the page */

@@ -36,9 +36,8 @@ export default {
 }
 
 .cactus-image {
-  width: 200px;
+  width: 300px;
   height: auto;
-  margin-bottom: 20px;
 }
 
 .headline {
@@ -50,7 +49,7 @@ export default {
 .maintenance-message {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
   margin-top: 20px;
 }
@@ -60,7 +59,7 @@ export default {
 }
 
 .tools-image {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
 }
 </style>
