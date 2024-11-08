@@ -47,15 +47,17 @@
 <script>
 export default {
   name: 'EditProfileForm',
+  //We allow passing data from the parent component to this component
   props: {
     initialData: {
-      type: Object,
-      default: () => ({})
+      type: Object, //Specifies that 'initialData' should be an Object
+      default: () => ({}) //Default value if 'initialData' is not provided
     }
   },
   data() {
     return {
       formData: {
+	//Initialize each field with data from 'initialData', or set to an empty string if not provided
 	username: this.initialData.username || '',
         name: this.initialData.name || '',
         lastName: this.initialData.lastName || '',
@@ -70,10 +72,12 @@ export default {
   },
   methods: {
     saveProfile() {
+       //Convert empty string fields to null, represents missing data
       const sanitizedData = Object.fromEntries(
+	// Object.entries converts formData into an array of [key, value] pairs
+        // mapping processes each pair, setting null to any empty value
         Object.entries(this.formData).map(([key, value]) => [key, value || null])
       );
-
       this.$emit('saveProfile', sanitizedData);
     },
     goToHome() {
@@ -92,7 +96,7 @@ export default {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  width: 400px;
+  width: 450px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: "Wix Madefor Display", sans-serif;
 }
@@ -103,6 +107,7 @@ label {
   font-weight: bold;
   color: #333;
   font-family: "Wix Madefor Display", sans-serif;
+  transition: border 0.3s ease;
 }
 
 input {
@@ -120,12 +125,25 @@ input {
 .row {
   display: flex;
   width: 100%;
-  gap: 10px;
+  gap: 40px;
+  margin-left: -20px;
 }
 
 /* Half-width for columns */
 .column {
-  flex: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.column label {
+  margin-left: 10px;
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .button-group {
@@ -134,27 +152,32 @@ input {
   justify-content: space-between;
 }
 
+.save-btn, .cancel-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .save-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #21255B;
-    color: white;
-    margin-bottom: 15px;
-    font-family: "Wix Madefor Display", sans-serif;
+  background-color: #21255B;
+  color: white;
 }
 
 .cancel-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #333;
-    color: white;
-    font-family: "Wix Madefor Display", sans-serif;
+  background-color: #e53935;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #1b1e50;
+}
+
+.cancel-btn:hover {
+  background-color: #d32f2f;
 }
 
 .save-btn:hover .cancel-btn:hover{
