@@ -41,7 +41,7 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     editProfile() {
-      alert("Edit Profile clicked");
+      this.$router.push('/edit-profile');
     },
     logout() {
       this.$emit('logout');

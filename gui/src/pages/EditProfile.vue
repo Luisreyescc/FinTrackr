@@ -1,71 +1,69 @@
 <template>
-  <div class="edit-profile-page">
-  </div>
+<div class="edit-profile-page">
+  <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />
+</div>
 </template>
 
 <script>
-//import EditProfileForm from '../components/editprofile-form.vue';
+import EditProfileForm from '@/components/editprofile-form.vue';
 import axios from 'axios';
 
 export default {
   name: 'EditProfile',
   components: {
-    //EditProfileForm
+    EditProfileForm
+  },
+  data() {
+    return {
+       userData: {
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        curp: '',
+        rfc: '',
+        birthDate: '',
+        password: ''
+      }
+    };
   },
   methods: {
-    async editProfile({ username, email, password }) {
-      if (username && email && password) {
-        try {
-          const response = await axios.post(
-            'http://localhost:8000/api/auth/register/',
-            {
-              user_name: username,
-              email: email,
-              password_hash: password
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
+    async editProfile(profileData) {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/api/auth/register/',
+          { user_name: profileData.username, name: profileData.name, last_name: profileData.lastName, email: profileData.email, user_curp: profileData.curp, user_rfc: profileData.rfc, phone_number: profileData.phone, birth_date: profileData.birthDate, password_hash: profileData.password },
+          {
+            headers: {
+              'Content-Type': 'application/json'
             }
-          );
-
-          if (response.status === 500) {
-            alert('Signup failed');
-          } else {
-            alert('User registered! Redirecting to login...');
-            this.$router.push('/');
           }
-        } catch (error) {
-          console.error('Signup failed:', error);
-          alert('There was an issue with your signup. Please try again.');
+        );
+	if (response.status === 200) {
+          alert('User data updated successfully!');
+        } else {
+          alert('Failed to save data');
         }
-      } else {
-        alert('Please fill all required fields.');
+      } catch (error) {
+        console.error('Update failed:', error);
+        alert('There was an issue with saving the user data. Please try again.');
       }
     },
-    goToLogin() {
-      this.$router.push('/');
+    goToHome() {
+      this.$router.push('/home');
     }
   }
 };
 </script>
 
 <style scoped>
-.signup-page {
+.edit-profile-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   font-family: "Wix Madefor Display", sans-serif;
-}
-
-.profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
 }
 </style>
