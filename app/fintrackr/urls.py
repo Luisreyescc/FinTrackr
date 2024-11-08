@@ -23,5 +23,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", HomeView.as_view(), name="home"),
     path("api/", include("fintrackr.core.urls")),
-    path('api/', include('fintrackr.auth_app.urls')),
+    path("api/", include("fintrackr.auth_app.urls")),
+    path("api/", include("fintrackr.profile_app.urls")),
 ]

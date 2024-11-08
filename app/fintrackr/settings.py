@@ -38,10 +38,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "fintrackr.core",
     "rest_framework",
-    "fintrackr.auth_app", 
     'corsheaders',
+    "fintrackr.auth_app", 
+    "fintrackr.profile_app",
+    "fintrackr.core",
 ]
 
 MIDDLEWARE = [
