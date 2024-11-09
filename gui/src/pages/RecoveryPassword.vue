@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import RecoveryForm from '../components/recpassword-form.vue';
+import RecoveryForm from '../formats/recpassword-form.vue';
 
 export default {
   name: 'RecoveryPassword',

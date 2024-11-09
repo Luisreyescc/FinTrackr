@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import LoginForm from '../components/login-form.vue';
+import LoginForm from '../formats/login-form.vue';
 import axios from 'axios';
 
 export default {

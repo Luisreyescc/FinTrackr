@@ -98,7 +98,7 @@ export default {
 }
 
 .nav-item:hover {
-  color: #5860D0;
+  color: #21255B;
 }
 
 .nav-item::before,

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import EditProfileForm from '@/components/editprofile-form.vue';
+import EditProfileForm from '@/formats/editprofile-form.vue';
 import axios from 'axios';
 
 export default {

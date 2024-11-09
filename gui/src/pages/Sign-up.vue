@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import SignUpForm from '../components/signup-form.vue';
+import SignUpForm from '../formats/signup-form.vue';
 import axios from 'axios';
 
 export default {
