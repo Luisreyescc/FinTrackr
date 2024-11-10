@@ -29,7 +29,7 @@ export default {
     logout() {
       this.isLoggedIn = false;
       sessionStorage.removeItem("isLoggedIn"); // Remove login state from session
-      this.$router.replace('/'); // Redirect to Log-in page after sign-out
+      this.$router.push('/'); // Redirect to Log-in page after sign-out
     }
   },
   watch: {

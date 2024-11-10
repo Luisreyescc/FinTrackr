@@ -29,7 +29,7 @@
 export default {
   name: 'AppHeader',
   props: {
-    isLoggedIn: Boolean //
+    isLoggedIn: Boolean
   },
   data() {
     return {
