@@ -3,4 +3,5 @@ mysqlclient
 python-decouple
 djangorestframework
 django-cors-headers
+djangorestframework-simplejwt
 requests

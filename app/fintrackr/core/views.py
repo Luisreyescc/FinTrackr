@@ -1,102 +1,49 @@
-from rest_framework import generics
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from fintrackr.core.models import (
-    Users,
-    Incomes,
-    Categories,
-    Expenses,
-    ExpenseCategories,
-    Debts,
-    DebtCategories,
-)
-from fintrackr.core.serializers import (
-    UsersSerializer,
-    IncomesSerializer,
-    CategoriesSerializer,
-    ExpensesSerializer,
-    ExpenseCategoriesSerializer,
-    DebtsSerializer,
-    DebtCategoriesSerializer,
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Users
+from .serializers import (
+    RegisterSerializer,
+    LoginSerializer,
+    UserSerializer,
+    UpdateUserSerializer,
 )
 
 
-class HomeView(APIView):
-    def get(self, request):
-        return Response({"message": "Welcome to the Fintrackr API!"})
-
-
-class UsersListView(generics.ListCreateAPIView):
-    serializer_class = UsersSerializer
-
-    def get_queryset(self):
-        queryset = Users.objects.all()
-        username = self.request.query_params.get('username', None)
-        if username is not None:
-            queryset = queryset.filter(user_name=username) 
-        return queryset
-
-
-class UsersDetailView(generics.RetrieveUpdateDestroyAPIView):
+class RegisterView(generics.CreateAPIView):
     queryset = Users.objects.all()
-    serializer_class = UsersSerializer
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = RegisterSerializer
 
 
-class IncomesListView(generics.ListCreateAPIView):
-    queryset = Incomes.objects.all()
-    serializer_class = IncomesSerializer
+class LoginView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
-class IncomesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Incomes.objects.all()
-    serializer_class = IncomesSerializer
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = Users.objects.all()
+    serializer_class = UpdateUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_object(self):
+        return self.request.user
 
-class CategoriesListView(generics.ListCreateAPIView):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
-
-
-class CategoriesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
-
-
-class ExpensesListView(generics.ListCreateAPIView):
-    queryset = Expenses.objects.all()
-    serializer_class = ExpensesSerializer
-
-
-class ExpensesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Expenses.objects.all()
-    serializer_class = ExpensesSerializer
-
-
-class ExpenseCategoriesListView(generics.ListCreateAPIView):
-    queryset = ExpenseCategories.objects.all()
-    serializer_class = ExpenseCategoriesSerializer
-
-
-class ExpenseCategoriesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ExpenseCategories.objects.all()
-    serializer_class = ExpenseCategoriesSerializer
-
-
-class DebtsListView(generics.ListCreateAPIView):
-    queryset = Debts.objects.all()
-    serializer_class = DebtsSerializer
-
-
-class DebtsDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Debts.objects.all()
-    serializer_class = DebtsSerializer
-
-
-class DebtCategoriesListView(generics.ListCreateAPIView):
-    queryset = DebtCategories.objects.all()
-    serializer_class = DebtCategoriesSerializer
-
-
-class DebtCategoriesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DebtCategories.objects.all()
-    serializer_class = DebtCategoriesSerializer
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserSerializer
+        return UpdateUserSerializer

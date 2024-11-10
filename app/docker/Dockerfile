@@ -8,5 +8,5 @@ RUN pip install --no-cache-dir -r docker/requirements.txt
 
 EXPOSE 8000
 
-CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "/app/fintrackr/manage.py", "runserver", "0.0.0.0:8000"]
 
