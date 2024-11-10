@@ -1,22 +1,52 @@
 <template>
   <div class="recovery-form">
     <label for="username">Username</label>
-    <input v-model="username" type="text" id="username" placeholder="Insert username..." />
+    <div class="username-container">
+      <span class="user-icon gg-user"></span>
+      <input
+	v-model="username"
+	type="text"
+	id="username"
+	placeholder="Insert username..."
+	:class="{ 'input-error': usernameError, 'padded-input': true }"
+	@input="clearError('username')" />
+    </div>
+    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
     <label for="email">E-mail</label>
-    <input v-model="email" type="email" id="email" placeholder="Insert email..." />
-
-    <!-- Send Code Button -->
+    <div class="email-container">
+      <span class="email-icon gg-mail"></span>
+      <input
+	v-model="email"
+	type="email"
+	id="email"
+	placeholder="Insert email..."
+	:class="{ 'input-error': emailError, 'padded-input': true }"
+	@input="clearError('email')" />
+    </div>
+    <span v-if="emailError" class="error-message">{{ emailError }}</span>
+    
     <button class="send-code-btn" @click="sendCode">Send code</button>
     <!-- Recovery Code Input, shown after Send Code is clicked -->
     <label v-if="codeSent" for="recovery-code">Recovery Code</label>
-    <input v-if="codeSent" v-model="recoveryCode" type="text" id="recovery-code" placeholder="Enter recovery code..." />
-    <!-- Change Password Button -->
+    <div v-if="codeSent" class="recovery-container">
+    <span class="key-icon gg-key"></span>
+    <input
+      v-model="recoveryCode"
+      type="text"
+      id="recovery-code"
+      placeholder="Enter recovery code..."
+      :class="{ 'input-error': keyError, 'padded-input': true }"
+      @input="clearError('recoveryCode')" />
+    </div>
+    <span v-if="keyError" class="error-message">{{ keyError }}</span>
+    
     <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
     <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
   </div>
 </template>
 
 <script>
+import '@/css/key.css';
 export default {
   name: 'RecoveryForm',
   data() {
@@ -24,28 +54,45 @@ export default {
       username: '',
       email: '',
       recoveryCode: '',
-      codeSent: false // State to track if the code has been sent
+      codeSent: false, // State to track if the code has been sent
+      usernameError: '',
+      emailError: '',
+      keyError: ''
     };
   },
   methods: {
     sendCode() {
+      this.usernameError = '';
+      this.emailError = '';     
+      if (!this.username)
+	this.usernameError = 'Username is required';
+      if (!this.email)
+	this.emailError = 'Email is required';
       if (this.username && this.email) {
         this.codeSent = true;
         alert('A recovery code has been sent to your email!');
         // Emit an event to the parent if needed
         this.$emit('sendCode', { username: this.username, email: this.email });
-      } else {
-        alert('Please enter both username and email.');
       }
     },
     changePassword() {
+      this.keyError = '';
       if (this.recoveryCode) {
         alert('Password changed successfully! Redirecting to login...');
         this.$emit('changePassword');
       } else {
-        alert('Please enter the recovery code.');
+	this.keyError = 'Please insert the code sent to your e-mail';
       }
-    }
+    },
+    clearError(field) {
+      // Clear specific error messages when the user starts typing
+      if (field === 'username')
+	this.usernameError = '';
+      if (field === 'email')
+	this.emailError = '';
+      if (field === 'recoveryCode')
+	this.keyError = '';
+    },
   }
 };
 </script>
@@ -83,6 +130,18 @@ input {
   font-family: "Wix Madefor Display", sans-serif;
 }
 
+.input-error {
+    border-color: #E42121;
+}
+
+.error-message {
+    color: #E42121;
+    font-size: 12px;
+    align-self: flex-start;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
 button {
   padding: 10px 20px;
   border: none;
@@ -100,18 +159,57 @@ button {
 }
 
 .change-password-btn {
-  background-color: #333;
+  background-color: #BF9F00;
   color: white;
   font-family: "Wix Madefor Display", sans-serif;
 }
 
-login-btn {
-  background-color: #0033cc;
+.login-btn {
+  background-color: #333;
   color: white;
+  margin-top: 15px;
   font-family: "Wix Madefor Display", sans-serif;
 }
 
 button:hover {
   opacity: 0.9;
+}
+
+.username-container, .email-container, .recovery-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 108%;
+}
+
+.user-icon {
+    position: absolute;
+    left: 15px;
+    color: #555;
+    font-size: 18px;
+    margin-top: -5%;
+    pointer-events: none;
+}
+
+.email-icon {
+    position: absolute;
+    left: 13px;
+    color: #555;
+    font-size: 18px;
+    margin-top: -4%;
+    pointer-events: none;
+}
+
+.key-icon {
+  position: absolute;
+  left: 25px;
+  color: #555;
+  font-size: 18px;
+  margin-top: -4%;
+  pointer-events: none;
+}
+
+.padded-input {
+  padding-left: 40px;
 }
 </style>

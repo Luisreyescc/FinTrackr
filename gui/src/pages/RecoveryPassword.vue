@@ -26,23 +26,21 @@ export default {
 </script>
 
 <style scoped>
-/* Center the recovery password page */
 .recovery-password-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 240px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-/* Profile icon styling */
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
 }
 
 </style>

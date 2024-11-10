@@ -1,7 +1,6 @@
 <template>
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
-  
   <label for="username">Username</label>
   <div class="username-container">
     <span class="user-icon gg-user"></span>
@@ -14,8 +13,6 @@
       @input="clearError('username')"/>
   </div>
   <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-  
-  
   <label for="email">E-mail</label>
   <div class="email-container">
     <span class="email-icon gg-mail"></span>
@@ -99,10 +96,14 @@ export default {
       this.emailError = '';
       this.passwordError = '';
       this.confirmPasswordError = '';
-      if (!this.username) this.usernameError = 'Username is required';
-      if (!this.email) this.emailError = 'Email is required';
-      if (!this.password) this.passwordError = 'Password is required';
-      if (!this.conf_password) this.confirmPasswordError = 'Confirm password is required';
+      if (!this.username)
+	this.usernameError = 'Username is required';
+      if (!this.email)
+	this.emailError = 'Email is required';
+      if (!this.password)
+	this.passwordError = 'Password is required';
+      if (!this.conf_password)
+	this.confirmPasswordError = 'Confirm password is required';
       if (this.password && this.conf_password && this.password !== this.conf_password) {
 	this.confirmPasswordError = 'Passwords don\'t match';
       }
@@ -111,16 +112,20 @@ export default {
       }
     },
     clearError(field) {
-      if (field === 'username') this.usernameError = '';
-      if (field === 'email') this.emailError = '';
-      if (field === 'password') this.passwordError = '';
-      if (field === 'conf_password') this.confirmPasswordError = '';
+      if (field === 'username')
+	this.usernameError = '';
+      if (field === 'email')
+	this.emailError = '';
+      if (field === 'password')
+	this.passwordError = '';
+      if (field === 'conf_password')
+	this.confirmPasswordError = '';
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
-  toggleConfirmPasswordVisibility() {
-    this.showConfirmPassword = !this.showConfirmPassword;
+    toggleConfirmPasswordVisibility() {
+      this.showConfirmPassword = !this.showConfirmPassword;
     }
   }
 };

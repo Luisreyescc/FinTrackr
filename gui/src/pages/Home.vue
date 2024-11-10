@@ -52,13 +52,13 @@ export default {
 }
 
 .content {
-  flex: 1;
-  padding: 20px;
+    flex: 1;
+    padding: 20px;
 }
 
 .content-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }
 </style>

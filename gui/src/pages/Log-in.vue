@@ -59,15 +59,15 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    padding-top: 220px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .error-message {
-  color: rgb(8, 34, 183);
-  font-size: 14px;
-  margin-top: 10px;
-  text-align: center;
+    color: rgb(8, 34, 183);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
 }
 
 .profile-icon {

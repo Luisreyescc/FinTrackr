@@ -52,9 +52,7 @@ export default {
   } else {
     alert('Please fill in all required fields.');
   }
-}
-
-,
+},
     goToLogin() {
       this.$router.push('/');
     }
@@ -64,19 +62,19 @@ export default {
 
 <style scoped>
 .signup-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 190px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
 }
 </style>
