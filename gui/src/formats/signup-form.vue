@@ -1,8 +1,7 @@
 <template>    
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
-  <form @submit.prevent="submitForm">
-    
+  <!-- <form @submit.prevent="submitForm"> -->
     <label for="username">Username</label>
     <div class="username-container">
       <span class="user-icon gg-user"></span>
@@ -68,10 +67,10 @@
     <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
     
     <div class="button-group">
-      <button class="accept-btn" type="submit" >Create User</button>
+      <button class="accept-btn" @click="emitSignUp" >Create User</button>
       <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
     </div>
-  </form>
+  <!-- </form> -->
 </div>
 </template>
 
@@ -96,7 +95,7 @@ export default {
     };
   },
   methods: {
-    submitForm() {
+    emitSignUp() {
       this.usernameError = '';
       this.emailError = '';
       this.passwordError = '';
@@ -155,138 +154,122 @@ export default {
 <style scoped>
 /* Sign-up form styling */
 .signup-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
-  align-self: flex-start;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #333;
-  font-family: "Wix Madefor Display", sans-serif;
+    align-self: flex-start;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .input-error {
-  border-color: #e42121;
+    border-color: #e42121;
 }
 
 .error-message {
-  color: #e42121;
-  font-size: 12px;
-  align-self: flex-start;
-  margin-top: -10px;
-  margin-bottom: 10px;
+    color: #e42121;
+    font-size: 12px;
+    align-self: flex-start;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .button-group {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .accept-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: #4caf50;
-  color: white;
-  margin-bottom: 15px;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    margin-bottom: 15px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .login-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: #333;
-  color: white;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .accept-btn:hover,
 .login-btn:hover {
-  opacity: 0.9;
+    opacity: 0.9;
 }
 
-.username-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 108%;
+.username-container,
+.email-container,
+.password-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 108%;
 }
 
-.user-icon {
-  position: absolute;
-  left: 15px;
-  color: #555;
-  font-size: 18px;
-  margin-top: -5%;
-  pointer-events: none;
-}
-
-.email-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 108%;
+.user-icon,
+.email-icon {
+    position: absolute;
+    left: 15px;
+    color: #555;
+    font-size: 18px;
+    margin-top: -5%;
+    pointer-events: none;
 }
 
 .email-icon {
-  position: absolute;
-  left: 13px;
-  color: #555;
-  font-size: 18px;
-  margin-top: -5%;
-  pointer-events: none;
-}
-
-.password-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 108%;
+    left: 13px;
 }
 
 .show-password-btn {
-  position: absolute;
-  padding-left: 10px;
-  background: none;
-  border: none;
-  color: #555;
-  cursor: pointer;
-  font-size: 18px;
+    position: absolute;
+    padding-left: 10px;
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 18px;
 }
 
 .show-password-btn span {
-  font-size: 18px;
-  display: flex;
-  margin-top: -68%;
+    font-size: 18px;
+    display: flex;
+    margin-top: -68%;
 }
 
 .padded-input {
-  padding-left: 40px;
+    padding-left: 40px;
 }
 </style>
