@@ -1,22 +1,14 @@
 <template>
   <div class="login-page">
     <!-- Profile Icon -->
-    <img
-      src="@/assets/profile_black.svg"
-      alt="Profile Icon"
-      class="profile-icon"
-    />
-    <login-form
-      @login="login"
-      @goToSignUp="goToSignUp"
-      @goToRecovery="goToRecovery"
-    />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
+    <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
 
 <script>
-import LoginForm from "../components/login-form.vue";
-import axios from "axios";
+import LoginForm from '../formats/login-form.vue';
+import axios from 'axios';
 
 export default {
   name: "LogIn",
@@ -41,7 +33,7 @@ export default {
           );
           console.log(response.data);
           if (response.status === 200) {
-            this.$emit("login"); //Don't move this for the moment:)
+            this.$emit("login");
             const token = response.data.access;
             localStorage.setItem("token", token);
             alert("Login successful");
@@ -57,10 +49,10 @@ export default {
       }
     },
     goToSignUp() {
-      this.$router.push("/signup"); // Redirect to sign up page
+      this.$router.push("/signup");
     },
     goToRecovery() {
-      this.$router.push("/recovery-password"); // Redirect to password recovery page
+      this.$router.push("/recovery-password");
     },
   },
 };
@@ -68,19 +60,19 @@ export default {
 
 <style scoped>
 .login-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 220px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .error-message {
-  color: rgb(8, 34, 183);
-  font-size: 14px;
-  margin-top: 10px;
-  text-align: center;
+    color: rgb(8, 34, 183);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
 }
 
 .profile-icon {

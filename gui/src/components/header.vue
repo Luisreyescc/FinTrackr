@@ -42,7 +42,7 @@
 export default {
   name: "AppHeader",
   props: {
-    isLoggedIn: Boolean, //
+    isLoggedIn: Boolean
   },
   data() {
     return {
@@ -111,7 +111,7 @@ export default {
 }
 
 .nav-item:hover {
-  color: #5860d0;
+  color: #21255B;
 }
 
 .nav-item::before,

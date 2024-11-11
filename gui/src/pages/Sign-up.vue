@@ -1,16 +1,12 @@
 <template>
   <div class="signup-page">
-    <img
-      src="@/assets/profile_black.svg"
-      alt="Profile Icon"
-      class="profile-icon"
-    />
+    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     <sign-up-form @signUp="signUp" @goToLogin="goToLogin" />
   </div>
 </template>
 
 <script>
-import SignUpForm from "@/components/signup-form.vue";
+import SignUpForm from '../formats/signup-form.vue';
 import apiClient from "@/apiClient.js";
 
 export default {
@@ -53,7 +49,6 @@ export default {
         alert("Please fill in all required fields.");
       }
     },
-
     goToLogin() {
       this.$router.push("/login");
     },
@@ -63,19 +58,19 @@ export default {
 
 <style scoped>
 .signup-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 190px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
 }
 </style>

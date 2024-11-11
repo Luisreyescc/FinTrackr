@@ -29,7 +29,7 @@ export default {
     logout() {
       this.isLoggedIn = false;
       sessionStorage.removeItem("isLoggedIn"); // Remove login state from session
-      this.$router.replace('/'); // Redirect to Log-in page after sign-out
+      this.$router.push('/'); // Redirect to Log-in page after sign-out
     }
   },
   watch: {
@@ -43,10 +43,10 @@ export default {
 
 <style>
   #app {
-  font-family: "Wix Madefor Display", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+      font-family: "Wix Madefor Display", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-align: center;
+      color: #2c3e50;
   }
 </style>

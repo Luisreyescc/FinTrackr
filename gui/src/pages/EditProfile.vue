@@ -1,16 +1,12 @@
 <template>
   <div class="edit-profile-page">
-    <EditProfileForm
-      :initialData="userData"
-      @saveProfile="editProfile"
-      @goToHome="goToHome"
-    />
+    <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />
   </div>
 </template>
 
 <script>
-import EditProfileForm from "@/components/editprofile-form.vue";
-import axios from "axios";
+import EditProfileForm from '@/formats/editprofile-form.vue';
+import axios from 'axios';
 
 export default {
   name: "EditProfile",
@@ -45,10 +41,8 @@ export default {
         birth_date: profileData.birthDate,
         password: profileData.password,
       };
-
       try {
         const token = localStorage.getItem("token");
-
         const response = await axios.put(
           "http://localhost:8000/api/profile-details/",
           dataToSend,
@@ -59,7 +53,6 @@ export default {
             },
           },
         );
-
         if (response.status === 200) {
           alert("User data updated successfully!");
         } else {
