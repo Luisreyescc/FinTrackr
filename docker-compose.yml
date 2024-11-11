@@ -13,6 +13,17 @@ services:
     env_file:
       - .env
 
+  frontend:
+    build:
+      context: ./gui
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gui:/app
+    environment:
+      - VUE_APP_API_URL=http://web:8000
+
   db:
     image: mysql:9.1
     environment:

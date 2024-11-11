@@ -34,33 +34,32 @@ export default {
   },
   methods: {
     async editProfile(profileData) {
-      const dataToSend = {};
-      if (profileData.user_name) dataToSend.user_name = profileData.user_name;
-      if (profileData.name) dataToSend.name = profileData.name;
-      if (profileData.last_name) dataToSend.last_name = profileData.last_name;
-      if (profileData.email) dataToSend.email = profileData.email;
-      if (profileData.curp) dataToSend.curp = profileData.curp;
-      if (profileData.rfc) dataToSend.rfc = profileData.rfc;
-      if (profileData.phone) dataToSend.phone = profileData.phone;
-      if (profileData.birth_date)
-        dataToSend.birth_date = profileData.birth_date;
-
-      if (profileData.password) {
-        dataToSend.password_hash = profileData.password;
-      }
-
-      console.log("Data to send:", dataToSend);
+      const dataToSend = {
+        user_name: profileData.username,
+        name: profileData.name,
+        last_name: profileData.lastName,
+        email: profileData.email,
+        phone: profileData.phone,
+        curp: profileData.curp,
+        rfc: profileData.rfc,
+        birth_date: profileData.birthDate,
+        password: profileData.password,
+      };
 
       try {
+        const token = localStorage.getItem("token");
+
         const response = await axios.put(
           "http://localhost:8000/api/profile-details/",
           dataToSend,
           {
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           },
         );
+
         if (response.status === 200) {
           alert("User data updated successfully!");
         } else {
@@ -68,7 +67,6 @@ export default {
         }
       } catch (error) {
         console.error("Update failed:", error);
-        console.log("Error details:", error.response?.data);
         alert(
           error.response?.data?.message ||
             "An error occurred while updating the profile.",

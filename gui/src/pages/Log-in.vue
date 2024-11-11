@@ -30,7 +30,7 @@ export default {
           const response = await axios.post(
             "http://localhost:8000/api/login/", // Login endpoint of the backend
             {
-              username: username,
+              user_name: username,
               password: password,
             },
             {
@@ -39,8 +39,11 @@ export default {
               },
             },
           );
+          console.log(response.data);
           if (response.status === 200) {
             this.$emit("login"); //Don't move this for the moment:)
+            const token = response.data.access;
+            localStorage.setItem("token", token);
             alert("Login successful");
           } else {
             alert("Invalid credentials");

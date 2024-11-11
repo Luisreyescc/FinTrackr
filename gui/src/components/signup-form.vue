@@ -1,91 +1,59 @@
 <template>
-  <div class="signup-form">
-    <h2 class="form-title">Sign Up</h2>
-
-    <label for="username">Username</label>
-    <div class="username-container">
-      <span class="user-icon gg-user"></span>
+  <div class="form-container">
+    <h2>Sign Up</h2>
+    <form @submit.prevent="submitForm">
+      <label for="username">Username</label>
       <input
         v-model="username"
         type="text"
         id="username"
-        placeholder="Enter a username..."
-        :class="{ 'input-error': usernameError, 'padded-input': true }"
+        placeholder="Enter your username"
         @input="clearError('username')"
       />
-    </div>
-    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+      <span v-if="usernameError" class="error-message">{{
+        usernameError
+      }}</span>
 
-    <label for="email">E-mail</label>
-    <div class="email-container">
-      <span class="email-icon gg-mail"></span>
+      <label for="email">Email</label>
       <input
         v-model="email"
         type="email"
         id="email"
-        placeholder="Enter your email..."
-        :class="{ 'input-error': emailError, 'padded-input': true }"
+        placeholder="Enter your email"
         @input="clearError('email')"
       />
-    </div>
-    <span v-if="emailError" class="error-message">{{ emailError }}</span>
+      <span v-if="emailError" class="error-message">{{ emailError }}</span>
 
-    <label for="password">Password</label>
-    <div class="password-container">
+      <label for="password">Password</label>
       <input
         v-model="password"
-        :type="showPassword ? 'text' : 'password'"
+        type="password"
         id="password"
-        placeholder="Insert a password..."
-        :class="{ 'input-error': passwordError, 'padded-input': true }"
+        placeholder="Enter your password"
         @input="clearError('password')"
       />
-      <button
-        type="button"
-        class="show-password-btn"
-        @click="togglePasswordVisibility"
-        aria-label="Show or Hide Password"
-      >
-        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-      </button>
-    </div>
-    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+      <span v-if="passwordError" class="error-message">{{
+        passwordError
+      }}</span>
 
-    <label for="conf_password">Confirm password</label>
-    <div class="password-container">
+      <label for="password2">Confirm Password</label>
       <input
-        v-model="conf_password"
-        :type="showConfirmPassword ? 'text' : 'password'"
-        id="conf_password"
-        placeholder="Confirm your password..."
-        :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-        @input="clearError('conf_password')"
+        v-model="password2"
+        type="password"
+        id="password2"
+        placeholder="Confirm your password"
+        @input="clearError('password2')"
       />
-      <button
-        type="button"
-        class="show-password-btn"
-        @click="toggleConfirmPasswordVisibility"
-        aria-label="Show or Hide Confirm Password"
-      >
-        <span
-          :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"
-        ></span>
-      </button>
-    </div>
-    <span v-if="confirmPasswordError" class="error-message">{{
-      confirmPasswordError
-    }}</span>
+      <span v-if="confirmPasswordError" class="error-message">{{
+        confirmPasswordError
+      }}</span>
 
-    <div class="button-group">
-      <button class="accept-btn" @click="emitSignUp">Create User</button>
-      <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
-    </div>
+      <button type="submit">Register</button>
+    </form>
   </div>
 </template>
 
 <script>
-import "@/css/mail.css";
-
 export default {
   name: "SignUpForm",
   data() {
@@ -93,33 +61,27 @@ export default {
       username: "",
       email: "",
       password: "",
-      conf_password: "",
+      password2: "",
       usernameError: "",
       emailError: "",
       passwordError: "",
       confirmPasswordError: "",
-      showPassword: false,
-      showConfirmPassword: false,
     };
   },
   methods: {
-    emitSignUp() {
+    submitForm() {
       this.usernameError = "";
       this.emailError = "";
       this.passwordError = "";
       this.confirmPasswordError = "";
+
       if (!this.username) this.usernameError = "Username is required";
       if (!this.email) this.emailError = "Email is required";
       if (!this.password) this.passwordError = "Password is required";
-      if (!this.conf_password)
-        this.confirmPasswordError = "Confirm password is required";
-      if (
-        this.password &&
-        this.conf_password &&
-        this.password !== this.conf_password
-      ) {
+      if (this.password !== this.password2) {
         this.confirmPasswordError = "Passwords don't match";
       }
+
       if (
         !this.usernameError &&
         !this.emailError &&
@@ -130,6 +92,7 @@ export default {
           username: this.username,
           email: this.email,
           password: this.password,
+          password2: this.password2,
         });
       }
     },
@@ -137,13 +100,7 @@ export default {
       if (field === "username") this.usernameError = "";
       if (field === "email") this.emailError = "";
       if (field === "password") this.passwordError = "";
-      if (field === "conf_password") this.confirmPasswordError = "";
-    },
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword;
-    },
-    toggleConfirmPasswordVisibility() {
-      this.showConfirmPassword = !this.showConfirmPassword;
+      if (field === "password2") this.confirmPasswordError = "";
     },
   },
 };

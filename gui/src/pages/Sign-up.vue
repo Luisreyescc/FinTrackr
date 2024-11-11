@@ -1,6 +1,5 @@
 <template>
   <div class="signup-page">
-    <!-- Profile Icon -->
     <img
       src="@/assets/profile_black.svg"
       alt="Profile Icon"
@@ -11,8 +10,8 @@
 </template>
 
 <script>
-import SignUpForm from "../components/signup-form.vue";
-import axios from "axios";
+import SignUpForm from "@/components/signup-form.vue";
+import apiClient from "@/apiClient.js";
 
 export default {
   name: "SignUp",
@@ -20,51 +19,35 @@ export default {
     SignUpForm,
   },
   methods: {
-    async signUp({
-      username,
-      email,
-      name,
-      lastName,
-      phone,
-      curp,
-      rfc,
-      birthDate,
-      password,
-    }) {
-      if (username && email && password) {
+    async signUp({ username, email, password, password2 }) {
+      if (username && email && password && password2) {
         try {
-          const response = await axios.post(
-            "http://localhost:8000/api/register/",
-            {
-              user_name: username,
-              email: email,
-              name: name,
-              last_name: lastName,
-              phone: phone,
-              curp: curp,
-              rfc: rfc,
-              birth_date: birthDate,
-              password_hash: password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
+          const response = await apiClient.post("register/", {
+            user_name: username,
+            email: email,
+            password: password,
+            password2: password2,
+          });
 
           if (response.status === 201) {
             alert("User registered successfully! Redirecting to login...");
-            this.$router.push("/");
+            this.$router.push("/login");
           } else {
             alert(response.data.error || "Registration failed");
           }
         } catch (error) {
           console.error("Registration error:", error);
-          alert(
-            error.response?.data?.error ||
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            alert(errors.join("\n"));
+          } else {
+            alert(
               "There was an issue with the registration. Please try again.",
-          );
+            );
+          }
         }
       } else {
         alert("Please fill in all required fields.");
@@ -72,7 +55,7 @@ export default {
     },
 
     goToLogin() {
-      this.$router.push("/");
+      this.$router.push("/login");
     },
   },
 };
