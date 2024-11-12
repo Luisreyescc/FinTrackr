@@ -1,20 +1,20 @@
 <template>    
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
-  <!-- <form @submit.prevent="submitForm"> -->
-    <label for="username">Username</label>
-    <div class="username-container">
-      <span class="user-icon gg-user"></span>
-      <input
-	v-model="username"
-	type="text"
-	id="username"
-	placeholder="Enter a username..."
-	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="validateUser" />
-    </div>
-    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-    
+  <label for="username">Username</label>
+  
+  <div class="username-container">
+    <span class="user-icon gg-user"></span>
+    <input
+      v-model="username"
+      type="text"
+      id="username"
+      placeholder="Enter a username..."
+      :class="{ 'input-error': usernameError, 'padded-input': true }"
+      @input="validateUser" />
+  </div>
+  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+  
     <label for="email">E-mail</label>
     <div class="email-container">
       <span class="email-icon gg-mail"></span>
@@ -70,7 +70,6 @@
       <button class="accept-btn" @click="emitSignUp" >Create User</button>
       <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
     </div>
-  <!-- </form> -->
 </div>
 </template>
 

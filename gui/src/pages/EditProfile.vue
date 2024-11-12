@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-profile-page">
+<div class="edit-profile-page">
     <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />
   </div>
 </template>
@@ -72,3 +72,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.edit-profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 150px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+</style>
