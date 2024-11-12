@@ -29,6 +29,34 @@ export default {
     };
   },
   methods: {
+    //This method is not well tested yet
+    async fetchUserData() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:8000/api/profile-details/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          this.userData = {
+            user_name: response.data.user_name || "",
+            name: response.data.name || "",
+            last_name: response.data.last_name || "",
+            email: response.data.email || "",
+            phone: response.data.phone || "",
+            curp: response.data.curp || "",
+            rfc: response.data.rfc || "",
+            birth_date: response.data.birth_date || "",
+            password: "", // We leave password field empty for security reasons
+          };
+        } else {
+          console.error("Failed to fetch user data");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }, //Ends here
     async editProfile(profileData) {
       const dataToSend = {
         user_name: profileData.username,
@@ -70,7 +98,12 @@ export default {
       this.$router.push("/");
     },
   },
+  //Also this
+  mounted() {
+    this.fetchUserData(); // Fetch user data when component is mounted
+  },
 };
+
 </script>
 
 <style scoped>
