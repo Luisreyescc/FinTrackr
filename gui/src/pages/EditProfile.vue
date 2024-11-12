@@ -1,12 +1,16 @@
 <template>
-<div class="edit-profile-page">
-    <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />
+  <div class="edit-profile-page">
+    <EditProfileForm
+      :initialData="userData"
+      @saveProfile="editProfile"
+      @goToHome="goToHome"
+    />
   </div>
 </template>
 
 <script>
-import EditProfileForm from '@/formats/editprofile-form.vue';
-import axios from 'axios';
+import EditProfileForm from "@/formats/editprofile-form.vue";
+import axios from "axios";
 
 export default {
   name: "EditProfile",
@@ -29,15 +33,17 @@ export default {
     };
   },
   methods: {
-    //This method is not well tested yet
     async fetchUserData() {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/profile-details/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          "http://localhost:8000/api/profile-details/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         if (response.status === 200) {
           this.userData = {
             user_name: response.data.user_name || "",
@@ -59,18 +65,24 @@ export default {
     }, //Ends here
     async editProfile(profileData) {
       const dataToSend = {
-        user_name: profileData.username,
+        user_name: profileData.user_name,
         name: profileData.name,
-        last_name: profileData.lastName,
+        last_name: profileData.last_name,
         email: profileData.email,
         phone: profileData.phone,
         curp: profileData.curp,
         rfc: profileData.rfc,
-        birth_date: profileData.birthDate,
+        birth_date: profileData.birth_date,
         password: profileData.password,
+        new_password: profileData.new_password,
+        confirm_password: profileData.confirm_password,
       };
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
         const response = await axios.put(
           "http://localhost:8000/api/profile-details/",
           dataToSend,
@@ -81,6 +93,7 @@ export default {
             },
           },
         );
+        console.log("API response:", response);
         if (response.status === 200) {
           alert("User data updated successfully!");
         } else {
@@ -98,21 +111,20 @@ export default {
       this.$router.push("/");
     },
   },
-  //Also this
   mounted() {
+    console.log("Mounted hook is working");
     this.fetchUserData(); // Fetch user data when component is mounted
   },
 };
-
 </script>
 
 <style scoped>
 .edit-profile-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 150px;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 150px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 </style>
