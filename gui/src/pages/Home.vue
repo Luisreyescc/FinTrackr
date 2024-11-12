@@ -1,10 +1,7 @@
 <template>
 <div class="page-container">
-  <HomeForm @toggleSidebar="toggleSidebar" />
-  <!-- Conditionally render the content based on selectedContent -->
-  <div class="content">
-    <button v-if="selectedContent" class="content-button">{{ selectedContent }} Home Button</button>
-  </div>
+  <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
+  
    <!-- Sidebar component, visible based on isSidebarVisible -->
   <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 </div>
@@ -23,7 +20,7 @@ export default {
   data() {
     return {
       isSidebarVisible: false,
-      selectedContent: null
+      selectedContent: 'Incomes' // We set the Incomes option as the default selection
     };
   },
   methods: {
@@ -42,7 +39,7 @@ export default {
 .page-container {
     display: flex;
     position: relative;
-    padding-top: 71px;
+    padding-top: 70px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
