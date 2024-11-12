@@ -85,19 +85,25 @@
   </div>
   
   <label for="password">Current Password</label>
-  <div class="password-container">
+  <div class="password-container">    
     <input
       v-model="formData.password"
       :type="showPassword ? 'text' : 'password'"
-      id="password" />
+      id="password"
+      placeholder="Confirm new password..."
+      class="padded-input"/>
     <button
       type="button"
       class="show-password-btn"
       @click="togglePasswordVisibility" >
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
     </button>
-    <button type="button" class="change-password-btn" @click="togglePasswordFields">
-      {{ showPasswordFields ? "Close" : "Change Password" }}
+    <button
+      type="button"
+      :class="['change-password-btn', { 'close-btn': showPasswordFields }]"
+      @click="togglePasswordFields" >
+      <span v-if="showPasswordFields" class="gg-close"></span>
+      <span v-else>Change Password</span>
     </button>
   </div>
 
@@ -108,7 +114,8 @@
         v-model="formData.newPassword"
         :type="showNewPassword ? 'text' : 'password'"
         id="new_password"
-        placeholder="Enter a new password..." />
+        placeholder="Enter a new password..." 
+	class="padded-input" />
       <button type="button" class="show-password-btn" @click="toggleNewPasswordVisibility">
         <span :class="{ 'gg-eye': true, 'gg-eye-alt': showNewPassword }"></span>
       </button>
@@ -120,7 +127,8 @@
         v-model="formData.confirmPassword"
         :type="showConfirmPassword ? 'text' : 'password'"
         id="confirm_password"
-        placeholder="Confirm new password..." />
+        placeholder="Confirm new password..."
+	class="padded-input" />
       <button type="button" class="show-password-btn" @click="toggleConfirmPasswordVisibility">
         <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
       </button>
@@ -156,7 +164,7 @@ export default {
         rfc: this.initialData.rfc || "",
         phone: this.initialData.phone || "",
         birthDate: this.initialData.birthDate || "",
-        password: this.initialData.password || "",
+        password: "",
 	newPassword: "",
         confirmPassword: "",
       },
@@ -279,6 +287,13 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+
+.input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
 .input-error {
     border-color: #e42121;
 }
@@ -289,6 +304,7 @@ input {
     align-self: flex-start;
     margin-top: -10px;
     margin-bottom: 10px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .row {
@@ -328,6 +344,7 @@ input {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    font-family: "Wix Madefor Display", sans-serif;
     transition: background-color 0.3s ease;
 }
 
@@ -350,21 +367,30 @@ input {
 }
 
 .username-container,
+.phone-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.user-icon,
+.phone-icon {
+    position: absolute;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    fill: #555;
+    margin-left: 12px;
+    pointer-events: none;
+}
+
 .email-container,
 .password-container {
     display: flex;
     align-items: center;
     position: relative;
-    width: 108%;
-}
-
-.user-icon {
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    fill: #555;
-    pointer-events: none;
+    width: 100%;
 }
 
 .email-icon {
@@ -373,15 +399,6 @@ input {
     color: #555;
     font-size: 18px;
     margin-top: -15px;
-    pointer-events: none;
-}
-
-.phone-icon {
-    transform: translateX(-470%);
-    width: 18px;
-    height: 18px;
-    fill: #555;
-    margin-top: 20px;
     pointer-events: none;
 }
 
@@ -405,5 +422,35 @@ input {
     padding-left: 40px;
 }
 
-.email-icon {}
+.change-password-btn {
+    margin-left: 15px;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 60%;
+    background-color: #BF9F00;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-radius 0.3s ease;
+}
+
+.change-password-btn.close-btn {
+    background-color: #e53935;
+    border-radius: 6px;
+    color: white;
+    padding: 10px 15px;
+    width: auto;
+}
+
+.password-input-wrapper {
+    position: relative;
+    width: 70%;
+}
 </style>
