@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <AppHeader :isLoggedIn="isLoggedIn" @logout="logout"/>
+    <AppHeader v-if="showBanner" :isLoggedIn="isLoggedIn" @logout="logout"/>
     <div class="main-content">
       <router-view @login="login"/>
     </div>
@@ -19,6 +19,12 @@ export default {
     return {
       isLoggedIn: !!sessionStorage.getItem("isLoggedIn") // Check session storage for login status
     };
+  },
+  computed: {
+    showBanner() {
+      const bannerRoutes = ['/home', '/status', '/history', '/leaderboard', '/edit-profile'];
+      return bannerRoutes.includes(this.$route.path);
+    }
   },
   methods: {
     login() {
