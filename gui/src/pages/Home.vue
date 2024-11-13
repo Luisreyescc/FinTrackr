@@ -10,6 +10,7 @@
 <script>
 import HomeForm from '@/formats/home-form.vue';
 import SideBar from '@/components/side-bar.vue';
+import apiClient from "@/apiClient.js";
   
 export default {
   name: 'HomePage',
@@ -24,6 +25,32 @@ export default {
     };
   },
   methods: {
+    async newIncome(incomeData) {
+      const { amount, source, description, date } = incomeData;
+      if (amount && source && description && date) {
+        try {
+          const response = await apiClient.post("/api/incomes", incomeData);
+          if (response.status === 201) {
+            alert("New income added");
+          } else {
+            alert(response.data.error || "Failed adding new income");
+          }
+        } catch (error) {
+          console.error("New income error:", error);
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            alert(errors.join("\n"));
+          } else {
+            alert("There was an issue while adding your new income. Please try again.");
+          }
+        }
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },

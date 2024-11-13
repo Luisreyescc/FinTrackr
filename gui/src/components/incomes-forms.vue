@@ -28,7 +28,7 @@ export default {
   name: "IncomesForm",
   data() {
     return {
-      income: { amount: '', description: '', source: '', date: '' }
+      income: { amount: '', source: '', description: '', date: '' }
     };
   },
   methods: {
@@ -37,7 +37,7 @@ export default {
       this.resetForm();
     },
     resetForm() {
-      this.income = { amount: '', description: '', source: '', date: '' };
+      this.income = { amount: '', source: '', description: '', date: '' };
     }
   }
 };
@@ -45,24 +45,40 @@ export default {
 
 <style scoped>
 .form-container {
-  padding: 10px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 label {
   display: block;
-  margin: 10px 0;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
 }
 
-button {
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Botón de envío del formulario */
+.submit-button {
   background-color: #0F612F;
   color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
-button:hover {
+.submit-button:hover {
   background-color: #237242;
 }
 </style>

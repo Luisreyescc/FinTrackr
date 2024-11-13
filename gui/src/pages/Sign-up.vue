@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import SignUpForm from '../formats/signup-form.vue';
+import SignUpForm from '@/formats/signup-form.vue';
 import apiClient from "@/apiClient.js";
 
 export default {
