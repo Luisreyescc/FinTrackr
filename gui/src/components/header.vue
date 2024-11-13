@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       dropdownOpen: false,
-      userName: "", // Almacena el nombre del usuario
+      userName: "",
     };
   },
   created() {
@@ -61,7 +61,7 @@ export default {
               Authorization: `Bearer ${token}`,
             },
           });
-          this.userName = response.data.user_name; // Asigna el user_name desde la respuesta
+          this.userName = response.data.user_name;
         }
       } catch (error) {
         console.error("Error fetching user name:", error);
