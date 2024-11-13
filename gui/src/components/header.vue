@@ -57,7 +57,9 @@ export default {
       this.$router.push("/edit-profile");
     },
     logout() {
-      this.$emit("logout");
+      sessionStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("token");
+      this.$router.push("/");
     },
   },
 };
