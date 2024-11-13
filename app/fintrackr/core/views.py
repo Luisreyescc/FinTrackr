@@ -57,3 +57,11 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         if self.request.method in ["PUT", "PATCH"]:
             return UpdateUserSerializer
         return UserSerializer
+
+
+class UserProfileView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({"user_name": user.user_name})

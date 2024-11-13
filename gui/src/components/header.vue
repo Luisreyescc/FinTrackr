@@ -6,22 +6,15 @@
       <!-- Display menu if user is logged in -->
       <div class="nav-profile-wrapper">
         <nav v-if="isLoggedIn" class="nav-menu">
-          <router-link to="/home" class="nav-item"
-            >Home<span></span
-          ></router-link>
-          <router-link to="/status" class="nav-item"
-            >Status<span></span
-          ></router-link>
-          <router-link to="/history" class="nav-item"
-            >History<span></span
-          ></router-link>
-          <router-link to="/leaderboard" class="nav-item"
-            >Leaderboard<span></span
-          ></router-link>
+          <router-link to="/home" class="nav-item">Home<span></span></router-link>
+          <router-link to="/status" class="nav-item">Status<span></span></router-link>
+          <router-link to="/history" class="nav-item">History<span></span></router-link>
+          <router-link to="/leaderboard" class="nav-item">Leaderboard<span></span></router-link>
         </nav>
 
-        <!-- Profile Icon with Dropdown -->
+        <!-- Welcome Message and Profile Icon with Dropdown -->
         <div v-if="isLoggedIn" class="profile-menu">
+          <span class="welcome-message"> {{ userName }}</span>
           <img
             src="@/assets/profile_white.svg"
             alt="Profile"
@@ -39,19 +32,40 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "AppHeader",
   props: {
-    isLoggedIn: Boolean
+    isLoggedIn: Boolean,
   },
   data() {
     return {
       dropdownOpen: false,
+      userName: "", // Almacena el nombre del usuario
     };
+  },
+  created() {
+    this.fetchUserName();
   },
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+    async fetchUserName() {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await axios.get("http://localhost:8000/api/profile/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          this.userName = response.data.user_name; // Asigna el user_name desde la respuesta
+        }
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+      }
     },
     editProfile() {
       this.$router.push("/edit-profile");
@@ -71,10 +85,10 @@ export default {
   padding: 13px;
   color: #ffffff;
   width: 100%;
-  position: fixed; /* Make the banner stick at the top of the page */
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; /* Ensure it stays on top of other elements */
+  z-index: 1000;
 }
 
 .header-content {
@@ -92,7 +106,7 @@ export default {
 .nav-profile-wrapper {
   display: flex;
   align-items: center;
-  gap: 15px; /* Space between nav menu and profile icon */
+  gap: 15px;
 }
 
 .nav-menu {
@@ -116,46 +130,16 @@ export default {
   color: #21255B;
 }
 
-.nav-item::before,
-.nav-item::after,
-.nav-item span::before,
-.nav-item span::after {
-  content: "";
-  position: absolute;
-  height: 100%;
-  width: 25%;
-  top: 0;
-  left: 0;
-  background: #ffffff;
-  transform: translateY(-110%);
-  transition: transform 0.5s;
-  z-index: -1;
-}
-
-.nav-item:hover::before,
-.nav-item:hover::after,
-.nav-item:hover span::before,
-.nav-item:hover span::after {
-  transform: translateY(0);
-}
-
-.nav-item::after {
-  left: 25%;
-  transition-delay: 0.1s;
-}
-
-.nav-item span::before {
-  left: 50%;
-  transition-delay: 0.2s;
-}
-
-.nav-item span::after {
-  left: 75%;
-  transition-delay: 0.3s;
-}
-
 .profile-menu {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.welcome-message {
+  margin-right: 10px;
+  color: #ffffff;
+  font-size: 18px;
 }
 
 .profile-icon {
@@ -186,9 +170,7 @@ export default {
   text-align: left;
   font-size: 16px;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .dropdown button:hover {
