@@ -33,7 +33,8 @@ export default {
   },
   methods: {
     submitForm() {
-      this.$emit('submitForm', this.income);
+      //this.$emit('submitForm', this.income);
+      this.$emit('submitForm', { ...this.income });
       this.resetForm();
     },
     resetForm() {

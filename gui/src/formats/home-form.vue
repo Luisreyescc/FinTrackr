@@ -18,7 +18,9 @@
 	</div>
 	<div class="activity-content">
           <div class="activity-section">
-            <h3>Activity</h3>
+            <h3>Activity</h3><div class="income-list">
+              <IncomeRow v-for="(income, index) in incomes" :key="index" :income="income" />
+            </div>
           </div>
 	</div>
       </div>
@@ -46,12 +48,14 @@
 <script>
 import IncomesForm from '@/components/incomes-forms.vue';
 import IncomeButton from '@/components/incomes-header.vue';
+import IncomeRow from '@/components/income-row.vue';
 
 export default {
   name: "HomeForm",
     components: {
       IncomesForm,
-      IncomeButton
+      IncomeButton,
+      IncomeRow
   },
    props: {
     selectedContent: {
@@ -61,7 +65,8 @@ export default {
    },
    data() {
     return {
-      showForm: false
+      showForm: false,
+      incomes: []
     };
   },
   methods: {
@@ -79,6 +84,10 @@ export default {
     toggleForm() {
       this.showForm = !this.showForm;
     },
+    addIncome(incomeData) {
+      this.incomes.push(incomeData);
+      this.showForm = false;
+    },
     resetForm() {
       this.showForm = false;
       this.income = { amount: '', source: '', date: '' };
@@ -86,8 +95,9 @@ export default {
       this.debt = { amount: '', creditor: '', date: '' };
     },
     handleIncomeSubmission(incomeData) {
-      this.$emit('submitIncome', incomeData);
-      this.showForm = false;
+      //this.$emit('submitIncome', incomeData);
+      //this.showForm = false;
+      this.addIncome(incomeData); //usin this for test incomes rows
     }
   }
 };
@@ -119,8 +129,8 @@ export default {
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     padding: 15px;
-    margin-top: -10px;
-    margin-left: 25px;
+    margin-top: -15px;
+    margin-left: 5px;
 }
 
 .menu-button svg {
@@ -182,6 +192,16 @@ export default {
     font-family: "Wix Madefor Display", sans-serif;
     margin-top: 0;
     text-align: left;
+}
+
+.activity-section {
+    overflow-y: auto; /* Hace que el área sea scrollable */
+    max-height: 400px;
+    padding-right: 10px;
+}
+
+.income-list {
+    margin-top: 10px;
 }
 
 .forms-section {

@@ -130,6 +130,44 @@ export default {
   color: #21255B;
 }
 
+.nav-item::before,
+.nav-item::after,
+.nav-item span::before,
+.nav-item span::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 25%;
+  top: 0;
+  left: 0;
+  background: #ffffff;
+  transform: translateY(-110%);
+  transition: transform 0.5s;
+  z-index: -1;
+}
+
+.nav-item:hover::before,
+.nav-item:hover::after,
+.nav-item:hover span::before,
+.nav-item:hover span::after {
+  transform: translateY(0);
+}
+
+.nav-item::after {
+  left: 25%;
+  transition-delay: 0.1s;
+}
+
+.nav-item span::before {
+  left: 50%;
+  transition-delay: 0.2s;
+}
+
+.nav-item span::after {
+  left: 75%;
+  transition-delay: 0.3s;
+}
+
 .profile-menu {
   position: relative;
   display: flex;
