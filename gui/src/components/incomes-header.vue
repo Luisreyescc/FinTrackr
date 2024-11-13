@@ -1,5 +1,5 @@
 <template>
-  <button @click="$emit('click')" class="add-income-button">
+  <button @click="$emit('toggle-form')" class="add-income-button">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="white">
       <path d="M12 2a1 1 0 0 1 1 1v8h8a1 1 0 1 1 0 2h-8v8a1 1 0 1 1-2 0v-8H3a1 1 0 1 1 0-2h8V3a1 1 0 0 1 1-1z" />
     </svg>
@@ -25,6 +25,7 @@ export default {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .add-income-button:hover {
