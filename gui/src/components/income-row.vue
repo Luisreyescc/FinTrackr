@@ -41,26 +41,30 @@ export default {
 }
 
 .income-icon {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: #e0e0e0;
   margin-right: 10px;
 }
 
 .income-details {
-  flex: 1;
+    flex: 1;
+    align-items: flex-start;
 }
 
 .income-details h4 {
   margin: 0;
   font-size: 16px;
+  color: #21255b;
   font-weight: bold;
+  align-items: flex-start;
 }
 
 .income-details p {
   margin: 5px 0;
   color: #777;
+  font-weight: bold;
   font-size: 14px;
 }
 
@@ -77,7 +81,7 @@ export default {
 
 .income-amount {
   font-weight: bold;
-  color: #4CAF50; /* Verde para representar ingreso */
+  color: #4CAF50;
   font-size: 16px;
 }
 

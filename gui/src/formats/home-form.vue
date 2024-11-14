@@ -84,21 +84,41 @@ export default {
     toggleForm() {
       this.showForm = !this.showForm;
     },
-    addIncome(incomeData) {
-      this.incomes.push(incomeData);
-      this.showForm = false;
-    },
     resetForm() {
       this.showForm = false;
       this.income = { amount: '', source: '', date: '' };
       this.expense = { amount: '', category: '', date: '' };
       this.debt = { amount: '', creditor: '', date: '' };
     },
+    addIncome(incomeData) {
+      this.incomes.push(incomeData);
+      this.showForm = false;
+      //This line is just for test incomes rows in frontend
+      this.saveIncomesToLocalStorage();
+    },
+    // end of 'methods:'}
+    //This methods are for frontends tests 
     handleIncomeSubmission(incomeData) {
       //this.$emit('submitIncome', incomeData);
       //this.showForm = false;
-      this.addIncome(incomeData); //usin this for test incomes rows
+      this.addIncome(incomeData);
+    },
+    saveIncomesToLocalStorage() {
+      // Convert incomes array to JSON and store in localStorage
+      localStorage.setItem('incomes', JSON.stringify(this.incomes));
+    },
+    loadIncomesFromLocalStorage() {
+      // Retrieve incomes data from localStorage, if it exists
+      const storedIncomes = localStorage.getItem('incomes');
+      if (storedIncomes) {
+        // Parse the stored JSON data and assign it to incomes
+        this.incomes = JSON.parse(storedIncomes);
+      }
     }
+  },
+  mounted() {
+    // Load incomes from localStorage when the component is mounted
+    this.loadIncomesFromLocalStorage(); 
   }
 };
 </script>
@@ -147,8 +167,9 @@ export default {
     flex: 1;
     flex-direction: row;
     padding: 20px;
-    gap: 20px;
     margin-left: 70px;
+    height: 90vh; /* Full viewport height */
+    box-sizing: border-box;
 }
 
 .first-content {
@@ -156,6 +177,7 @@ export default {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
 }
 
 .header {
@@ -169,7 +191,6 @@ export default {
 .section-title {
     font-size: 24px;
     font-weight: bold;
-    margin-right: 50px; 
     color: #333;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -178,7 +199,7 @@ export default {
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
-    margin-left: 50px; 
+    margin-left: 300px; 
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.2s;
@@ -195,9 +216,30 @@ export default {
 }
 
 .activity-section {
-    overflow-y: auto; /* Hace que el área sea scrollable */
-    max-height: 400px;
+    flex: 1;
+    overflow-y: auto;
     padding-right: 10px;
+    padding-bottom: 20px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.activity-section {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    max-height: calc(100% - 60px);
+    scrollbar-width: thin;
+    scrollbar-color: #00A0BE #e0e0e0;
+}
+
+.activity-content {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .income-list {
@@ -205,12 +247,9 @@ export default {
 }
 
 .forms-section {
-    width: 300px;
+    flex: 2;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
 }
 </style>
