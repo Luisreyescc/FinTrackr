@@ -65,7 +65,7 @@ export default {
     margin-bottom: 10px;
     font-family: "Wix Madefor Display", sans-serif;
     position: fixed;
-    bottom: 20px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     max-width: 90%;

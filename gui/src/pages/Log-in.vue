@@ -2,20 +2,44 @@
   <div class="login-page">
     <!-- Profile Icon -->
     <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
+
+    <div class="message-container">
+      <MessageAlerts
+        v-for="(msg, index) in messages" 
+        :key="msg.id" 
+        :text="msg.text" 
+        :type="msg.type" 
+        @close="removeMessage(index)" />
+    </div>
+    
     <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
 
 <script>
-import LoginForm from '../formats/login-form.vue';
+import LoginForm from '@/formats/login-form.vue';
+import MessageAlerts from '@/components/messages.vue';
 import axios from 'axios';
 
 export default {
   name: "LogIn",
   components: {
     LoginForm,
+    MessageAlerts
+  },
+  data() {
+    return {
+      messages: []
+    };
   },
   methods: {
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
     async login({ username, password }) {
       if (username && password) {
         try {
@@ -33,19 +57,17 @@ export default {
           );
           console.log(response.data);
           if (response.status === 200) {
-            this.$emit("login");
             const token = response.data.access;
-            localStorage.setItem("token", token);
-            alert("Login successful");
+            localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
           } else {
-            alert("Invalid credentials");
+            this.addMessage("Invalid credentials", "error");
           }
         } catch (error) {
           console.error("Login failed:", error);
-          alert("Invalid username or password. Please try again.");
+          this.addMessage("Invalid username or password. Please try again.", "error");
         }
       } else {
-        alert("Please enter username and password");
+        this.addMessage("Please enter username and password", "neutral");
       }
     },
     goToSignUp() {
@@ -53,8 +75,8 @@ export default {
     },
     goToRecovery() {
       this.$router.push("/recovery-password");
-    },
-  },
+    }
+  }
 };
 </script>
 

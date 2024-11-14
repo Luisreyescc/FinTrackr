@@ -8,8 +8,7 @@
       :key="msg.id" 
       :text="msg.text" 
       :type="msg.type" 
-      @close="removeMessage(index)"
-      />
+      @close="removeMessage(index)" />
   </div>
   
   <sign-up-form @signUp="signUp" @goToLogin="goToLogin" />
@@ -34,7 +33,7 @@ export default {
   },
   methods: {
     addMessage(text, type = "neutral") {
-      const id = Date.now(); // ID único basado en el tiempo
+      const id = Date.now();
       this.messages.push({ id, text, type });
     },
     removeMessage(index) {
@@ -83,7 +82,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 190px;
+    padding-top: 150px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -99,6 +98,5 @@ export default {
     width: 100%;
     max-width: 400px;
     position: absolute;
-    top: 20px;
 }
 </style>
