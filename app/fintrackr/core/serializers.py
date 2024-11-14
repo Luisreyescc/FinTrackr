@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users
+from .models import Users, Incomes, Categories, Expenses, ExpenseCategories
 from django.contrib.auth import authenticate
 
 
@@ -92,3 +92,16 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
+    
+
+class IncomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Incomes
+        fields = ["income_id", "user", "amount", "description", "date", "source"]
+        read_only_fields = ["user"]
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ["category_id", "name"]
+
