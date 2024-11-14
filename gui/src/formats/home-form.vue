@@ -9,15 +9,15 @@
     </button>
   </div>
   
-  <div v-if="selectedContent === 'Incomes'">
-    <div class="main-content">
-      <div class="first-content">
+  <div class="content-wrapper">
+    <div v-if="selectedContent === 'Incomes'" class="main-content">
+      <div class="incomes-container">
 	<div class="header">
           <h2 class="section-title">{{ selectedContent }}</h2><IncomeButton @click="toggleForm" />
 	</div>
-	<div class="activity-content">
+	<div class="activity-content"><h3 class="activity-title">Activity</h3>
           <div class="activity-section">
-            <h3>Activity</h3><div class="income-list">
+            <div class="income-list">
               <IncomeRow v-for="(income, index) in incomes" :key="index" :income="income" />
             </div>
           </div>
@@ -161,7 +161,6 @@ export default {
     display: flex;
     width: 100%;
     overflow: hidden;
-    position: relative;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -170,9 +169,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 20px;
     position: fixed;
     z-index: 1000;
+    padding-top: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -195,31 +194,33 @@ export default {
     transform: scale(1.1);
 }
 
-.main-content {
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    padding: 20px;
-    margin-left: 70px;
-    height: 90vh;
-    box-sizing: border-box;
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin-left: 70px;
+  position: relative;
 }
 
-.first-content {
-    flex: 2;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    flex-direction: column;
-    max-width: 900px;
+.main-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  overflow: hidden;
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
 }
 
 .section-title {
@@ -229,11 +230,36 @@ export default {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  position: relative;
+}
+
+.activity-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.income-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    max-height: calc(70vh - 50px);
+    scrollbar-width: thin;
+    scrollbar-color: #00A0BE #e0e0e0;
+}
+
 .add-income-button {
     border: none;
     padding: 10px 15px;
-    border-radius: 5px;
-    margin-left: 300px; 
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.2s;
@@ -243,48 +269,29 @@ export default {
     background-color: #00A0BE;
 }
 
-.activity-section h3 {
-    font-family: "Wix Madefor Display", sans-serif;
-    margin-top: 0;
-    text-align: left;
-}
-
-.activity-section {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    padding-bottom: 20px;
-    margin-top: 10px;
-    box-sizing: border-box;
-}
-
-.activity-section {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    max-height: 680px;
-    scrollbar-width: thin;
-    scrollbar-color: #00A0BE #e0e0e0;
-}
-
-.activity-content {
-    flex: 1; 
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.income-list {
-    max-width: 100%;
-    margin-top: 10px;
-}
-
 .forms-section {
-    flex: 2;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  right: 0;
+  top: 100px;
+  bottom: 100px;
+  width: 350px;
+  max-width: 100%;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 9px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.forms-section-enter-active, .forms-section-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.forms-section-enter {
+  transform: translateX(100%);
+}
+
+.forms-section-leave-to {
+  transform: translateX(100%);
 }
 </style>
