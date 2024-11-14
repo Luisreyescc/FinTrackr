@@ -11,95 +11,112 @@
   
   <!-- Second seccion: Main content -->
   <div v-if="selectedContent === 'Incomes'">
-    <div class="main-content">
-      <div class="first-content">
-	<div class="header">
-          <h2 class="section-title">{{ selectedContent }}</h2><IncomeButton @click="toggleForm" />
-	</div>
-	<div class="activity-content">
-          <div class="activity-section">
-            <h3>Activity</h3><div class="income-list">
-              <IncomeRow v-for="(income, index) in incomes" :key="index" :income="income" />
+      <div class="main-content">
+        <div class="first-content">
+          <div class="header">
+            <h2 class="section-title">{{ selectedContent }}</h2>
+            <IncomeButton @click="toggleForm" />
+          </div>
+          <div class="activity-content">
+            <div class="activity-section">
+              <h3>Activity</h3>
+              <div class="income-list">
+                <IncomeRow
+                  v-for="(income, index) in incomes"
+                  :key="index"
+                  :income="income"
+                />
+              </div>
             </div>
           </div>
-	</div>
-      </div>
-      
-      <div class="forms-section" v-if="showForm">
-	<IncomesForm @submitForm="handleIncomeSubmission" />
+        </div>
+
+        <div class="forms-section" v-if="showForm">
+          <IncomesForm @submitForm="handleIncomeSubmission" />
+        </div>
       </div>
     </div>
   </div>
-  
-  <div v-if="selectedContent === 'Expenses'">
-    <button @click="showForm = !showForm">Add new Expense</button>
-    <div v-if="showForm">
-      <form @submit.prevent="submitExpense">
-        <input type="number" v-model="expense.amount" placeholder="Amount" required />
-        <input type="text" v-model="expense.category" placeholder="Category" required />
-        <input type="date" v-model="expense.date" placeholder="Date" required />
-        <button type="submit">Submit Expense</button>
-      </form>
-    </div>
-  </div>
-</div>
 </template>
 
 <script>
+import axios from 'axios';
 import IncomesForm from '@/components/incomes-forms.vue';
 import IncomeButton from '@/components/incomes-header.vue';
 import IncomeRow from '@/components/income-row.vue';
 
 export default {
   name: "HomeForm",
-    components: {
-      IncomesForm,
-      IncomeButton,
-      IncomeRow
+  components: {
+    IncomesForm,
+    IncomeButton,
+    IncomeRow,
   },
-   props: {
+  props: {
     selectedContent: {
       type: String,
-      default: 'Incomes' // We set the Incomes as the default selection
-    }
-   },
-   data() {
+      default: 'Incomes',
+    },
+  },
+  data() {
     return {
       showForm: false,
-      incomes: []
+      incomes: [],
     };
   },
   methods: {
     toggleSidebar() {
       this.$emit('toggleSidebar');
     },
-    submitIncome() {
-      console.log("Income submitted:", this.income);
-      this.resetForm();
-    },
-    submitExpense() {
-      console.log("Expense submitted:", this.expense);
-      this.resetForm();
-    },
     toggleForm() {
       this.showForm = !this.showForm;
     },
-    addIncome(incomeData) {
-      this.incomes.push(incomeData);
-      this.showForm = false;
+    async fetchIncomes() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+        
+        const response = await axios.get('http://localhost:8000/api/incomes/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.incomes = response.data;
+      } catch (error) {
+        console.error('Error fetching incomes:', error);
+      }
     },
-    resetForm() {
-      this.showForm = false;
-      this.income = { amount: '', source: '', date: '' };
-      this.expense = { amount: '', category: '', date: '' };
-      this.debt = { amount: '', creditor: '', date: '' };
+    async handleIncomeSubmission(incomeData) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        const response = await axios.post(
+          'http://localhost:8000/api/incomes/',
+          incomeData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        this.incomes.push(response.data);
+        this.showForm = false;
+      } catch (error) {
+        console.error('Error submitting income:', error);
+      }
     },
-    handleIncomeSubmission(incomeData) {
-      //this.$emit('submitIncome', incomeData);
-      //this.showForm = false;
-      this.addIncome(incomeData); //usin this for test incomes rows
-    }
-  }
+  },
+  mounted() {
+    this.fetchIncomes();
+  },
 };
 </script>
 
