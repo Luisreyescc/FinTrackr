@@ -1,15 +1,14 @@
 <template>
 <div class="home-form">
-  <!-- First seccion: Sidebar -->
+  
   <div class="sidebar">
-    <button @click="$emit('toggleSidebar')" class="menu-button">
+    <button @click="toggleSidebar" class="menu-button">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="32" height="32">
 	<path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/>
       </svg>
     </button>
   </div>
   
-  <!-- Second seccion: Main content -->
   <div v-if="selectedContent === 'Incomes'">
     <div class="main-content">
       <div class="first-content">
@@ -32,14 +31,22 @@
   </div>
   
   <div v-if="selectedContent === 'Expenses'">
-    <button @click="showForm = !showForm">Add new Expense</button>
-    <div v-if="showForm">
-      <form @submit.prevent="submitExpense">
-        <input type="number" v-model="expense.amount" placeholder="Amount" required />
-        <input type="text" v-model="expense.category" placeholder="Category" required />
-        <input type="date" v-model="expense.date" placeholder="Date" required />
-        <button type="submit">Submit Expense</button>
-      </form>
+    <div class="main-content">
+      <div class="first-content">
+	<div class="header"><h2 class="section-title">{{ selectedContent }}</h2><ExpenseButton @click="toggleForm" />
+	</div>
+	<div class="activity-content">
+          <div class="activity-section">
+            <h3>Activity</h3><div class="expense-list">
+              <ExpenseRow v-for="(expense, index) in expenses" :key="index" :expense="expense" />
+            </div>
+          </div>
+	</div>
+      </div>
+      
+      <div v-if="showForm">
+	<ExpensesForm @submitForm="handleExpenseSubmission" />
+      </div>
     </div>
   </div>
 </div>
@@ -50,23 +57,31 @@ import IncomesForm from '@/components/incomes-forms.vue';
 import IncomeButton from '@/components/incomes-header.vue';
 import IncomeRow from '@/components/income-row.vue';
 
+import ExpensesForm from '@/components/expenses/expenses-forms.vue';
+import ExpenseButton from '@/components/expenses/expenses-header.vue';
+import ExpenseRow from '@/components/expenses/expense-row.vue';
+
 export default {
   name: "HomeForm",
-    components: {
-      IncomesForm,
-      IncomeButton,
-      IncomeRow
+  components: {
+    IncomesForm,
+    IncomeButton,
+    IncomeRow,
+    ExpensesForm,
+    ExpenseButton,
+    ExpenseRow
   },
-   props: {
+  props: {
     selectedContent: {
       type: String,
       default: 'Incomes' // We set the Incomes as the default selection
     }
-   },
-   data() {
+  },
+  data() {
     return {
       showForm: false,
-      incomes: []
+      incomes: [],
+      expenses: []
     };
   },
   methods: {
@@ -86,9 +101,8 @@ export default {
     },
     resetForm() {
       this.showForm = false;
-      this.income = { amount: '', source: '', date: '' };
-      this.expense = { amount: '', category: '', date: '' };
-      this.debt = { amount: '', creditor: '', date: '' };
+      this.income = { amount: '', source: '', description: '', date: '' };
+      this.expense = { amount: '', description: '', categories: '', date: '' };
     },
     addIncome(incomeData) {
       this.incomes.push(incomeData);
@@ -114,11 +128,30 @@ export default {
         // Parse the stored JSON data and assign it to incomes
         this.incomes = JSON.parse(storedIncomes);
       }
+    },
+    //The same for expenses
+    addExpense(expenseData) {
+      this.expenses.push(expenseData);
+      this.showForm = false;
+      this.saveExpensesToLocalStorage();
+    },
+    handleExpenseSubmission(expenseData) {
+      this.addExpense(expenseData);
+    },
+    saveExpensesToLocalStorage() {
+      localStorage.setItem('expenses', JSON.stringify(this.expenses));
+    },
+    loadExpensesFromLocalStorage() {
+      const storedExpenses = localStorage.getItem('expenses');
+      if (storedExpenses) {
+      this.expenses = JSON.parse(storedExpenses);
+      }
     }
   },
   mounted() {
-    // Load incomes from localStorage when the component is mounted
-    this.loadIncomesFromLocalStorage(); 
+    // Load incomes and ecpenses from localStorage when the component is mounted
+    this.loadIncomesFromLocalStorage();
+    this.loadExpensesFromLocalStorage();
   }
 };
 </script>

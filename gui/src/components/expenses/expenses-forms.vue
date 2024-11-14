@@ -1,44 +1,44 @@
 <template>
   <div class="form-container">
-    <h3>New income data</h3>
+    <h3>New expense data</h3>
     <form @submit.prevent="submitForm">
       <label>
         Amount:
-        <input type="number" v-model="income.amount" required />
+        <input type="number" v-model="expense.amount" required />
       </label>
       <label>
-        Source:
-        <input type="text" v-model="income.source" required />
+	Description:
+        <input type="text" v-model="expense.description" required />
       </label>
       <label>
-      Description:
-        <input type="text" v-model="income.description" required />
+        Categories:
+        <input type="text" v-model="expense.categories" required />
       </label>
       <label>
         Date:
-        <input type="date" v-model="income.date" required />
+        <input type="date" v-model="expense.date" required />
       </label>
-      <button type="submit">Submit Income</button>
+      <button type="submit">Submit Expense</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "IncomesForm",
+  name: "ExpensesForm",
   data() {
     return {
-      income: { amount: '', source: '', description: '', date: '' }
+      expense: { amount: '', description: '', categories: '', date: '' }
     };
   },
   methods: {
     submitForm() {
-      //this.$emit('submitForm', this.income);
-      this.$emit('submitForm', { ...this.income });
+      //this.$emit('submitForm', this.expense);
+      this.$emit('submitForm', { ...this.expense });
       this.resetForm();
     },
     resetForm() {
-      this.income = { amount: '', source: '', description: '', date: '' };
+      this.expense = { amount: '', description: '', categories: '', date: '' }
     }
   }
 };
@@ -66,7 +66,7 @@ input {
   border-radius: 4px;
 }
 
-.submit {
+.submit-button {
   background-color: #0F612F;
   color: white;
   border: none;
@@ -76,7 +76,7 @@ input {
   font-weight: bold;
 }
 
-.submit:hover {
+.submit-button:hover {
   background-color: #237242;
 }
 </style>
