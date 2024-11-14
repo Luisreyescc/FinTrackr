@@ -51,6 +51,32 @@ export default {
         alert("Please fill in all required fields.");
       }
     },
+    async newExpense(expenseData) {
+      const { amount, description, categories, date } = expenseData;
+      if (amount && description && categories && date) {
+        try {
+          const response = await apiClient.post("/api/expenses", expenseData);
+          if (response.status === 201) {
+            alert("New expense added");
+          } else {
+            alert(response.data.error || "Failed adding new expense");
+          }
+        } catch (error) {
+          console.error("New expense error:", error);
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            alert(errors.join("\n"));
+          } else {
+            alert("There was an issue while adding your new expense. Please try again.");
+          }
+        }
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },
