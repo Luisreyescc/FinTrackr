@@ -7,7 +7,7 @@
       <span class="income-date">{{ income.date }}</span>
     </div>
     <div class="income-amount-section">
-      <span class="income-amount">+ ${{ income.amount }}</span>
+      <span class="income-amount">{{ formattedAmount }}</span>
       <div class="income-actions">
         <button class="edit-button"></button>
         <button class="delete-button"></button>
@@ -24,6 +24,16 @@ export default {
       type: Object,
       required: true
     }
+  },
+  computed: {
+    formattedAmount() {
+      // This for give the amount format in USD
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+      return `+ ${formatter.format(this.income.amount)}`;
+    }
   }
 };
 </script>
@@ -31,7 +41,7 @@ export default {
 <style scoped>
 .income-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 15px;
   background-color: #F9F9F9;
@@ -41,16 +51,19 @@ export default {
 }
 
 .income-icon {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background-color: #e0e0e0;
-  margin-right: 10px;
+  margin-right: 14px;
 }
 
 .income-details {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
+    overflow: hidden;
 }
 
 .income-details h4 {
@@ -58,11 +71,30 @@ export default {
   font-size: 16px;
   color: #21255b;
   font-weight: bold;
-  align-items: flex-start;
 }
 
 .income-details p {
   margin: 5px 0;
+  color: #777;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.income-details h4, .income-details p {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 10px;
+}
+
+.income-details h4 {
+  font-size: 16px;
+  color: #21255b;
+  font-weight: bold;
+}
+
+.income-details p {
   color: #777;
   font-weight: bold;
   font-size: 14px;
@@ -77,12 +109,14 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-left: 15px;
 }
 
 .income-amount {
   font-weight: bold;
   color: #4CAF50;
   font-size: 16px;
+  flex-shrink: 0;
 }
 
 .income-actions {

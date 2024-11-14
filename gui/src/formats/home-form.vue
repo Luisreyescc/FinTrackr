@@ -168,7 +168,7 @@ export default {
     flex-direction: row;
     padding: 20px;
     margin-left: 70px;
-    height: 90vh; /* Full viewport height */
+    height: 90vh;
     box-sizing: border-box;
 }
 
@@ -178,6 +178,7 @@ export default {
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     flex-direction: column;
+    max-width: 900px;
 }
 
 .header {
@@ -230,7 +231,7 @@ export default {
     padding-right: 10px;
     margin-top: 10px;
     box-sizing: border-box;
-    max-height: calc(100% - 60px);
+    max-height: 680px;
     scrollbar-width: thin;
     scrollbar-color: #00A0BE #e0e0e0;
 }
@@ -243,6 +244,7 @@ export default {
 }
 
 .income-list {
+    max-width: 100%;
     margin-top: 10px;
 }
 
