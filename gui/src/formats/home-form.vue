@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import IncomesForm from '@/components/incomes-forms.vue';
 import IncomeButton from '@/components/incomes-header.vue';
 import IncomeRow from '@/components/income-row.vue';
