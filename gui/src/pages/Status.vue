@@ -27,7 +27,7 @@ import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
 
 export default {
-  name: "StatusForm",
+  name: 'StatusPage',
   components: {
     StatusForm,
     SideBar,
@@ -57,41 +57,7 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      this.$emit('toggleSidebar');
-    },
-
-    async fetchIncomeChartData() {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/incomes/source-summary/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
-        // Populate income chart data
-        this.incomeChartOptions.labels = response.data.map(item => item.source); // Set labels to sources
-        this.incomeSeries = response.data.map(item => item.total_amount); // Set series to total amounts
-      } catch (error) {
-        console.error("Error fetching income chart data:", error);
-      }
-    },
-
-    async fetchExpenseChartData() {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/expenses/category-summary/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Populate expense chart data
-        this.expenseChartOptions.labels = response.data.map(item => item.category); // Set labels to categories
-        this.expenseSeries = response.data.map(item => item.total_amount); // Set series to total amounts
-      } catch (error) {
-        console.error("Error fetching expense chart data:", error);
-      }
+      this.isSidebarVisible = !this.isSidebarVisible;
     },
     updateContent(content) {
       this.selectedContent = content;
@@ -165,9 +131,9 @@ export default {
   font-family: "Wix Madefor Display", sans-serif;
 }
 
-.chart-container {
-  display: flex;
-  gap: 20px; /* Adds space between the two charts */
+.content {
+  flex: 1;
+  padding: 20px;
 }
 
 .chart-controls {

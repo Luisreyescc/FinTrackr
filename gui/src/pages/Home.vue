@@ -26,17 +26,10 @@ export default {
   },
   methods: {
     async newIncome(incomeData) {
-      console.log("newIncome method called");
       const { amount, source, description, date } = incomeData;
       if (amount && source && description && date) {
         try {
-          const token = localStorage.getItem("token");  // Retrieve the token from local storage
-          const response = await apiClient.post("/api/incomes", incomeData, {
-            headers: {
-              Authorization: `Bearer ${token}`,  // Add the Authorization header with the token
-            },
-          });
-          
+          const response = await apiClient.post("/api/incomes", incomeData);
           if (response.status === 201) {
             alert("New income added");
           } else {

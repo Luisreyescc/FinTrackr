@@ -47,7 +47,7 @@
     
     <div class="button-group">
       <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-      <button type="submit" class="submit-button" @click="newIncome(incomeData)">Submit</button>
+      <button type="submit" class="submit-button">Submit</button>
       </div>
   </form>
 </div>
