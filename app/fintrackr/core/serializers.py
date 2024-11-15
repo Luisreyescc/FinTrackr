@@ -117,19 +117,21 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.CharField(write_only=True)  # Expect 'category' as an input field
+    category = serializers.SerializerMethodField()  # Retrieve category dynamically
 
     class Meta:
         model = Expenses
         fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category']
 
+    def get_category(self, obj):
+        # Retrieve the category name related to the expense
+        expense_category = ExpenseCategories.objects.filter(expense=obj).first()
+        return expense_category.category.name if expense_category else None
+
     def create(self, validated_data):
         # Extract the single category name and remove it from validated_data
         category_name = validated_data.pop('category', None)
         
-        if category_name is None:
-            raise serializers.ValidationError({"category": "This field is required."})
-
         # Create or retrieve the category
         category, created = Categories.objects.get_or_create(name=category_name)
 
@@ -141,6 +143,22 @@ class ExpenseSerializer(serializers.ModelSerializer):
         
         return expense
 
+    def update(self, instance, validated_data):
+        # Extract the category name and remove it from validated_data
+        category_name = validated_data.pop('category', None)
+        
+        # Update the expense instance with remaining fields
+        instance = super().update(instance, validated_data)
+
+        if category_name is not None:
+            # Clear existing category association
+            instance.expensecategories_set.all().delete()
+            
+            # Retrieve or create the new category and associate it
+            category, created = Categories.objects.get_or_create(name=category_name)
+            ExpenseCategories.objects.create(expense=instance, category=category)
+        
+        return instance
 
 
 
