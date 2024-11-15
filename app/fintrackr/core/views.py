@@ -118,6 +118,30 @@ class IncomeDetailView(APIView):
         income.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+class IncomeSourceSummaryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Aggregate incomes by source for the authenticated user
+        source_summary = (
+            Incomes.objects
+            .filter(user=request.user)  # Filter by the current user
+            .values('source')  # Group by source
+            .annotate(total_amount=Sum('amount'))  # Sum amounts for each source
+            .order_by('source')  # Optional: order by source
+        )
+
+        # Format the response data
+        response_data = [
+            {
+                "source": income["source"],
+                "total_amount": income["total_amount"]
+            }
+            for income in source_summary
+        ]
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
 class ExpenseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
