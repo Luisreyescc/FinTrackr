@@ -1,10 +1,11 @@
 from rest_framework import generics, permissions, status, viewsets
+from django.db.models import Sum 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Users, Incomes, Categories, Expenses
+from .models import Users, Incomes, Categories, Expenses, ExpenseCategories
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -136,3 +137,30 @@ class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]  # Make this view publicly accessible
+
+
+ 
+
+class ExpenseCategorySummaryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Aggregate expenses by category for the authenticated user
+        categories_summary = (
+            ExpenseCategories.objects
+            .filter(expense__user=request.user)  # Filter by the current user
+            .values('category__name')  # Group by category name
+            .annotate(total_amount=Sum('expense__amount'))  # Sum the amount of related expenses
+            .order_by('category__name')  # Order by category name (optional)
+        )
+
+        # Format the response data
+        response_data = [
+            {
+                "category": category["category__name"],
+                "total_amount": category["total_amount"]
+            }
+            for category in categories_summary
+        ]
+
+        return Response(response_data, status=status.HTTP_200_OK)

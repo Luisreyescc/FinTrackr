@@ -117,11 +117,16 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.CharField(write_only=True)
+    category = serializers.SerializerMethodField()  # Retrieve category dynamically
 
     class Meta:
         model = Expenses
         fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category']
+
+    def get_category(self, obj):
+        # Retrieve the category name related to the expense
+        expense_category = ExpenseCategories.objects.filter(expense=obj).first()
+        return expense_category.category.name if expense_category else None
 
     def create(self, validated_data):
         # Extract the single category name and remove it from validated_data
@@ -154,6 +159,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
             ExpenseCategories.objects.create(expense=instance, category=category)
         
         return instance
+
 
 
 
