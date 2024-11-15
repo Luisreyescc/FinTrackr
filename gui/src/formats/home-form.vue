@@ -46,9 +46,11 @@
    </div>
   </div>
 </div>
+
 </template>
 
 <script>
+import axios from 'axios';
 import IncomesForm from '@/components/incomes-forms.vue';
 import IncomeButton from '@/components/incomes-header.vue';
 import IncomeRow from '@/components/income-row.vue';
@@ -83,14 +85,6 @@ export default {
   methods: {
     toggleSidebar() {
       this.$emit('toggleSidebar');
-    },
-    submitIncome() {
-      console.log("Income submitted:", this.income);
-      this.resetForm();
-    },
-    submitExpense() {
-      console.log("Expense submitted:", this.expense);
-      this.resetForm();
     },
     toggleForm() {
       this.showForm = !this.showForm;
