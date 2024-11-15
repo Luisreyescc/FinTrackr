@@ -1,92 +1,92 @@
 <template>
-<div class="login-form">
-  <h2 class="form-title">Log In</h2>
+  <div class="login-form">
+    <h2 class="form-title">Log In</h2>
 
-  <label for="username">Username</label>
-  <div class="username-container">
-    <span class="user-icon gg-user"></span>
-    <input
-      v-model="username" 
-      type="text" 
-      id="username" 
-      placeholder="Insert your username..."
-      :class="{ 'input-error': usernameError, 'padded-input': true }"
-      @input="clearError('username')"/>
+    <label for="username">Username</label>
+    <div class="username-container">
+      <span class="user-icon gg-user"></span>
+      <input
+	v-model="username"
+	type="text"
+	id="username"
+	placeholder="Insert your username..."
+	:class="{ 'input-error': usernameError, 'padded-input': true }"
+	@input="clearError('username')" />
     </div>
     <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
     
-  
-  <label for="password">Password</label>
-  <div class="password-container">
-    <input 
-      v-model="password" 
-      :type="showPassword ? 'text': 'password'" 
-      id="password" 
-      placeholder="Insert the password.."
-      :class="{ 'input-error': passwordError, 'padded-input': true }" 
-      @input="clearError('password')" /> 
-    <button 
-      type="button" 
-      class="show-password-btn" 
-      @click="togglePasswordVisibility"
-      aria-label="Show or Hide Password" >
-      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-    </button>
-  </div>
-  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+    <label for="password">Password</label>
+    <div class="password-container">
+      <input
+        v-model="password"
+        :type="showPassword ? 'text' : 'password'"
+        id="password"
+        placeholder="Insert the password.."
+        :class="{ 'input-error': passwordError, 'padded-input': true }"
+        @input="clearError('password')" />
+      <button
+        type="button"
+        class="show-password-btn"
+        @click="togglePasswordVisibility"
+        aria-label="Show or Hide Password" >
+        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+      </button>
+    </div>
+    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
 
-  <!-- Buttons -->
-  <div class="button-group">
-    <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
-    <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
+    <div class="button-group">
+      <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
+      <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
+    </div>
+    
+    <a href="#" class="recover-password" @click.prevent="goToRecovery"> Forget password?</a>
   </div>
-  
-    <!-- Recover Password Link -->
-  <a href="#" class="recover-password" @click.prevent="goToRecovery">Forget password?</a>
-</div>
 </template>
 
 <script>
-import '@/css/eye.css';
-import '@/css/eye-alt.css';
-import '@/css/user.css';
+import "@/css/eye.css";
+import "@/css/eye-alt.css";
+import "@/css/user.css";
 
 export default {
-  name: 'LoginForm',
+  name: "LoginForm",
   data() {
     return {
-      username: '',
-      password: '',
-      usernameError: '',
-      passwordError: '',
-      showPassword: false
+      username: "",
+      password: "",
+      usernameError: "",
+      passwordError: "",
+      showPassword: false,
     };
   },
   methods: {
     emitLogin() {
       // Clean previous errors
-      this.usernameError = '';
-      this.passwordError = '';
-      if (!this.username) this.usernameError = 'Username is required';
-      if (!this.password) this.passwordError = 'Password is required';
-      if(!this.usernameError && !this.passwordError){
+      this.usernameError = "";
+      this.passwordError = "";
+      if (!this.username) this.usernameError = "Username is required";
+      if (!this.password) this.passwordError = "Password is required";
+      if (!this.usernameError && !this.passwordError) {
         // Emit an event with username and password data to the parent
-        this.$emit('login', { username: this.username, password: this.password });
+        this.$emit("login", {
+          username: this.username,
+          password: this.password,
+        });
       }
     },
     clearError(field) {
-      if (field === 'username') this.usernameError = '';
-      if (field === 'password') this.passwordError = '';
+      if (field === "username") this.usernameError = "";
+      if (field === "password") this.passwordError = "";
     },
-    togglePasswordVisibility(){
+    togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
       console.log(this.password);
     },
     goToRecovery() {
       // Emit an event to navigate to the recovery page
-      this.$emit('goToRecovery');
-    }
-  }
+      this.$emit("goToRecovery");
+    },
+  },
 };
 </script>
 
@@ -123,12 +123,12 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.input-error{
-    border-color: #E42121;
+.input-error {
+    border-color: #e42121;
 }
 
 .error-message {
-    color: #E42121;
+    color: #e42121;
     font-size: 12px;
     align-self: flex-start;
     margin-top: -10px;
@@ -146,7 +146,7 @@ input {
     border: none;
     border-radius: 4px;
     font-size: 14px;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     margin-bottom: 15px;
     font-family: "Wix Madefor Display", sans-serif;
@@ -163,7 +163,8 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.sign-in-btn:hover, .register-btn:hover {
+.sign-in-btn:hover,
+.register-btn:hover {
     opacity: 0.9;
 }
 
@@ -219,7 +220,6 @@ input {
 }
 
 .recover-password:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
-
 </style>

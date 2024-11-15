@@ -2,52 +2,79 @@
   <div class="login-page">
     <!-- Profile Icon -->
     <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
+
+    <div class="message-container">
+      <MessageAlerts
+        v-for="(msg, index) in messages" 
+        :key="msg.id" 
+        :text="msg.text" 
+        :type="msg.type" 
+        @close="removeMessage(index)" />
+    </div>
+    
     <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
   </div>
 </template>
 
 <script>
-import LoginForm from '../components/login-form.vue';
+import LoginForm from '@/formats/login-form.vue';
+import MessageAlerts from '@/components/messages.vue';
 import axios from 'axios';
 
 export default {
-  name: 'LogIn',
+  name: "LogIn",
   components: {
-    LoginForm
+    LoginForm,
+    MessageAlerts
+  },
+  data() {
+    return {
+      messages: []
+    };
   },
   methods: {
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
     async login({ username, password }) {
       if (username && password) {
         try {
           const response = await axios.post(
-            'http://localhost:8000/api/login/',  // Login endpoint of the backend
+            "http://localhost:8000/api/login/", // Login endpoint of the backend
             {
-              username: username,
-              password: password
+              user_name: username,
+              password: password,
             },
             {
               headers: {
-                'Content-Type': 'application/json'
-              }
-            }
+                "Content-Type": "application/json",
+              },
+            },
           );
-          if (response.status === 200) { this.$emit('login'); //Don't move this for the moment:)
-            alert('Login successful');
-          } else { alert('Invalid credentials');
+          console.log(response.data);
+          if (response.status === 200) {
+            const token = response.data.access;
+            localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
+          } else {
+            this.addMessage("Invalid credentials", "error");
           }
         } catch (error) {
-          console.error('Login failed:', error);
-          alert('Invalid username or password. Please try again.');
+          console.error("Login failed:", error);
+          this.addMessage("Invalid username or password. Please try again.", "error");
         }
       } else {
-        alert('Please enter username and password');
+        this.addMessage("Please enter username and password", "neutral");
       }
     },
     goToSignUp() {
-      this.$router.push('/signup');  // Redirect to sign up page
+      this.$router.push("/signup");
     },
     goToRecovery() {
-      this.$router.push('/recovery-password');  // Redirect to password recovery page
+      this.$router.push("/recovery-password");
     }
   }
 };
@@ -59,22 +86,22 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    padding-top: 220px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .error-message {
-  color: rgb(8, 34, 183);
-  font-size: 14px;
-  margin-top: 10px;
-  text-align: center;
+    color: rgb(8, 34, 183);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
 }
 
 .profile-icon {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 20px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
 }
 </style>
