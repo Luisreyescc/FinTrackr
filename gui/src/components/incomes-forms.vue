@@ -47,7 +47,7 @@
     
     <div class="button-group">
       <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-      <button type="submit" class="submit-button">Submit Income</button>
+      <button type="submit" class="submit-button">Submit</button>
       </div>
   </form>
 </div>
@@ -204,9 +204,10 @@ input {
     background-color: #333;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 13px 30px;
+    border-radius: 2px;
     cursor: pointer;
+    font-size: 16px;
     font-weight: bold;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -215,9 +216,10 @@ input {
     background-color: #4caf50;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 13px 30px;
+    border-radius: 3px;
     cursor: pointer;
+    font-size: 16px;
     font-weight: bold;
     font-family: "Wix Madefor Display", sans-serif;
 }

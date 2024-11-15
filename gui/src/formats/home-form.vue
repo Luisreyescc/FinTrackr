@@ -254,18 +254,6 @@ export default {
     scrollbar-color: #00A0BE #e0e0e0;
 }
 
-.add-income-button:hover, .add-expense-button {
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.add-income-button:hover, .add-expense-button:hover {
-    background-color: #00A0BE;
-}
-
 .forms-section {
   position: fixed;
   right: 0;

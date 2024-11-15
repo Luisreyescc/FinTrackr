@@ -4,7 +4,7 @@
     <div class="expense-details">
       <h4>{{ expense.categories }}</h4>
       <p class="expense-description">{{ expense.description }}</p>
-      <span class="expense-date">{{ expense.date }}</span>
+      <span class="expense-date">{{ formattedDate }}</span>
     </div>
     <div class="expense-amount-section">
       <span class="expense-amount">{{ formattedAmount }}</span>
@@ -36,7 +36,7 @@ export default {
     },
     formattedDate() {
       // Data format day-MONTH-year
-      const date = new Date(this.income.date);
+      const date = new Date(this.expense.date);
       const day = String(date.getDate()).padStart(2, '0');
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
