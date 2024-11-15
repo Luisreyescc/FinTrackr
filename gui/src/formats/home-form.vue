@@ -67,19 +67,19 @@ export default {
     IncomeRow,
     ExpensesForm,
     ExpenseButton,
-    ExpenseRow
+    ExpenseRow,
   },
   props: {
     selectedContent: {
       type: String,
-      default: 'Incomes' // We set the Incomes as the default selection
-    }
+      default: 'Incomes',
+    },
   },
   data() {
     return {
       showForm: false,
       incomes: [],
-      expenses: []
+      expenses: [],
     };
   },
   methods: {
@@ -89,61 +89,72 @@ export default {
     toggleForm() {
       this.showForm = !this.showForm;
     },
-    resetForm() {
-      this.showForm = false;
-      this.income = { amount: '', source: '', description: '', date: '' };
-      this.expense = { amount: '', description: '', categories: '', date: '' };
-    },
-    addIncome(incomeData) {
-      this.incomes.push(incomeData);
-      this.showForm = false;
-      //This line is just for test incomes rows in frontend
-      this.saveIncomesToLocalStorage();
-    },
-    // end of 'methods:'}
-    //This methods are for frontends tests 
-    handleIncomeSubmission(incomeData) {
-      //this.$emit('submitIncome', incomeData);
-      this.addIncome(incomeData);
-      this.toggleForm();
-    },
-    saveIncomesToLocalStorage() {
-      // Convert incomes array to JSON and store in localStorage
-      localStorage.setItem('incomes', JSON.stringify(this.incomes));
-    },
-    loadIncomesFromLocalStorage() {
-      // Retrieve incomes data from localStorage, if it exists
-      const storedIncomes = localStorage.getItem('incomes');
-      if (storedIncomes) {
-        // Parse the stored JSON data and assign it to incomes
-        this.incomes = JSON.parse(storedIncomes);
+    async fetchIncomes() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+        
+        const response = await axios.get('http://localhost:8000/api/incomes/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.incomes = response.data;
+      } catch (error) {
+        console.error('Error fetching incomes:', error);
       }
     },
-    //The same for expenses
-    addExpense(expenseData) {
-      this.expenses.push(expenseData);
-      this.showForm = false;
-      this.saveExpensesToLocalStorage();
-    },
-    handleExpenseSubmission(expenseData) {
-      this.addExpense(expenseData);
-      this.toggleForm();
-    },
-    saveExpensesToLocalStorage() {
-      localStorage.setItem('expenses', JSON.stringify(this.expenses));
-    },
-    loadExpensesFromLocalStorage() {
-      const storedExpenses = localStorage.getItem('expenses');
-      if (storedExpenses) {
-	this.expenses = JSON.parse(storedExpenses);
+    async fetchExpenses() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+
+        const response = await axios.get('http://localhost:8000/api/expenses/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.expenses = response.data;
+      } catch (error) {
+        console.error('Error fetching expenses:', error);
       }
-    }
+    },
+    async handleIncomeSubmission(incomeData) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+
+        const response = await axios.post(
+          'http://localhost:8000/api/incomes/',
+          incomeData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        this.incomes.push(response.data);
+        this.showForm = false;
+      } catch (error) {
+        console.error('Error submitting income:', error);
+      }
+    },
+    async handleExpenseSubmission(expenseData) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+
+        const response = await axios.post(
+          'http://localhost:8000/api/expenses/',
+          expenseData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        this.expenses.push(response.data);
+        this.showForm = false;
+      } catch (error) {
+        console.error('Error submitting expense:', error);
+      }
+    },
   },
   mounted() {
-    // Load incomes and ecpenses from localStorage when the component is mounted
-    this.loadIncomesFromLocalStorage();
-    this.loadExpensesFromLocalStorage();
-  }
+    if (this.selectedContent === "Incomes") {
+      this.fetchIncomes();
+    } else if (this.selectedContent === "Expenses") {
+      this.fetchExpenses();
+    }
+  },
 };
 </script>
 
