@@ -101,14 +101,11 @@ class IncomeSerializer(serializers.ModelSerializer):
         read_only_fields = ["user"]
 
 class CategorySerializer(serializers.ModelSerializer):
+    category_id = serializers.ReadOnlyField()
+
     class Meta:
         model = Categories
         fields = ["category_id", "name"]
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = ['category_id', 'name']
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
     expense = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
@@ -120,8 +117,7 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    categories = serializers.ListField(child=serializers.CharField(max_length=100), write_only=True)
-    expense_categories = ExpenseCategorySerializer(source='expensecategories_set', many=True, read_only=True)
+    category = serializers.CharField(write_only=True)
 
     class Meta:
         model = Expenses

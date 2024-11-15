@@ -4,13 +4,15 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Users, Incomes
+from .models import Users, Incomes, Categories, Expenses
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UserSerializer,
     UpdateUserSerializer,
     IncomeSerializer,
+    CategorySerializer,
+    ExpenseSerializer,
 )
 
 
@@ -114,3 +116,23 @@ class IncomeDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         income.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ExpenseListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        expenses = Expenses.objects.filter(user=request.user)
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ExpenseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryListCreateView(generics.ListCreateAPIView):
+    queryset = Categories.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [AllowAny]  # Make this view publicly accessible
