@@ -3,7 +3,7 @@
     <div class="expense-icon"></div>
     <div class="expense-details">
       <h4>{{ expense.categories }}</h4>
-      <p>{{ expense.description }}</p>
+      <p class="expense-description">{{ expense.description }}</p>
       <span class="expense-date">{{ expense.date }}</span>
     </div>
     <div class="expense-amount-section">
@@ -33,6 +33,14 @@ export default {
         currency: 'USD'
       });
       return `- ${formatter.format(this.expense.amount)}`;
+    },
+    formattedDate() {
+      // Data format day-MONTH-year
+      const date = new Date(this.income.date);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
     }
   }
 };
@@ -41,7 +49,7 @@ export default {
 <style scoped>
 .expense-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   padding: 15px;
   background-color: #F9F9F9;
@@ -66,25 +74,12 @@ export default {
     overflow: hidden;
 }
 
-.expense-details h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #21255b;
-  font-weight: bold;
-}
-
-.expense-details p {
-  margin: 5px 0;
-  color: #777;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.expense-details h4, .expense-details p {
+.expense-details h4, .expense-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 440px;
     margin-left: 10px;
 }
 
@@ -94,15 +89,18 @@ export default {
   font-weight: bold;
 }
 
-.expense-details p {
+.expense-description {
   color: #777;
   font-weight: bold;
   font-size: 14px;
 }
 
 .expense-date {
-  color: #aaa;
-  font-size: 12px;
+    color: #aaa;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 .expense-amount-section {

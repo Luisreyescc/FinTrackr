@@ -1,6 +1,5 @@
 <template>
 <div class="home-form">
-  
   <div class="sidebar">
     <button @click="toggleSidebar" class="menu-button">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="32" height="32">
@@ -17,37 +16,34 @@
 	</div>
 	<div class="activity-content"><h3 class="activity-title">Activity</h3>
           <div class="activity-section">
-            <div class="income-list">
+            <div class="list-container">
               <IncomeRow v-for="(income, index) in incomes" :key="index" :income="income" />
             </div>
           </div>
 	</div>
       </div>
-      
       <div class="forms-section" v-if="showForm">
-	<IncomesForm @submitForm="handleIncomeSubmission" />
+	<IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
       </div>
     </div>
-  </div>
   
-  <div v-if="selectedContent === 'Expenses'">
-    <div class="main-content">
-      <div class="first-content">
-	<div class="header"><h2 class="section-title">{{ selectedContent }}</h2><ExpenseButton @click="toggleForm" />
+   <div v-if="selectedContent === 'Expenses'" class="main-content">
+     <div class="expenses-containert">
+       <div class="header">
+	<h2 class="section-title">{{ selectedContent }}</h2>
+	<ExpenseButton @click="toggleForm" />
+       </div>
+       <div class="activity-content">
+	<h3 class="activity-title">Activity</h3>
+         <div class="activity-section"><div class="list-container"><ExpenseRow v-for="(expense, index) in expenses" :key="index" :expense="expense" />
+           </div>
 	</div>
-	<div class="activity-content">
-          <div class="activity-section">
-            <h3>Activity</h3><div class="expense-list">
-              <ExpenseRow v-for="(expense, index) in expenses" :key="index" :expense="expense" />
-            </div>
-          </div>
-	</div>
-      </div>
-      
-      <div v-if="showForm">
-	<ExpensesForm @submitForm="handleExpenseSubmission" />
-      </div>
-    </div>
+       </div>
+     </div>
+     <div class="forms-section" v-if="showForm">
+       <ExpensesForm @submitForm="handleExpenseSubmission"  @closeForm="toggleForm"/>
+     </div>
+   </div>
   </div>
 </div>
 </template>
@@ -114,8 +110,8 @@ export default {
     //This methods are for frontends tests 
     handleIncomeSubmission(incomeData) {
       //this.$emit('submitIncome', incomeData);
-      //this.showForm = false;
       this.addIncome(incomeData);
+      this.toggleForm();
     },
     saveIncomesToLocalStorage() {
       // Convert incomes array to JSON and store in localStorage
@@ -137,6 +133,7 @@ export default {
     },
     handleExpenseSubmission(expenseData) {
       this.addExpense(expenseData);
+      this.toggleForm();
     },
     saveExpensesToLocalStorage() {
       localStorage.setItem('expenses', JSON.stringify(this.expenses));
@@ -144,7 +141,7 @@ export default {
     loadExpensesFromLocalStorage() {
       const storedExpenses = localStorage.getItem('expenses');
       if (storedExpenses) {
-      this.expenses = JSON.parse(storedExpenses);
+	this.expenses = JSON.parse(storedExpenses);
       }
     }
   },
@@ -195,23 +192,23 @@ export default {
 }
 
 .content-wrapper {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  margin-left: 70px;
-  position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-left: 70px;
+    position: relative;
 }
 
 .main-content {
-  display: flex;
-  flex-direction: column;
-  max-width: 800px;
-  width: 100%;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow: hidden;
 }
 
 .header {
@@ -248,7 +245,7 @@ export default {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.income-list {
+.list-container {
     flex: 1;
     overflow-y: auto;
     padding-right: 10px;
@@ -257,7 +254,7 @@ export default {
     scrollbar-color: #00A0BE #e0e0e0;
 }
 
-.add-income-button {
+.add-income-button:hover, .add-expense-button {
     border: none;
     padding: 10px 15px;
     cursor: pointer;
@@ -265,7 +262,7 @@ export default {
     transition: background-color 0.2s;
 }
 
-.add-income-button:hover {
+.add-income-button:hover, .add-expense-button:hover {
     background-color: #00A0BE;
 }
 
@@ -273,11 +270,11 @@ export default {
   position: fixed;
   right: 0;
   top: 100px;
-  bottom: 100px;
-  width: 350px;
+  bottom: 200px;
+  width: 450px;
   max-width: 100%;
   padding: 20px;
-  background: #f5f5f5;
+  background: #ffffff;
   border-radius: 9px;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
