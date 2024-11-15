@@ -1,89 +1,80 @@
 <template>
 <div class="form-container">
-  <h3 class="form-title">New Income Data</h3>
+  <h3 class="form-title">New Expense data</h3>
   <form @submit.prevent="submitForm">
     <label>
       Amount:
-      <input
-	type="text"
-	v-model="income.amount"
-	@input="validateAmount"
-	:class="{ 'input-error': amountError, 'input-valid': !amountError && income.amount }"
-	placeholder="Enter amount (e.g., 1000.00)" />
+      <input type="text" v-model="expense.amount" @input="validateAmount" :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }" placeholder="Enter amount (e.g., 1000.00)" />
     </label>
     <span v-if="amountError" class="error-message">{{ amountError }}</span>
     
     <label>
-      Source:
-      <input
-	type="text"
-	v-model="income.source"
-	@input="validateTextField('source')"
-	:class="{ 'input-error': sourceError, 'input-valid': !sourceError && income.source }"
-	placeholder="Enter the source of the income" />
-    </label>
-    <span v-if="sourceError" class="error-message">{{ sourceError }}</span>
-    
-    <label>
       Description:
-      <input
-	type="text"
-	v-model="income.description"
-	@input="validateTextField('description')"
-	:class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && income.description }"
-        placeholder="Enter a description for the income" />
+      <input type="text" v-model="expense.description" @input="validateTextField('description')" :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }" placeholder="Enter a description for the expense" />
     </label>
     <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-      
+    
+    <label>
+      Categories:
+      <input
+        type="text"
+        v-model="expense.categories"
+        @input="validateTextField('categories')"
+        :class="{ 'input-error': categoriesError, 'input-valid': !categoriesError && expense.categories }"
+        placeholder="Enter the category of the expense" />
+    </label>
+    <span v-if="categoriesError" class="error-message">{{ categoriesError }}</span>
+    
     <label>
       Date:
       <input
-	type="date"
-        v-model="income.date"
+        type="date"
+        v-model="expense.date"
         @input="validateDate"
-        :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }" />
+        :class="{ 'input-error': dateError, 'input-valid': !dateError && expense.date }" />
     </label>
     <span v-if="dateError" class="error-message">{{ dateError }}</span>
     
     <div class="button-group">
       <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
       <button type="submit" class="submit-button">Submit</button>
-      </div>
+    </div>
   </form>
 </div>
 </template>
 
 <script>
 export default {
-  name: "IncomesForm",
+  name: "ExpensesForm",
   data() {
     return {
-      income: { amount: '', source: '', description: '', date: '' },
+      expense: { amount: '', description: '', categories: '', date: '' },
       amountError: "",
-      sourceError: "",
       descriptionError: "",
+      categoriesError: "",
       dateError: ""
     };
   },
   methods: {
     submitForm() {
+      //this.$emit('submitForm', this.expense);
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
-      const isSourceValid = this.validateTextField('source');
       const isDescriptionValid = this.validateTextField('description');
+      const isCategoriesValid = this.validateTextField('categories');
       const isDateValid = this.validateDate();
       
-      if (isAmountValid && isSourceValid && isDescriptionValid && isDateValid) {
-	this.$emit('submitForm', { ...this.income });
+      if (isAmountValid && isDescriptionValid && isCategoriesValid && isDateValid) {
+	this.$emit('submitForm', { ...this.expense });
 	this.$emit('closeForm');
 	this.resetForm();
       }
     },
     clearErrors() {
       this.amountError = "";
-      this.sourceError = "";
       this.descriptionError = "";
+      this.categoriesError = "";
       this.dateError = "";
     },
     cancelForm() {
@@ -91,17 +82,17 @@ export default {
       this.$emit('closeForm');
     },
     resetForm() {
-      this.income = { amount: '', source: '', description: '', date: '' };
+      this.expense = { amount: '', description: '', categories: '', date: '' };
       this.clearErrors();
     },
     validateAmount() {
       this.amountError = "";
       const amountPattern = /^\d{1,10}(\.\d{0,2})?$/; // Maximum of 10 digits before dot and 2 after it
-      if (!this.income.amount) {
+      if (!this.expense.amount) {
         this.amountError = "Amount is required";
         return false;
       }
-      if (!amountPattern.test(this.income.amount)) {
+      if (!amountPattern.test(this.expense.amount)) {
         this.amountError = "Invalid amount format";
         return false;
       }
@@ -110,11 +101,11 @@ export default {
     validateTextField(field) {
       //function to determine the label error
       this[`${field}Error`] = "";
-      if (!this.income[field]) {
+      if (!this.expense[field]) {
         this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.income[field].length > 180) {
+      if (this.expense[field].length > 180) {
         this[`${field}Error`] = "Exceeded the maximum character limit of 180";
         return false;
       }
@@ -122,7 +113,7 @@ export default {
     },
     validateDate() {
       this.dateError = "";
-      if (!this.income.date) {
+      if (!this.expense.date) {
         this.dateError = "Date is required";
         return false;
       }
