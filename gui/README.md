@@ -12,6 +12,8 @@ npm install vue-router
 ```
 npm install axios
 ```
+npm install validator
+```
 
 ## Compiles and hot-reloads for development
 ```

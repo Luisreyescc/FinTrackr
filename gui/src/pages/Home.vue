@@ -1,71 +1,116 @@
 <template>
-  <div class="page-container">
-    <div class="illustration">
-      <img
-        src="@/assets/empty_status.svg"
-        alt="Nothing to see here"
-        class="cactus-image"
-      />
-      <h2 class="headline">Nothing to see here</h2>
-    </div>
-    <div class="maintenance-message">
-      <p>Home page is on maintenance...</p>
-      <img src="@/assets/tools.png" alt="Maintenance" class="tools-image" />
-    </div>
-  </div>
+<div class="page-container">
+  <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
+  
+   <!-- Sidebar component, visible based on isSidebarVisible -->
+  <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
+</div>
 </template>
 
 <script>
+import HomeForm from '@/formats/home-form.vue';
+import SideBar from '@/components/side-bar.vue';
+import apiClient from "@/apiClient.js";
+  
 export default {
-  name: "HomePage",
+  name: 'HomePage',
+   components: {
+    HomeForm,
+    SideBar
+  },
+  data() {
+    return {
+      isSidebarVisible: false,
+      selectedContent: 'Incomes' // We set the Incomes option as the default selection
+    };
+  },
+  methods: {
+    async newIncome(incomeData) {
+      console.log("newIncome method called");
+      const { amount, source, description, date } = incomeData;
+      if (amount && source && description && date) {
+        try {
+          const token = localStorage.getItem("token");  // Retrieve the token from local storage
+          const response = await apiClient.post("/api/incomes", incomeData, {
+            headers: {
+              Authorization: `Bearer ${token}`,  // Add the Authorization header with the token
+            },
+          });
+          
+          if (response.status === 201) {
+            alert("New income added");
+          } else {
+            alert(response.data.error || "Failed adding new income");
+          }
+        } catch (error) {
+          console.error("New income error:", error);
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            alert(errors.join("\n"));
+          } else {
+            alert("There was an issue while adding your new income. Please try again.");
+          }
+        }
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    },
+    async newExpense(expenseData) {
+      const { amount, description, categories, date } = expenseData;
+      if (amount && description && categories && date) {
+        try {
+          const response = await apiClient.post("/api/expenses", expenseData);
+          if (response.status === 201) {
+            alert("New expense added");
+          } else {
+            alert(response.data.error || "Failed adding new expense");
+          }
+        } catch (error) {
+          console.error("New expense error:", error);
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            alert(errors.join("\n"));
+          } else {
+            alert("There was an issue while adding your new expense. Please try again.");
+          }
+        }
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    },
+    toggleSidebar() {
+      this.isSidebarVisible = !this.isSidebarVisible;
+    },
+    updateContent(content) {
+      this.selectedContent = content;
+      this.isSidebarVisible = false; // Close sidebar after selection
+    }
+  }
 };
 </script>
 
 <style scoped>
 .page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 60px); /* Adjusts for header height */
-  text-align: center;
-  color: #666;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    position: relative;
+    padding-top: 70px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-/* Styling for the cactus illustration and main message */
-.illustration {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.content {
+    flex: 1;
+    padding: 20px;
 }
 
-.cactus-image {
-  width: 300px;
-  height: auto;
-}
-
-.headline {
-  font-size: 24px;
-  font-weight: bold;
-  color: #666;
-}
-
-/* Styling for the maintenance message */
-.maintenance-message {
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  color: #333;
-  margin-top: 20px;
-}
-
-.maintenance-message p {
-  margin-right: 10px;
-}
-
-.tools-image {
-  width: 36px;
-  height: 36px;
+.content-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }
 </style>
