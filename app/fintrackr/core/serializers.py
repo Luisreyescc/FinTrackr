@@ -105,3 +105,59 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Categories
         fields = ["category_id", "name"]
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ['category_id', 'name']
+
+class ExpenseCategorySerializer(serializers.ModelSerializer):
+    expense = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
+
+    class Meta:
+        model = ExpenseCategories
+        fields = ['expense', 'category']
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
+    categories = serializers.ListField(child=serializers.CharField(max_length=100), write_only=True)
+    expense_categories = ExpenseCategorySerializer(source='expensecategories_set', many=True, read_only=True)
+
+    class Meta:
+        model = Expenses
+        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category']
+
+    def create(self, validated_data):
+        # Extract the single category name and remove it from validated_data
+        category_name = validated_data.pop('category', None)
+        
+        # Create or retrieve the category
+        category, created = Categories.objects.get_or_create(name=category_name)
+
+        # Now validated_data only contains fields for Expenses, so we can create the instance
+        expense = Expenses.objects.create(**validated_data)
+
+        # Create the association in the ExpenseCategories table
+        ExpenseCategories.objects.create(expense=expense, category=category)
+        
+        return expense
+
+    def update(self, instance, validated_data):
+        # Extract the category name and remove it from validated_data
+        category_name = validated_data.pop('category', None)
+        
+        # Update the expense instance with remaining fields
+        instance = super().update(instance, validated_data)
+
+        if category_name is not None:
+            # Clear existing category association
+            instance.expensecategories_set.all().delete()
+            
+            # Retrieve or create the new category and associate it
+            category, created = Categories.objects.get_or_create(name=category_name)
+            ExpenseCategories.objects.create(expense=instance, category=category)
+        
+        return instance
+
+
+
