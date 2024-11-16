@@ -13,6 +13,7 @@
     "validator": "^13.12.0",
     "vue": "^3.2.13",
     "vue-router": "^4.4.5",
+    "vue3-apexcharts": "^1.7.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
