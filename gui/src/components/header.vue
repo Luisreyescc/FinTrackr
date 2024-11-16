@@ -19,8 +19,7 @@
             src="@/assets/profile_white.svg"
             alt="Profile"
             class="profile-icon"
-            @click="toggleDropdown"
-          />
+            @click="toggleDropdown" />
           <div v-if="dropdownOpen" class="dropdown">
             <button @click="editProfile">Edit Profile</button>
             <button @click="logout">Sign-out</button>
