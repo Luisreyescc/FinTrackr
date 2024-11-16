@@ -10,21 +10,8 @@
           <router-link to="/status" class="nav-item">Status<span></span></router-link>
           <router-link to="/history" class="nav-item">History<span></span></router-link>
           <router-link to="/leaderboard" class="nav-item">Leaderboard<span></span></router-link>
-        </nav>
-
-        <!-- Welcome Message and Profile Icon with Dropdown -->
-        <div v-if="isLoggedIn" class="profile-menu">
-          <span class="welcome-message"> {{ userName }}</span>
-          <img
-            src="@/assets/profile_white.svg"
-            alt="Profile"
-            class="profile-icon"
-            @click="toggleDropdown" />
-          <div v-if="dropdownOpen" class="dropdown">
-            <button @click="editProfile">Edit Profile</button>
-            <button @click="logout">Sign-out</button>
-          </div>
-        </div>
+          <router-link v-if="isLoggedIn" to="/edit-profile" class="nav-item user-item">Hello, {{ userName }} <span></span></router-link>
+	</nav>
       </div>
     </div>
   </header>
