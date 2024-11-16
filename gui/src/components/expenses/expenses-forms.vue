@@ -1,7 +1,7 @@
 <template>
 <div class="form-container">
   <h3 class="form-title">New Expense data</h3>
-  <div class="form-content">
+  <div class="form-content scrollbar">
   <form @submit.prevent="submitForm">
     <label>
       Amount:
@@ -28,7 +28,7 @@
 	</span>
       </div>
       
-      <ul v-if="dropdownOpen" class="categories-dropdown">
+      <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
         <li
           v-for="(category, index) in categoryOptions"
           :key="index"
@@ -64,6 +64,8 @@
 </template>
 
 <script>
+import '@/css/scrollbar.css';
+ 
 export default {
   name: "ExpensesForm",
   data() {
@@ -186,8 +188,6 @@ export default {
     padding: 10px;
     margin: 0;
     overflow-y: auto;
-    /*scrollbar-width: thin;
-    scrollbar-color: #1B1F9C #e0e0e0;*/
 }
 
 label {
@@ -305,30 +305,6 @@ input {
   border: 1px solid #ccc;
   border-radius: 4px;
   z-index: 1000;
-}
-
-.categories-dropdown::-webkit-scrollbar {
-  width: 12px;
-}
-
-.categories-dropdown::-webkit-scrollbar-thumb {
-  background: #4caf50;
-  border-radius: 10px;
-  border: 3px solid transparent;
-  background-clip: content-box;
-}
-
-.categories-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #388e3c;
-}
-
-.categories-dropdown::-webkit-scrollbar-track {
-  background: #e0e0e0;
-  border-radius: 10px;
-}
-
-.categories-dropdown::-webkit-scrollbar-button {
-  display: none;
 }
 
 .categories-dropdown li {
