@@ -134,13 +134,21 @@ export default {
     async handleExpenseSubmission(expenseData) {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        const userId = localStorage.getItem("user_id") ?? 1; // Retrieve user_id from localStorage
+
+        // Update expenseData to include user_id and change 'categories' to 'category'
+        const modifiedExpenseData = {
+          ...expenseData,
+          user: userId,
+          category: expenseData.categories, // Change 'categories' to 'category'
+        };
 
         const response = await axios.post(
           'http://localhost:8000/api/expenses/',
-          expenseData,
+          modifiedExpenseData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         this.expenses.push(response.data);
         this.showForm = false;
       } catch (error) {
