@@ -1,5 +1,6 @@
 <template>
-  <div :class="['message', messageType]" v-if="visible">
+  <transition name="fade-up" @after-leave="$emit('close')">
+  <div :class="['message', messageType]" v-if="visible" >
     <div class="message-content">
       <span class="message-text">{{ text }}</span>
     </div>
@@ -9,6 +10,7 @@
       </svg>
     </button>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -72,6 +74,17 @@ export default {
     transition: opacity 0.5s ease, transform 0.5s ease;
     opacity: 1;
     z-index: 1000;
+}
+
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-up-enter, 
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 .message-hidden {
