@@ -312,7 +312,7 @@ input {
     left: 0;
     right: 0;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     padding: 0;
@@ -333,7 +333,7 @@ input {
 
 .categories-dropdown li:hover {
     background-color: #f0f8ff;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #1010AC;
     font-weight: bold;
 }
