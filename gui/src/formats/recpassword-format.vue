@@ -19,7 +19,7 @@
 	v-model="email"
 	type="email"
 	id="email"
-	placeholder="Insert email..."
+	placeholder="Email"
 	:class="{ 'input-error': emailError, 'padded-input': true }"
 	@input="validateEmail" />
     </div>
@@ -45,7 +45,7 @@
 	v-model="password"
 	:type="showPassword ? 'text' : 'password'"
 	id="password"
-	placeholder="Insert a password..."
+	placeholder="New password"
 	:class="{ 'input-error': passwordError, 'padded-input': true }"
 	@input="clearError('password')" />
       <button
@@ -61,7 +61,7 @@
 	v-model="password2"
 	:type="showConfirmPassword ? 'text': 'password'"
 	id="password2"
-	placeholder="Confirm your password..."
+	placeholder="Confirm newn password"
 	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
 	@input="clearError('password2')" />
       <button 
@@ -243,23 +243,27 @@ input {
 }
 
 .input-error {
-    border-color: #E42121;
+    border-color: #D55C5C;
 }
 
 .username-container,
 .email-container,
-.recovery-container,
 .password-container {
     position: relative;
     width: 130%;
     color: white;
-    margin-right: 15px;
+    left: -50px;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .recovery-container {
-   width: 110%;
+    position: relative;
+    width: 110%;
+    left: -5px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .username-container input,
@@ -302,19 +306,8 @@ input {
 
 .show-password-btn {
     position: absolute;
-    left: 103px;
-    top: 22%;
-    background: none;
-    border: none;
-    color:white;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-.show-password-btn {
-    position: absolute;
-    left: 103px;
-    top: 22%;
+    left: 50px;
+    top: -10%;
     background: none;
     border: none;
     color:white;
@@ -338,6 +331,7 @@ button {
 
 .send-code-btn {
     padding: 10px 20px;
+    width: 75%;
     border-radius: 20px;
     background-color: white;
     border: 2px solid white;

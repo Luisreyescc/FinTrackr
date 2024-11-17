@@ -8,7 +8,7 @@
       v-model="username"
       type="text"
       id="username"
-      placeholder="Enter a username..."
+      placeholder="Your username"
       :class="{ 'input-error': usernameError, 'padded-input': true }"
       @input="clearError('username')" />
   </div>
@@ -19,7 +19,7 @@
       v-model="email"
       type="email"
       id="email"
-      placeholder="Email"
+      placeholder="Your email"
       :class="{ 'input-error': emailError, 'padded-input': true }"
       @input="validateEmail" />
   </div>
@@ -29,7 +29,7 @@
       v-model="password"
       :type="showPassword ? 'text' : 'password'"
       id="password"
-      placeholder="Insert a password..."
+      placeholder="Your password"
       :class="{ 'input-error': passwordError, 'padded-input': true }"
       @input="clearError('password')" />
     <button
@@ -46,7 +46,7 @@
       v-model="password2"
       :type="showConfirmPassword ? 'text': 'password'"
       id="password2"
-      placeholder="Confirm your password..."
+      placeholder="Confirm your password"
       :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
       @input="clearError('password2')" />
     <button 
