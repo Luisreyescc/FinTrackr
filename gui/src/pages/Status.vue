@@ -125,10 +125,10 @@ export default {
 
 <style scoped>
 .page-container {
-  display: flex;
-  position: relative;
-  padding-top: 71px;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    position: relative;
+    padding-top: 70px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .content {

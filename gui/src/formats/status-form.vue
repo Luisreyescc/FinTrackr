@@ -21,13 +21,28 @@ export default {
 </script>
 
 <style scoped>
+  .status-form {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    font-family: "Wix Madefor Display", sans-serif;
+  }
+  
 .menu-button {
     background: none;
     border: none;
     cursor: pointer;
-    color: #21255B;
     transition: transform 0.2s ease-in-out;
-    z-index: 1000;
-    padding: 20px;
+    margin-top: -283px;
+    margin-left: 6px;
+}
+
+.menu-button svg {
+    fill: #21255B;
+    transition: transform 0.2s ease-in-out;
+}
+
+.menu-button svg:hover {
+    transform: scale(1.1);
 }
 </style>
