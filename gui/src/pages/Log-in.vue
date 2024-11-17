@@ -1,6 +1,6 @@
 <template>
-  <div class="login-page">
-    <!-- Profile Icon -->
+<div class="login-page">
+  
     <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
 
     <div class="message-container">
@@ -87,7 +87,6 @@ export default {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    /*background: linear-gradient(to bottom, #d1d5f6, #a6a8f0, #7177f4); */
     background: #3B3B5A;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -95,10 +94,12 @@ export default {
 .profile-icon {
     width: 120px;
     height: 120px;
-    margin-bottom: -50px;
+    margin-bottom: -70px;
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
+    /*background: #3B3B5A;*/
+    background: rgba(59, 59, 90, 0.1);
+    backdrop-filter: blur(15px);
 }
 </style>

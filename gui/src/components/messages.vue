@@ -130,6 +130,7 @@ export default {
 .close-button svg {
     width: 16px;
     height: 16px;
+    cursor: pointer;
     fill: currentColor;
 }
 </style>

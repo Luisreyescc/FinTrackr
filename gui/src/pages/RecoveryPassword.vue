@@ -1,8 +1,7 @@
 <template>
-  <div class="recovery-password-page">
-    <!-- Profile Icon -->
-    <img
-      src="@/assets/profile_black.svg"
+<div class="recovery-password-page">
+  
+    <img src="@/assets/profile_white.svg"
       alt="Profile Icon"
       class="profile-icon"
     />

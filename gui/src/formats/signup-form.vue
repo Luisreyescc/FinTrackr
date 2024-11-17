@@ -1,144 +1,169 @@
 <template>    
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
-  <label for="username">Username</label>
   
   <div class="username-container">
-    <span class="user-icon gg-user"></span>
+    <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
     <input
       v-model="username"
       type="text"
       id="username"
       placeholder="Enter a username..."
       :class="{ 'input-error': usernameError, 'padded-input': true }"
-      @input="validateUser" />
+      @input="clearError('username')" />
   </div>
-  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
   
-    <label for="email">E-mail</label>
-    <div class="email-container">
-      <span class="email-icon gg-mail"></span>
-      <input
-        v-model="email"
-        type="email"
-        id="email"
-        placeholder="Enter your email..."
-        :class="{ 'input-error': emailError, 'padded-input': true }"
-        @input="validateEmail" />
-    </div>
-    <span v-if="emailError" class="error-message">{{ emailError }}</span>
-    
-    <label for="password">Password</label>
-    <div class="password-container">
-      <input
-	v-model="password"
-	:type="showPassword ? 'text' : 'password'"
-	id="password"
-	placeholder="Insert a password..."
-	:class="{ 'input-error': passwordError, 'padded-input': true }"
-	@input="clearError('password')" />
-      <button
-	type="button" 
-	class="show-password-btn" 
-	@click="togglePasswordVisibility"
-	aria-label="Show or Hide Password" >
-	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-      </button>
-      </div>
-    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-    
-    <label for="password2">Confirm password</label>
-    <div class="password-container">
-      <input
-	v-model="password2"
-	:type="showConfirmPassword ? 'text': 'password'"
-	id="password2"
-	placeholder="Confirm your password..."
-	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-	@input="clearError('password2')" />
-      <button 
-	type="button" 
-	class="show-password-btn" 
-	@click="toggleConfirmPasswordVisibility"
-	aria-label="Show or Hide Confirm Password">
-	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
-      </button>
-    </div>
-    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-    
-    <div class="button-group">
-      <button class="accept-btn" @click="emitSignUp" >Create User</button>
-      <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
-    </div>
+  <div class="email-container">
+    <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
+    <input
+      v-model="email"
+      type="email"
+      id="email"
+      placeholder="Email"
+      :class="{ 'input-error': emailError, 'padded-input': true }"
+      @input="validateEmail" />
+  </div>
+  
+  <div class="password-container">
+    <input
+      v-model="password"
+      :type="showPassword ? 'text' : 'password'"
+      id="password"
+      placeholder="Insert a password..."
+      :class="{ 'input-error': passwordError, 'padded-input': true }"
+      @input="clearError('password')" />
+    <button
+      type="button" 
+      class="show-password-btn" 
+      @click="togglePasswordVisibility"
+      aria-label="Show or Hide Password" >
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+    </button>
+  </div>
+  
+  <div class="password-container">
+    <input
+      v-model="password2"
+      :type="showConfirmPassword ? 'text': 'password'"
+      id="password2"
+      placeholder="Confirm your password..."
+      :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+      @input="clearError('password2')" />
+    <button 
+      type="button" 
+      class="show-password-btn" 
+      @click="toggleConfirmPasswordVisibility"
+      aria-label="Show or Hide Confirm Password">
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
+    </button>
+  </div>
+  
+  <div class="button-group">
+    <button class="accept-btn" @click="emitSignUp" >Create User</button>
+    <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
+  </div>
+</div>
+
+<div class="message-container">
+  <MessageAlerts
+    v-for="(msg, index) in messages" 
+    :key="msg.id" 
+    :text="msg.text" 
+    :type="msg.type" 
+    @close="removeMessage(index)" />
 </div>
 </template>
 
 <script>
-import isEmail from "validator/lib/isEmail";//
-import '@/css/mail.css';//
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MessageAlerts from '@/components/messages.vue';
+import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "SignUpForm",
+  components: { FontAwesomeIcon, MessageAlerts },
   data() {
     return {
       username: "",
       email: "",
       password: "",
-      password2: "",//
-      usernameError: "",
-      emailError: "",
-      passwordError: "",
-      confirmPasswordError: "",
-      showPassword: false,//
-      showConfirmPassword: false//
+      password2: "",
+      usernameError: false,
+      emailError: false,
+      passwordError: false,
+      confirmPasswordError: false,
+      showPassword: false,
+      showConfirmPassword: false,
+      messages: []
     };
   },
   methods: {
-    emitSignUp() {
-      this.usernameError = '';
-      this.emailError = '';
-      this.passwordError = '';
-      this.confirmPasswordError = '';
-      if (!this.username)
-	this.usernameError = 'Username is required';
-      else if (this.username.length < 3) this.usernameError = 'Username requieres at least 3 characters';
-      if (!this.email)
-	this.emailError = 'Email is required';
-      else if (!isEmail(this.email))
-	this.emailError = 'Invalid email format';
-      if (!this.password)
-	this.passwordError = 'Password is required';
-      if (!this.password2)
-	this.confirmPasswordError = 'Confirm password is required';
-      if (this.password && this.password2 && this.password !== this.password2) {
-	this.passwordError = 'Passwords don\'t match';
-	this.confirmPasswordError = 'Passwords don\'t match';
-      }
-      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
-        this.$emit("signUp", { username: this.username, email: this.email, password: this.password, password2: this.password2});
-      }
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
     },
-    validateUsername() {
-      this.usernameError = '';
-      if (this.username.length > 0 && this.username.length < 3) {
-        this.usernameError = 'Username must be at least 3 characters long';
-      }
-    },
-    validateEmail() {
-      this.emailError = '';
-      if (this.email && !isEmail(this.email)) {
-        this.emailError = 'Invalid email format';
-      }
+    removeMessage(index) {
+      this.messages.splice(index, 1);
     },
     clearError(field) {
       if (field === 'username')
-	this.usernameError = '';
+	this.usernameError = false;
       if (field === 'email')
-	this.emailError = '';
+	this.emailError = false;
       if (field === 'password')
-	this.passwordError = '';
+	this.passwordError = false;
       if (field === 'password2')
-	this.confirmPasswordError = '';
+	this.confirmPasswordError = false;
+    },
+    emitSignUp() {
+      if (this.validateInputs() && this.validateEmail()) {
+        this.$emit("signUp", { username: this.username, email: this.email, password: this.password, password2: this.password2});
+      }
+    },
+    validateEmail() {
+      let emailValid = true;
+      if (this.email && !isEmail(this.email)) {
+	this.addMessage("Invalid email format.", "error");
+        this.emailError = true;
+        emailValid = false;
+      }
+      return emailValid;
+    },
+    validateInputs() {
+      let isValid = true;
+
+      if (!this.username) {
+        this.addMessage("Username is required.", "error");
+        this.usernameError = true;
+        isValid = false;
+      } else if (this.username.length < 3 || this.username.length > 16) {
+        this.addMessage("Username must be 3-16 characters long.", "error");
+        this.usernameError = true;
+        isValid = false;
+      }
+      if (!this.email) {
+        this.addMessage("Email is required.", "error");
+        this.emailError = true;
+        isValid = false;
+      }
+      if (!this.password) {
+        this.addMessage("Password is required.", "error");
+        this.passwordError = true;
+        isValid = false;
+      }
+      if (!this.password2) {
+        this.addMessage("Confirm Password is required.", "error");
+        this.confirmPasswordError = true;
+        isValid = false;
+      }
+      if (this.password2 !== this.password) {
+        this.addMessage("Passwords don't match.", "error");
+	this.passwordError = true;
+        this.confirmPasswordError = true;
+        isValid = false;
+      }
+      
+      return isValid;
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -151,124 +176,137 @@ export default {
 </script>
 
 <style scoped>
-/* Sign-up form styling */
 .signup-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 300px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-label {
-    align-self: flex-start;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+.form-title {
+    margin-top: 70px;
+    color: white;
+    font-size: 36px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
+    width: 50%;
+    padding: 14px;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .input-error {
-    border-color: #e42121;
+    border-color: #D55C5C;
 }
 
-.error-message {
-    color: #e42121;
-    font-size: 12px;
-    align-self: flex-start;
-    margin-top: -10px;
-    margin-bottom: 10px;
+.username-container,
+.email-container,
+.password-container {
+    position: relative;
+    width: 130%;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.username-container input,
+.email-container input,
+.password-container input{
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.username-container, .email-container {
+    margin-right: 15px;
+}
+
+.username-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.email-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.password-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.user-icon, .email-icon {
+    position: relative;
+    right: -25px;
+    top: 35%;
+    color: white;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.show-password-btn {
+    position: absolute;
+    left: 103px;
+    top: 22%;
+    background: none;
+    border: none;
+    color:white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.padded-input {
+    padding-left: 40px;
 }
 
 .button-group {
-    width: 100%;
+    width: 60%;
     display: flex;
+    margin-top: 30px;
     flex-direction: column;
 }
 
 .accept-btn {
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #4caf50;
-    color: white;
+    border-radius: 20px;
+    background-color: white;
+    border: 2px solid white;
     margin-bottom: 15px;
+    cursor: pointer;
+    color: #333;
+    font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .login-btn {
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
+    border-radius: 20px;
     background-color: #333;
+    border: 2px solid #333;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
     color: white;
+    font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .accept-btn:hover,
 .login-btn:hover {
     opacity: 0.9;
-}
-
-.username-container,
-.email-container,
-.password-container {
-    display: flex;
-    align-items: center;
-    position: relative;
-    width: 108%;
-}
-
-.user-icon,
-.email-icon {
-    position: absolute;
-    left: 15px;
-    color: #555;
-    font-size: 18px;
-    margin-top: -5%;
-    pointer-events: none;
-}
-
-.email-icon {
-    left: 13px;
-}
-
-.show-password-btn {
-    position: absolute;
-    padding-left: 10px;
-    background: none;
-    border: none;
-    color: #555;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.show-password-btn span {
-    font-size: 18px;
-    display: flex;
-    margin-top: -68%;
-}
-
-.padded-input {
-    padding-left: 40px;
 }
 </style>

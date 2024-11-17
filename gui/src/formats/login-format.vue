@@ -31,7 +31,7 @@
     </div>
 
     <div class="button-group">
-      <button class="sign-in-btn" @click="emitLogin">Sign-in</button>
+      <button class="sign-in-btn" @click="emitLogin">Log-in</button>
       <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
     </div>
   
@@ -39,12 +39,12 @@
   </div>
 
   <div class="message-container">
-      <MessageAlerts
-        v-for="(msg, index) in messages" 
-        :key="msg.id" 
-        :text="msg.text" 
-        :type="msg.type" 
-        @close="removeMessage(index)" />
+    <MessageAlerts
+      v-for="(msg, index) in messages" 
+      :key="msg.id" 
+      :text="msg.text" 
+      :type="msg.type" 
+      @close="removeMessage(index)" />
   </div>
 </template>
 
@@ -76,8 +76,10 @@ export default {
       this.messages.splice(index, 1);
     },
     clearError(field) {
-      if (field === 'username') this.usernameError = false;
-      if (field === 'password') this.passwordError = false;
+      if (field === 'username')
+	this.usernameError = false;
+      if (field === 'password')
+	this.passwordError = false;
     },
     emitLogin() {
       if (this.validateInputs()) {
@@ -113,7 +115,6 @@ export default {
       console.log(this.password);
     },
     goToRecovery() {
-      // Emit an event to navigate to the recovery page
       this.$emit("goToRecovery");
     },
   },
@@ -248,7 +249,7 @@ input {
 .recover-password {
     margin-top: 35px;
     font-size: 16px;
-    color: #333;
+    color: white;
     text-decoration: none;
     font-family: "Wix Madefor Display", sans-serif;
 }
