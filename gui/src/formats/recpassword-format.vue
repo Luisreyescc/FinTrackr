@@ -129,8 +129,9 @@ export default {
     },
     sendCode() {
       if (this.validateInputs() && this.validateEmail()) {
+	this.addMessage('Sending recovery code to ${email}', "neutral");
+	this.$emit('sendCode', { username: this.username, email: this.email });
 	this.currentStep = 2; // Next state of the page, validate key code
-        this.$emit('sendCode', { username: this.username, email: this.email });
       }
     },
     validateCode() {
@@ -138,8 +139,9 @@ export default {
         this.keyError = true;
         this.addMessage("Recovery code is required.", "error");
       } else {
-        this.currentStep = 3; // Next state of the page, create ne password
-        this.addMessage("Code validated successfully.", "success");
+	this.addMessage("Code validated successfully.", "success");
+	this.$emit("validateCode", { recoveryCode: this.recoveryCode });
+        this.currentStep = 3; // Next state of the page, create new password
       }
     },
     changePassword() {
@@ -161,8 +163,7 @@ export default {
         isValid = false;
       }
       if (isValid) {
-        this.addMessage("Password changed successfully.", "success");
-        this.$emit('changePassword');
+        this.$emit("changePassword", { password: this.password });
       }
     },
     validateInputs() {

@@ -11,14 +11,19 @@
       @close="removeMessage(index)" />
   </div>
   
-  <RecoveryForm @sendCode="handleSendCode" @changePassword="goToLogin" @goToLogin="goToLogin" />
+  <RecoveryForm
+    :currentStep="currentStep"
+    @sendCode="handleSendCode"
+    @validateCode="handleValidateCode"
+    @changePassword="goToLogin"
+    @goToLogin="goToLogin" />
 </div>
 </template>
 
 <script>
 import RecoveryForm from '@/formats/recpassword-format.vue';
 import MessageAlerts from '@/components/messages.vue';
-//import axios from 'axios';
+import axios from 'axios';
 
 export default {
   name: "RecoveryPassword",
@@ -28,7 +33,8 @@ export default {
   },
   data() {
     return {
-      messages: []
+      messages: [],
+      currentStep: 1,
     };
   },
   methods: {
@@ -39,36 +45,48 @@ export default {
     removeMessage(index) {
       this.messages.splice(index, 1);
     },
-    /* async handleSendCode({ email }) {
-      if (email) {
-	try {
-	  const valEmail = await axios.post(
-            "http://localhost:8000/api/login/",
-            { email: email },
-            { headers: { "Content-Type": "application/json" } } );
-	  this.addMessage('Sending recovery code to ${email}', "neutral");
-	}
-	catch (error) {
-          this.addMessage('Sending code to ${email}', "error");
+    async handleSendCode({ username, email }) {
+      try {
+	const response = await axios.post(
+          "http://url-for-send-code/",
+          { username, email },
+          { headers: { "Content-Type": "application/json" } }
+        );
+	if (response.status === 200) {
+          this.addMessage("Recovery code sent successfully!", "success");
+          this.currentStep = 2;
         }
+      } catch (error) {
+        this.addMessage("Failed to send recovery code. Please try again.", "error");
       }
-      async validateCode({ recoveryCode }) {
-	if (recoveryCode) {
-	  try {
-	    const response = await axios.post("htpp://url-for-validate-code/");
-	    if (response.status === 200) {
-              const token = response.data.access;
-              localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
-            } else {
-              this.addMessage("Keycode not valid", "error");
-            }
-          } catch (error) {
-            console.error("Login failed:", error);
-            this.addMessage("Invalid username or password. Please try again.", "error");
-	  }
-	}
+    },
+    async handleValidateCode({ recoveryCode }) {
+      try {
+	const response = await axios.post("htpp://url-for-validate-code/", { recoveryCode }, { headers: { "Content-Type": "application/json" } }
+        );
+	if (response.status === 200) {
+          this.addMessage("Code validated successfully!", "success");
+          this.currentStep = 3;
+        }
+      } catch (error) {
+        this.addMessage("Invalid recovery code. Please try again.", "error");
       }
-    }, */
+    },
+    async handleChangePassword({ password }) {
+      try {
+        const response = await axios.post(
+          "http://url-for-change-password/",
+          { password },
+          { headers: { "Content-Type": "application/json" } }
+        );
+        if (response.status === 200) {
+          this.addMessage("Password changed successfully!", "success");
+          this.goToLogin();
+        }
+      } catch (error) {
+        this.addMessage("Failed to change password. Please try again.", "error");
+      }
+    },
     goToLogin() {
       this.$router.push("/");
     },
