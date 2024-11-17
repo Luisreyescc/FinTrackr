@@ -18,6 +18,7 @@
 <script>
 import RecoveryForm from '@/formats/recpassword-format.vue';
 import MessageAlerts from '@/components/messages.vue';
+//import axios from 'axios';
 
 export default {
   name: "RecoveryPassword",
@@ -38,17 +39,40 @@ export default {
     removeMessage(index) {
       this.messages.splice(index, 1);
     },
-    handleSendCode({ email }) {
+    /* async handleSendCode({ email }) {
       if (email) {
-      this.addMessage(`Sending recovery code to: ${email}`, "neutral");
-    } else {
-      this.addMessage("Please provide a valid email address.", "error");
-    }
-  },
+	try {
+	  const valEmail = await axios.post(
+            "http://localhost:8000/api/login/",
+            { email: email },
+            { headers: { "Content-Type": "application/json" } } );
+	  this.addMessage('Sending recovery code to ${email}', "neutral");
+	}
+	catch (error) {
+          this.addMessage('Sending code to ${email}', "error");
+        }
+      }
+      async validateCode({ recoveryCode }) {
+	if (recoveryCode) {
+	  try {
+	    const response = await axios.post("htpp://url-for-validate-code/");
+	    if (response.status === 200) {
+              const token = response.data.access;
+              localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
+            } else {
+              this.addMessage("Keycode not valid", "error");
+            }
+          } catch (error) {
+            console.error("Login failed:", error);
+            this.addMessage("Invalid username or password. Please try again.", "error");
+	  }
+	}
+      }
+    }, */
     goToLogin() {
       this.$router.push("/");
     },
-  },
+  }
 };
 </script>
 

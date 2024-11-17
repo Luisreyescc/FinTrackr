@@ -1,23 +1,20 @@
 <template>
 <div class="recovery-form">
   <h2 class="form-title">Recovery Password</h2>
-    <label for="username">Username</label>
-    <div class="username-container">
-      
-      <span class="user-icon gg-user"></span>
+  <!-- We define the Recovery pages in state-->
+  <div v-if="currentStep === 1">
+    <div class="username-container">    
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
       <input
 	v-model="username"
 	type="text"
 	id="username"
-	placeholder="Insert username..."
+	placeholder="Username"
 	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="validateUser" />
+	@input="clearError('username')" />
     </div>
-    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-    
-    <label for="email">E-mail</label>
     <div class="email-container">
-      <span class="email-icon gg-mail"></span>
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
       <input
 	v-model="email"
 	type="email"
@@ -26,209 +23,370 @@
 	:class="{ 'input-error': emailError, 'padded-input': true }"
 	@input="validateEmail" />
     </div>
-    <span v-if="emailError" class="error-message">{{ emailError }}</span>
-    
     <button class="send-code-btn" @click="sendCode">Send code</button>
-    <!-- Recovery Code Input, shown after Send Code is clicked -->
-    <label v-if="codeSent" for="recovery-code">Recovery Code</label>
-    <div v-if="codeSent" class="recovery-container">
-    <span class="key-icon gg-key"></span>
+  </div>
+    
+  
+  <div v-if="currentStep === 2" class="recovery-container">
+    <font-awesome-icon class="key-icon" :icon="['fas', 'key']" />
     <input
       v-model="recoveryCode"
       type="text"
       id="recovery-code"
-      placeholder="Enter recovery code..."
+      placeholder="Recovery code"
       :class="{ 'input-error': keyError, 'padded-input': true }"
       @input="clearError('recoveryCode')" />
-    </div>
-    <span v-if="keyError" class="error-message">{{ keyError }}</span>
-    
-    <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
-    <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
+    <button class="validate-code-btn" @click="validateCode">Validate Code</button>
   </div>
+  
+  <div v-if="currentStep === 3">
+    <div class="password-container">
+      <input
+	v-model="password"
+	:type="showPassword ? 'text' : 'password'"
+	id="password"
+	placeholder="Insert a password..."
+	:class="{ 'input-error': passwordError, 'padded-input': true }"
+	@input="clearError('password')" />
+      <button
+	type="button" 
+	class="show-password-btn" 
+	@click="togglePasswordVisibility"
+	aria-label="Show or Hide Password" >
+	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+      </button>
+    </div>
+    <div class="password-container">
+      <input
+	v-model="password2"
+	:type="showConfirmPassword ? 'text': 'password'"
+	id="password2"
+	placeholder="Confirm your password..."
+	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+	@input="clearError('password2')" />
+      <button 
+	type="button" 
+	class="show-password-btn" 
+	@click="toggleConfirmPasswordVisibility"
+	aria-label="Show or Hide Confirm Password">
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
+      </button>
+      <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
+    </div>
+  </div>
+
+  <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
+</div>
+
+<div class="message-container">
+  <MessageAlerts
+    v-for="(msg, index) in messages" 
+    :key="msg.id" 
+    :text="msg.text" 
+    :type="msg.type" 
+    @close="removeMessage(index)" />
+</div>
 </template>
 
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MessageAlerts from '@/components/messages.vue';
 import isEmail from "validator/lib/isEmail";
-import '@/css/key.css';
 
 export default {
   name: 'RecoveryForm',
+  components: {
+    FontAwesomeIcon,
+    MessageAlerts
+  },
   data() {
     return {
+      currentStep: 1,
       username: '',
       email: '',
       recoveryCode: '',
+      password: '',
+      password2: '',
       codeSent: false, // State to track if the code has been sent
-      usernameError: '',
-      emailError: '',
-      keyError: ''
+      usernameError: false,
+      emailError: false,
+      keyError: false,
+      passwordError: false,
+      confirmPasswordError: false,
+      messages: []
     };
   },
   methods: {
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
+    clearError(field) {
+      this[`${field}Error`] = false; // This instead of doing many if's
+    },
     sendCode() {
-      this.usernameError = '';
-      this.emailError = '';     
-      if (!this.username)
-	this.usernameError = 'Username is required';
-      else if (this.username.length < 3) this.usernameError = 'Username requieres at least 3 characters';
-      if (!this.email)
-	this.emailError = 'Email is required';
-      else if (!isEmail(this.email))
-	this.emailError = 'Invalid email format';
-      if (this.username && this.email) {
-        this.codeSent = true;
-        alert('A recovery code has been sent to your email!');
-        // Emit an event to the parent if needed
+      if (this.validateInputs() && this.validateEmail()) {
+	this.currentStep = 2; // Next state of the page, validate key code
         this.$emit('sendCode', { username: this.username, email: this.email });
       }
     },
-    changePassword() {
-      this.keyError = '';
-      if (this.recoveryCode) {
-        alert('Password changed successfully! Redirecting to login...');
-        this.$emit('changePassword');
+    validateCode() {
+      if (!this.recoveryCode) {
+        this.keyError = true;
+        this.addMessage("Recovery code is required.", "error");
       } else {
-	this.keyError = 'Please insert the code sent to your e-mail';
+        this.currentStep = 3; // Next state of the page, create ne password
+        this.addMessage("Code validated successfully.", "success");
       }
     },
-    validateUsername() {
-      this.usernameError = '';
-      if (this.username.length > 0 && this.username.length < 3) {
-        this.usernameError = 'Username must be at least 3 characters long';
+    changePassword() {
+      let isValid = true;
+      if (!this.password) {
+        this.addMessage("Password is required.", "error");
+        this.passwordError = true;
+        isValid = false;
       }
+      if (!this.password2) {
+        this.addMessage("Confirm password is required.", "error");
+        this.confirmPasswordError = true;
+        isValid = false;
+      }
+      if (this.password !== this.password2) {
+        this.addMessage("Passwords do not match.", "error");
+        this.passwordError = true;
+        this.confirmPasswordError = true;
+        isValid = false;
+      }
+      if (isValid) {
+        this.addMessage("Password changed successfully.", "success");
+        this.$emit('changePassword');
+      }
+    },
+    validateInputs() {
+      let isValid = true;
+
+      if (!this.username) {
+        this.addMessage("Username is required.", "error");
+        this.usernameError = true;
+        isValid = false;
+      } else if (this.username.length < 3 || this.username.length > 16) {
+        this.addMessage("Username must be 3-16 characters long.", "error");
+        this.usernameError = true;
+        isValid = false;
+      }
+      if (!this.email) {
+        this.addMessage("Email is required.", "error");
+        this.emailError = true;
+        isValid = false;
+      }
+      
+      return isValid;
     },
     validateEmail() {
-      this.emailError = '';
-      if (this.email && !isEmail(this.email)) {
-        this.emailError = 'Invalid email format';
+      if (this.email) {
+	if (isEmail(this.email)) {
+          this.emailError = false;
+          return true;
+	} else {
+          this.addMessage("Invalid email format.", "error");
+          this.emailError = true;
+          return false;
+	}
       }
+      
+      return true;
     },
-    clearError(field) {
-      if (field === 'username')
-	this.usernameError = '';
-      if (field === 'email')
-	this.emailError = '';
-      if (field === 'recoveryCode')
-	this.keyError = '';
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
     },
-  }
+    toggleConfirmPasswordVisibility() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
+}
 };
 </script>
 
 <style scoped>
-/* Recovery form styling */
 .recovery-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-label {
-  align-self: flex-start;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #333;
-  font-family: "Wix Madefor Display", sans-serif;
+.form-title {
+    margin-top: 70px;
+    color: white;
+    font-size: 32px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 50%;
+    padding: 14px;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid white;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .input-error {
     border-color: #E42121;
 }
 
-.error-message {
-    color: #E42121;
-    font-size: 12px;
-    align-self: flex-start;
-    margin-top: -10px;
-    margin-bottom: 10px;
+.username-container,
+.email-container,
+.recovery-container,
+.password-container {
+    position: relative;
+    width: 130%;
+    color: white;
+    margin-right: 15px;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.recovery-container {
+   width: 110%;
+}
+
+.username-container input,
+.email-container input,
+.recovery-container input,
+.password-container input{
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.username-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.email-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.recovery-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.password-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.user-icon, .email-icon, .key-icon {
+    position: relative;
+    right: -25px;
+    top: 35%;
+    color: white;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.show-password-btn {
+    position: absolute;
+    left: 103px;
+    top: 22%;
+    background: none;
+    border: none;
+    color:white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.show-password-btn {
+    position: absolute;
+    left: 103px;
+    top: 22%;
+    background: none;
+    border: none;
+    color:white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.padded-input {
+    padding-left: 40px;
 }
 
 button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  width: 100%;
+    width: 65%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 15px;
+    cursor: pointer;
 }
 
 .send-code-btn {
-  background-color: #4CAF50;
-  color: white;
-  margin-bottom: 15px;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: white;
+    border: 2px solid white;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: #333;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
+
 .change-password-btn {
-  background-color: #BF9F00;
-  color: white;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .login-btn {
-  background-color: #333;
-  color: white;
-  margin-top: 15px;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #333;
+    border: 2px solid #333;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.validate-code-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 button:hover {
   opacity: 0.9;
-}
-
-.username-container, .email-container, .recovery-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 108%;
-}
-
-.user-icon {
-    position: absolute;
-    left: 15px;
-    color: #555;
-    font-size: 18px;
-    margin-top: -5%;
-    pointer-events: none;
-}
-
-.email-icon {
-    position: absolute;
-    left: 13px;
-    color: #555;
-    font-size: 18px;
-    margin-top: -4%;
-    pointer-events: none;
-}
-
-.key-icon {
-  position: absolute;
-  left: 25px;
-  color: #555;
-  font-size: 18px;
-  margin-top: -4%;
-  pointer-events: none;
-}
-
-.padded-input {
-  padding-left: 40px;
 }
 </style>

@@ -81,7 +81,10 @@ import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "SignUpForm",
-  components: { FontAwesomeIcon, MessageAlerts },
+  components: {
+    FontAwesomeIcon,
+    MessageAlerts
+  },
   data() {
     return {
       username: "",
@@ -121,13 +124,18 @@ export default {
       }
     },
     validateEmail() {
-      let emailValid = true;
-      if (this.email && !isEmail(this.email)) {
-	this.addMessage("Invalid email format.", "error");
-        this.emailError = true;
-        emailValid = false;
+      if (this.email) {
+	if (isEmail(this.email)) {
+          this.emailError = false;
+          return true;
+	} else {
+          this.addMessage("Invalid email format.", "error");
+          this.emailError = true;
+          return false;
+	}
       }
-      return emailValid;
+      
+      return true;
     },
     validateInputs() {
       let isValid = true;
