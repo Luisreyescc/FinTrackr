@@ -49,8 +49,8 @@
 </template>
 
 <script>
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  import MessageAlerts from '@/components/messages.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MessageAlerts from '@/components/messages.vue';
 import "@/css/eye.css";
 import "@/css/eye-alt.css";
 

@@ -56,7 +56,7 @@
 
     <label for="email">E-mail</label>
     <div class="email-container">
-      <span class="email-icon gg-mail"></span>
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
       <input
         v-model="formData.email"
         type="email"
@@ -191,10 +191,14 @@
 </template>
 
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "EditProfileForm",
+  components: {
+    FontAwesomeIcon,
+  },
   props: {
     initialData: {
       type: Object,
