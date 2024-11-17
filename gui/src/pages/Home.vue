@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import HomeForm from '@/formats/home-form.vue';
+import HomeForm from '@/formats/home-format.vue';
 import SideBar from '@/components/side-bar.vue';
 import apiClient from "@/apiClient.js";
   

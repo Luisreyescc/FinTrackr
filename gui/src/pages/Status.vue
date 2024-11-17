@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import StatusForm from '@/formats/status-form.vue';
+import StatusForm from '@/formats/status-format.vue';
 import SideBar from '@/components/side-bar.vue';
 import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
