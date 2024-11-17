@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import SignUpForm from '@/formats/signup-form.vue';
+import SignUpForm from '@/formats/signup-format.vue';
 import MessageAlerts from '@/components/messages.vue';
 import apiClient from "@/apiClient.js";
 
@@ -95,7 +95,8 @@ export default {
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    background: #3B3B5A;
+    /*background: #3B3B5A;*/
+    background: rgba(59, 59, 90, 0.1);
+    backdrop-filter: blur(15px);
 }
-
 </style>

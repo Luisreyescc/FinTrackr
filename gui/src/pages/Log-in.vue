@@ -1,19 +1,18 @@
 <template>
 <div class="login-page">
+  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
   
-    <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
-
-    <div class="message-container">
-      <MessageAlerts
-        v-for="(msg, index) in messages" 
-        :key="msg.id" 
-        :text="msg.text" 
-        :type="msg.type" 
-        @close="removeMessage(index)" />
-    </div>
-    
-    <LoginForm @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
+  <div class="message-container">
+    <MessageAlerts
+      v-for="(msg, index) in messages" 
+      :key="msg.id" 
+      :text="msg.text" 
+      :type="msg.type" 
+      @close="removeMessage(index)" />
   </div>
+  
+  <LoginForm @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
+</div>
 </template>
 
 <script>
