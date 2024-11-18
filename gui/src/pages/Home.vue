@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import HomeForm from '@/formats/home-form.vue';
+import HomeForm from '@/formats/home-format.vue';
 import SideBar from '@/components/side-bar.vue';
 import apiClient from "@/apiClient.js";
   
@@ -99,11 +99,5 @@ export default {
 .content {
     flex: 1;
     padding: 20px;
-}
-
-.content-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
 }
 </style>

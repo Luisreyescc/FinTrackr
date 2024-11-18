@@ -1,46 +1,47 @@
 <template>
 <div>
   <div v-if="isVisible" class="overlay" @click="$emit('closeSidebar')"></div>
-<div class="side-bar" :class="{ 'side-bar--visible': isVisible }">
-  
-  <div class="sidebar-logo">
-    <img src="@/assets/title.svg" alt="Logo" class="logo">
+  <div class="side-bar" :class="{ 'side-bar--visible': isVisible }">
+    <button @click="$emit('closeSidebar')" class="close-button">
+      <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
+    </button>
+    
+    <div class="sidebar-logo">
+      <font-awesome-icon :icon="['fab', 'docker']" class="logo-icon"/>
+      <img src="@/assets/title.svg" alt="Logo" class="logo">
+    </div>  
+    
+    <div class="divider_top"></div>
+    
+    <div class="menu-options">
+      <button @click="selectOption('Incomes')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'chart-line']" class="icon"/> Incomes</button>
+      <button @click="selectOption('Expenses')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon"/>Expenses</button>
+      <button @click="selectOption('Debts')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'credit-card']" class="icon"/> Debts</button>
+    </div>
+    
+    <div class="divider_bottom"></div>
+    
+    <div class="bottom-options">
+      <button @click="editProfile" class="bottom-option">
+	<font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/> Edit Profile</button>
+      <button @click="logout" class="bottom-option">
+        <font-awesome-icon :icon="['fas', 'right-from-bracket']" class="icon"/> Log-out</button>
+    </div>
   </div>
-  
-  <button @click="$emit('closeSidebar')" class="close-button">
-    <span class="gg-close"></span>
-  </button>
-  
-  <!-- Sidebar menu options -->
-  <div class="menu-options">
-    <button @click="selectOption('Incomes')" class="menu-option">
-      <span class="gg-trending">
-      </span> Incomes</button>
-    <button @click="selectOption('Expenses')" class="menu-option">
-      <span class="gg-trending-down">
-      </span>Expenses</button>
-    <button @click="selectOption('Debts')" class="menu-option">
-      <img src="@/assets/card.svg" alt="Debts Icon" class="icon"> Debts</button>
-  </div>
-  
-  <div class="bottom-options">
-    <button @click="editProfile" class="edit-profile-btn">
-      <span class="gg-user"></span> Edit Profile</button>
-    <button @click="logout" class="logout-btn">
-      <span class="gg-log-out"></span> Log-out</button>
-  </div>
-</div>
 </div>
 </template>
 
 <script>
-import '@/css/log-out.css';
-import '@/css/close.css';
-import '@/css/down.css';
-import '@/css/up.css';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default {
   name: "SideBar",
+  components: {
+    FontAwesomeIcon,
+  },
   props: {
     isVisible: {
       type: Boolean,
@@ -70,7 +71,7 @@ export default {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(59, 59, 90, 0.5);
     backdrop-filter: blur(3px);
     z-index: 1000;
 }
@@ -78,7 +79,7 @@ export default {
 .side-bar {
     width: 350px;
     height: 100%;
-    background-color: #212352;
+    background-color: #25253C;
     color: white;
     position: fixed;
     top: 0;
@@ -93,140 +94,89 @@ export default {
     transform: translateX(0);
 }
 
-.sidebar-logo {
-    text-align: left;
-    padding-left: 20px;
-    padding-bottom: 20px;
-}
-
-.sidebar-logo .logo {
-    width: 150px;
-    height: auto;
-}
-
-.close-button .gg-close {
+.close-button  {
     background: none;
     border: none;
     color: white;
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 10px;
+    right: 13px;
+    font-size: 24px;
     cursor: pointer;
 }
 
-.menu-option .gg-trending {
-    color: white;
-    margin-top: 8px;
-    margin-right: 22px;
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    padding-top: 30px;
+    padding-left: 20px;
+    padding-bottom: 0;
 }
 
-.menu-option .gg-trending-down {
-    color: white;
-    margin-bottom: 8px;
-    margin-right: 22px;
+.logo-icon {
+    margin-right: 10px;
+    font-size: 28px;
 }
 
-.menu-option img.icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
+.logo {
+    width: 150px;
+    height: auto;
+}
+
+.divider_top {
+    height: 2px;
+    background: white;
+    margin: 40px 20px;
+    opacity: 0.8;
+}
+
+.menu-options, .bottom-options {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.menu-option, .bottom-option {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding: 15px 35px;
+    margin: 10px;
+    width: 85%;
+    border-radius: 8px;
+    line-height: 40px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.icon {
+    margin-right: 30px;
+    font-size: 24px;
+}
+
+.menu-option:hover, .bottom-option:hover {
+    background-color: #3B3B5A;
+    transform: translateX(10px);
+}
+
+.divider_bottom {
+    height: 2px;
+    background: white;
+    margin: 250px 20px;
+    opacity: 0.8;
 }
 
 .bottom-options {
-    margin-top: 430px;
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-top: -220px;
 }
 
-.menu option {
-    margin-left: 16px;
-}
-
-.menu-option {
-    margin: 10px 8px;
-    background-color: #212352;
-    color: #ffffff;
-    padding: 15px 20px;
-    border: none;
-    border-radius: 8px;
-    width: 95%;
-    text-align: left;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    padding-left: 40px;
-    align-items: center;
-    line-height: 40px;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid black;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.4s;
-}
-
-.menu-option:hover {
-    padding-left: 50px;
-    background-color: #2F316B;
-    transform: scale(1.05);
-}
-
-.edit-profile-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 13px 25px;
-    border: 2px solid #ffffff;
-    border-radius: 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #ffffff;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 10px;
-    width: 60%;
-    text-align: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.edit-profile-btn:hover {
-    background-color: #333;
-    color: #ffffff;
-}
-
-.edit-profile-btn .gg-user {
-    margin-right: 13px;
-}
-
-.logout-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 13px 25px;
-    border: 2px solid #333;
-    border-radius: 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #333;
-    color: #ffffff;
-    font-weight: bold;
-    margin-bottom: 10px;
-    width: 60%;
-    text-align: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.logout-btn:hover {
-    background-color: #ffffff;
-    color: #333;
-}
-
-.logout-btn .gg-log-out {
-    margin-right: 20px;
-}
-
-.menu option {
-    margin-right: 16px;
+.bottom-option {
+    font-size: 22px;
 }
 </style>

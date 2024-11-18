@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import StatusForm from '@/formats/status-form.vue';
+import StatusForm from '@/formats/status-format.vue';
 import SideBar from '@/components/side-bar.vue';
 import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
@@ -125,10 +125,10 @@ export default {
 
 <style scoped>
 .page-container {
-  display: flex;
-  position: relative;
-  padding-top: 71px;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    position: relative;
+    padding-top: 70px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .content {

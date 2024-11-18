@@ -51,9 +51,9 @@
 
 <script>
 import axios from 'axios';
-import IncomesForm from '@/components/incomes-forms.vue';
-import IncomeButton from '@/components/incomes-header.vue';
-import IncomeRow from '@/components/income-row.vue';
+import IncomesForm from '@/components/incomes/incomes-forms.vue';
+import IncomeButton from '@/components/incomes/incomes-header.vue';
+import IncomeRow from '@/components/incomes/income-row.vue';
 
 import ExpensesForm from '@/components/expenses/expenses-forms.vue';
 import ExpenseButton from '@/components/expenses/expenses-header.vue';
@@ -241,13 +241,13 @@ export default {
 }
 
 .activity-content {
-  display: flex;
-  flex-direction: column;
-  max-height: 100vh;
-  overflow: hidden;
-  padding: 20px;
-  border-top: 1px solid #eee;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    position: relative;
 }
 
 .activity-title {
@@ -268,28 +268,31 @@ export default {
 }
 
 .forms-section {
-  position: fixed;
-  right: 0;
-  top: 100px;
-  bottom: 200px;
-  width: 450px;
-  max-width: 100%;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 9px;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+    position: fixed;
+    right: 0;
+    top: 100px;
+    bottom: 40px;
+    width: 450px;
+    max-width: 100%;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 9px;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
 }
 
 .forms-section-enter-active, .forms-section-leave-active {
-  transition: transform 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .forms-section-enter {
-  transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .forms-section-leave-to {
-  transform: translateX(100%);
+    transform: translateX(100%);
 }
 </style>
