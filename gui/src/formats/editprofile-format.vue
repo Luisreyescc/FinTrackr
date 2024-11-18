@@ -407,6 +407,7 @@ input {
     display: flex;
     align-items: center;
     position: relative;
+    justify-content: space-between;
     width: 100%;
     color: white;
     font-size: 18px;
@@ -525,32 +526,28 @@ input {
 
 .save-btn,
 .cancel-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
+    padding: 14px 24px;
+    border-radius: 18px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
     font-family: "Wix Madefor Display", sans-serif;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .save-btn {
-    background-color: #21255b;
-    color: white;
+    background-color: white;
+    color: #333;
+    border: 2px solid white;
 }
 
 .cancel-btn {
-    background-color: #e53935;
+    background-color: #333;
     color: white;
-}
-
-.save-btn:hover {
-    background-color: #343870;
-}
-
-.cancel-btn:hover {
-    background-color: #d32f2f;
+    border: 2px solid #333;
 }
 
 .show-password-btn {
@@ -566,19 +563,25 @@ input {
 }
 
 .change-password-btn {
-    display: flex;
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: 2px solid #bf9f00;
-    margin-bottom: 15px;
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 18px;  
     cursor: pointer;
-    background-color: #bf9f00;
     color: white;
+    font-size: 16px;
     font-family: "Wix Madefor Display", sans-serif;
-    display: colum;
-    transition:
-	background-color 0.3s ease,
-	border-radius 0.3s ease;
+}
+
+.save-btn:hover,
+.cancel-btn:hover,
+.change-password-btn:hover {
+    opacity: 0.9;
 }
 
 .change-password-btn.close-btn {
