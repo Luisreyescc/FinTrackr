@@ -85,6 +85,7 @@ class IncomeListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class IncomeDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -117,7 +118,8 @@ class IncomeDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         income.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class IncomeSourceSummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -141,7 +143,8 @@ class IncomeSourceSummaryView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
-    
+
+
 class ExpenseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -149,6 +152,7 @@ class ExpenseListCreateView(APIView):
         expenses = Expenses.objects.filter(user=request.user)
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
+
 
     def post(self, request):
         serializer = ExpenseSerializer(data=request.data)
@@ -162,8 +166,6 @@ class CategoryListCreateView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]  # Make this view publicly accessible
 
-
- 
 
 class ExpenseCategorySummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
