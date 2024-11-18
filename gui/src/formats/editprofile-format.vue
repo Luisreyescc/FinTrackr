@@ -425,9 +425,14 @@ input {
 .last-name-container input,
 .curp-container input,
 .rfc-container input,
-.phone-container input,
-.birth-container input {
+.phone-container input {
     padding-left: 40px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.birth-container input {
     color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
@@ -506,8 +511,7 @@ input {
 .email-icon,
 .curp-icon,
 .rfc-icon,
-.phone-icon,
-.birth-icon {
+.phone-icon {
     margin-right: -25px;
     font-size: 18px;
     color: white;
@@ -517,10 +521,21 @@ input {
     padding-left: 40px;
 }
 
+.birth-container input {
+    padding-left: 2px;
+}
+
 .button-group {
     display: flex;
     width: 100%;
     justify-content: space-between;
+}
+
+.birth-icon {
+    margin-right: -25px;
+    transform: translateX(850%);
+    font-size: 18px;
+    color: white;
 }
 
 .save-btn,
@@ -592,5 +607,10 @@ input {
 .password-input-wrapper {
     position: relative;
     width: 70%;
+}
+
+.birth-container input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
 }
 </style>
