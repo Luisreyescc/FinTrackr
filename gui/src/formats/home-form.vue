@@ -134,14 +134,13 @@ export default {
     async handleExpenseSubmission(expenseData) {
       try {
         const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("user_id") ?? 1; // Retrieve user_id from localStorage
-
-        // Update expenseData to include user_id and change 'categories' to 'category'
+        const userId = localStorage.getItem("user_id") ?? 1;
         const modifiedExpenseData = {
           ...expenseData,
           user: userId,
-          category: expenseData.categories, // Change 'categories' to 'category'
+          category: expenseData.categories,
         };
+        delete modifiedExpenseData.categories;
 
         const response = await axios.post(
           'http://localhost:8000/api/expenses/',
@@ -152,9 +151,9 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
       } catch (error) {
-        console.error('Error submitting expense:', error);
+        console.error('Error submitting expense:', error.response?.data || error.message);
       }
-    },
+    }
   },
   mounted() {
     if (this.selectedContent === "Incomes") {
@@ -163,8 +162,18 @@ export default {
       this.fetchExpenses();
     }
   },
+  watch: {
+    selectedContent(newValue) {
+      if (newValue === "Incomes") {
+        this.fetchIncomes();
+      } else if (newValue === "Expenses") {
+        this.fetchExpenses();
+      }
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 .home-form {
