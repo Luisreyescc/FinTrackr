@@ -417,7 +417,7 @@ input {
 
 .username-container input,
 .email-container input {
-    color: white;
+    color: #25253C;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -572,7 +572,7 @@ input {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color:white;
+    color: white;
     cursor: pointer;
     font-size: 20px;
 }
@@ -603,7 +603,8 @@ input {
     background-color: #e53935;
     border-radius: 6px;
     color: white;
-    padding: 10px 15px;
+    padding: 3px 8px;
+    font-size: 22px;
     width: auto;
 }
 
