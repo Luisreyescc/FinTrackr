@@ -3,7 +3,6 @@
     <div class="header-content">
       <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo" />
 
-      <!-- Display menu if user is logged in -->
       <div class="nav-profile-wrapper">
         <nav v-if="isLoggedIn" class="nav-menu">
           <router-link to="/home" class="nav-item">Home<span></span></router-link>
@@ -67,14 +66,15 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #21255b;
-  padding: 13px;
-  color: #ffffff;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+    background-color: #3B3B5A;
+    border-bottom: 1px solid white;
+    padding: 13px;
+    color: #ffffff;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 .header-content {
@@ -113,7 +113,7 @@ export default {
 }
 
 .nav-item:hover {
-  color: #21255B;
+  color: #25253C;
 }
 
 .nav-item::before,

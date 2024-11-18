@@ -1,0 +1,596 @@
+<template>
+  <div class="edit-form scrollbar">
+    <div class="header">
+      <h2 class="form-title">Edit Profile</h2>
+      <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
+    </div>
+
+    <div class="username-container">
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+      <input
+        v-model="formData.username"
+        type="text"
+        id="username"
+        placeholder="Username"
+        :class="{ 'input-error': usernameError, 'padded-input': true }"
+        @input="clearError('username')" />
+    </div>
+
+    <div class="row">
+      <div class="column">
+	<div class="name-container">
+	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']" />
+        <input v-model="formData.name" type="text" id="name" placeholder="Your name" />
+	</div>
+      </div>
+      <div class="column">
+	<div class="last-name-container">
+	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']" />
+        <input v-model="formData.last_name" type="text" id="last_name" placeholder="Your last name" />
+	</div>
+      </div>
+    </div>
+
+    <div class="email-container">
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
+      <input
+        v-model="formData.email"
+        type="email"
+        id="email"
+        placeholder="Your email"
+        :class="{ 'input-error': emailError, 'padded-input': true }"
+        @input="validateEmail" />
+    </div>
+
+    <div class="curp-container">
+      <font-awesome-icon class="curp-icon" :icon="['fas', 'passport']" />
+      <input
+	v-model="formData.curp"
+	type="text"
+	id="curp"
+	placeholder="Your Curp"
+	@input="handleCurpInput"/>
+    </div>
+    
+    <div class="rfc-container">
+      <font-awesome-icon class="rfc-icon" :icon="['fas', 'passport']" />
+      <input
+	v-model="formData.rfc"
+	type="text"
+	id="rfc"
+	placeholder="Your Rfc"
+	@input="handleRfcInput">
+    </div>
+    
+    <div class="row">
+      <div class="column">
+        <div class="phone-container">
+          <font-awesome-icon class="phone-icon" :icon="['fas', 'plus']" />
+          <input
+            v-model="formData.phone"
+            type="tel"
+            id="phone"
+            placeholder="Your phone number"
+            :class="{ 'input-error': phoneError, 'padded-input': true }"
+            @input="validatePhone" />
+        </div>
+      </div>
+      <div class="column">
+	<div class="birth-container">
+	<font-awesome-icon class="birth-icon" :icon="['fas', 'cake-candles']" />
+          <input v-model="formData.birth_date" type="date" id="birth_date" />
+	</div>
+      </div>
+    </div>
+    
+    <div class="password-container">
+      <input
+        v-model="formData.password"
+        :type="showPassword ? 'text' : 'password'"
+        id="password"
+        placeholder="Your current password"
+        class="padded-input" />
+      <button
+        type="button"
+        class="show-password-btn"
+        @click="togglePasswordVisibility" >
+        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+      </button>
+      <button
+        type="button"
+        :class="['change-password-btn', { 'close-btn': showPasswordFields }]"
+        @click="togglePasswordFields" >
+        <span v-if="showPasswordFields"><font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/></span>
+        <span v-else>Change Password</span>
+      </button>
+    </div>
+    
+    <div v-if="showPasswordFields">
+      <div class="password-container">
+        <input
+          v-model="formData.newPassword"
+          :type="showNewPassword ? 'text' : 'password'"
+          id="new_password"
+          placeholder="New password"
+          :class="{ 'input-error': newPasswordError }"
+	@input="clearError('newPassword')" />
+        <button
+          type="button"
+          class="show-password-btn"
+          @click="toggleNewPasswordVisibility" >
+          <span :class="{ 'gg-eye': true, 'gg-eye-alt': showNewPassword }" ></span>
+        </button>
+      </div>
+
+      <div class="password-container">
+        <input
+          v-model="formData.confirmPassword"
+          :type="showConfirmPassword ? 'text' : 'password'"
+          id="confirm_password"
+          placeholder="Confirm new password"
+          :class="{ 'input-error': confirmPasswordError }"
+	@input="clearError('confirmPassword')" />
+        <button
+          type="button"
+          class="show-password-btn"
+          @click="toggleConfirmPasswordVisibility" >
+          <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }" ></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="cancel-btn" @click="$emit('goToHome')">Cancel</button>
+      <button class="save-btn" @click="saveProfile">Save Changes</button>
+    </div>
+  </div>
+  
+  <div class="message-container">
+  <MessageAlerts
+    v-for="(msg, index) in messages" 
+    :key="msg.id" 
+    :text="msg.text" 
+    :type="msg.type" 
+    @close="removeMessage(index)" />
+</div>
+</template>
+
+<script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MessageAlerts from '@/components/messages.vue';
+import isEmail from "validator/lib/isEmail";
+
+export default {
+  name: "EditProfileForm",
+  components: {
+    FontAwesomeIcon,
+    MessageAlerts
+  },
+  props: {
+    initialData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      formData: {
+        username: this.initialData.user_name || "",
+        name: this.initialData.name || "",
+        last_name: this.initialData.last_name || "",
+        email: this.initialData.email || "",
+        curp: this.initialData.curp || "",
+        rfc: this.initialData.rfc || "",
+        phone: this.initialData.phone || "",
+        birth_date: this.initialData.birth_date || "",
+        password: "",
+        new_password: "",
+        confirm_password: "",
+      },
+      showCurrentPassword: false,
+      showNewPassword: false,
+      showConfirmPassword: false,
+      showPasswordFields: false,
+      usernameError: false,
+      emailError: false,
+      phoneError: false,
+      newPasswordError: false,
+      confirmPasswordError: false,
+      messages: []
+    };
+  },
+  watch: {
+    initialData: {
+      handler(newVal) {
+        this.formData = {
+          ...this.formData,
+          user_name: newVal.user_name || "",
+          name: newVal.name || "",
+          last_name: newVal.last_name || "",
+          email: newVal.email || "",
+          curp: newVal.curp || "",
+          rfc: newVal.rfc || "",
+          phone: newVal.phone || "",
+          birth_date: newVal.birth_date || "",
+          password: "",
+          new_password: "",
+          confirm_password: "",
+        };
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+  methods: {
+    validateUsername() {
+      if (!this.formData.username) {
+        this.addMessage('Username is required.', 'error');
+        this.usernameError = true;
+      } else if (this.formData.username.length < 3 || this.formData.username.length > 16) {
+        this.addMessage('Username must be 3-16 characters long.', 'error');
+        this.usernameError = true;
+      } else
+        this.usernameError = false;
+    },
+    validateEmail() {
+      if (!this.formData.email) {
+        this.addMessage('Email is required.', 'error');
+        this.emailError = true;
+      } else if (!isEmail(this.formData.email)) {
+        this.addMessage('Invalid email format.', 'error');
+        this.emailError = true;
+      } else
+        this.emailError = false;
+    },
+    validatePhone() {
+      if (this.formData.phone && !/^\d+$/.test(this.formData.phone)) {
+        this.addMessage('Phone number must be numeric.', 'error');
+        this.phoneError = true;
+      } else
+        this.phoneError = false;
+    },
+    validatePasswords() {
+      if (this.formData.newPassword || this.formData.confirmPassword) {
+        if (this.formData.newPassword !== this.formData.confirmPassword) {
+          this.addMessage("Passwords don't match.", 'error');
+          this.newPasswordError = true;
+          this.confirmPasswordError = true;
+          return false;
+        }
+      }
+      return true;
+    },
+    clearError(field) {
+      this[`${field}Error`] = false;
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
+    toggleNewPasswordVisibility() {
+      this.showNewPassword = !this.showNewPassword;
+    },
+    toggleConfirmPasswordVisibility() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    },
+    togglePasswordFields() {
+      this.showPasswordFields = !this.showPasswordFields;
+      if (!this.showPasswordFields) {
+        this.formData.newPassword = "";
+        this.formData.confirmPassword = "";
+      }
+    },
+    saveProfile() {
+      this.validateUsername();
+      this.validateEmail();
+      this.validatePhone();
+      if (!this.validatePasswords()) return;
+      
+      const sanitizedData = Object.fromEntries(
+        Object.entries(this.formData).map(([key, value]) => [
+          key,
+          value || null,
+        ]),
+      );
+      this.$emit("saveProfile", sanitizedData);
+    },
+    handleCurpInput(event) {
+      const curp = event.target.value.toUpperCase();
+      if (curp.length > 18) {
+	this.addMessage("CURP can't have more than 18 characters.", "error");
+      }
+      this.formData.curp = curp;
+    },
+    handleRfcInput(event) {
+      const rfc = event.target.value.toUpperCase();
+      if (rfc.length > 13) {
+	this.addMessage("RFC can't have more than 13 characters.", "error");
+      }
+      this.formData.rfc = rfc;
+    },
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
+    goToHome() {
+      this.$emit("goToHome");
+    },
+  },
+};
+</script>
+
+<style scoped>
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin-top: 50px;
+    height: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.form-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.profile-icon {
+    width: 90px;
+    height: 90px;
+    margin-left: 200px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(59, 59, 90, 0.1);
+    backdrop-filter: blur(15px);
+}
+
+input {
+    width: 50%;
+    padding: 14px;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid white;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.input-error {
+    border-color: #D55C5C;
+}
+
+.username-container,
+.email-container,
+.curp-container,
+.rfc-container {
+    align-items: center;
+    position: relative;
+    margin-right: 20px;
+    width: 150%;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.name-container,
+.last-name-container,
+.phone-container,
+.birth-container {
+    align-items: center;
+    position: relative;
+    width: 130%;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.password-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.username-container input,
+.email-container input {
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.name-container input,
+.last-name-container input,
+.curp-container input,
+.rfc-container input,
+.phone-container input,
+.birth-container input {
+    padding-left: 40px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.password-container input {
+    flex: 1;
+    padding-left: 40px;
+    padding-right: 40px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.username-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.name-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.last-name-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.curp-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.rfc-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.email-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.phone-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.birth-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.password-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-left: -80px;
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-icon,
+.name-icon,
+.email-icon,
+.curp-icon,
+.rfc-icon,
+.phone-icon,
+.birth-icon {
+    margin-right: -25px;
+    font-size: 18px;
+    color: white;
+}
+
+.padded-input {
+    padding-left: 40px;
+}
+
+.button-group {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.save-btn,
+.cancel-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: "Wix Madefor Display", sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn {
+    background-color: #21255b;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #e53935;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #343870;
+}
+
+.cancel-btn:hover {
+    background-color: #d32f2f;
+}
+
+.show-password-btn {
+    position: absolute;
+    left: 2px;
+    top: 35%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color:white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.change-password-btn {
+    display: flex;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 2px solid #bf9f00;
+    margin-bottom: 15px;
+    cursor: pointer;
+    background-color: #bf9f00;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    display: colum;
+    transition:
+	background-color 0.3s ease,
+	border-radius 0.3s ease;
+}
+
+.change-password-btn.close-btn {
+    background-color: #e53935;
+    border-radius: 6px;
+    color: white;
+    padding: 10px 15px;
+    width: auto;
+}
+
+.password-input-wrapper {
+    position: relative;
+    width: 70%;
+}
+</style>

@@ -58,12 +58,9 @@ export default {
           if (response.status === 200) {
             const token = response.data.access;
             localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
-          } else {
-            this.addMessage("Invalid credentials", "error");
-          }
+          } else { this.addMessage("Invalid username or password. Please try again.", "error"); }
         } catch (error) {
           console.error("Login failed:", error);
-          this.addMessage("Invalid username or password. Please try again.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");
