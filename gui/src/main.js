@@ -8,19 +8,20 @@ import {
   faUser,
   faEnvelope,
   faKey,
+  faBars,
+  faXmark,
   faChartLine,
   faCreditCard,
-  faXmark,
   faPenToSquare, 
   faRightFromBracket,
   faIdCard,
   faPassport,
   faCakeCandles,
   faPlus,
-  faCircleDollarToSlot, 
-  faMoneyBillTransfer, 
   faAngleRight, 
-  faAngleDown 
+  faAngleDown ,
+  faCircleDollarToSlot, 
+  faMoneyBillTransfer 
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -29,20 +30,21 @@ library.add(
   faUser,
   faEnvelope,
   faKey,
-  faChartLine,
-  faCreditCard,
+  faBars,
   faDocker,
   faXmark,
+  faChartLine,
+  faCreditCard,
   faPenToSquare,
   faRightFromBracket,
   faIdCard,
   faPassport,
   faCakeCandles,
   faPlus,
-  faCircleDollarToSlot,
-  faMoneyBillTransfer,
   faAngleRight,
-  faAngleDown
+  faAngleDown,
+  faCircleDollarToSlot,
+  faMoneyBillTransfer
 );
 
 const app = createApp(App)

@@ -19,12 +19,8 @@
       <div class="categories-select" @click="toggleDropdown">
         Categories
         <span class="dropdown-icon">
-	<svg v-if="!dropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-	<path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
-        </svg>
-	<svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                <path d="M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z" />
-              </svg>
+	<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+	<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
 	</span>
       </div>
       
@@ -38,7 +34,7 @@
         <span v-for="(category, index) in expense.categories" :key="index" class="tag">
           {{ category }}
 	<button @click="removeCategory(index)" class="close-button">
-            <span class="gg-close"></span>
+            <font-awesome-icon :icon="['fas', 'xmark']"/>
           </button>
         </span>
       </div>
@@ -297,12 +293,11 @@ input {
     background-color: #f8f9fa;
 }
 
-.dropdown-icon svg {
-    top: 5px;
+.dropdown-icon {
     width: 16px;
     height: 16px;
     margin-left: 8px;
-    transform: translateY(3px);
+    transform: translateY(-1px);
     color: #21255b;
 }
 
@@ -339,20 +334,20 @@ input {
 }
 
 .selected-categories {
-    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
+    margin-top: 10px;
     gap: 5px;
 }
 
 .tag {
-    background-color: #F3F3F9;
-    border: 1px solid #6F6F7A;
+    display: flex;
+    align-items: center;
     border-radius: 16px;
     padding: 5px 10px;
-    display: flex;
     font-weight: bold;
-    align-items: center;
+    background-color: #F3F3F9;
+    border: 1px solid #6F6F7A;
 }
 
 .close-button {
