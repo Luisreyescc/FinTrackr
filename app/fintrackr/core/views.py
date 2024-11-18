@@ -72,14 +72,13 @@ class UserProfileView(generics.RetrieveAPIView):
 
 
 class IncomeListCreateView(APIView):
-    permission_classes = [permissions.AllowAny]  # Permitir acceso público
+    permission_classes = [permissions.AllowAny]  # Allows public access
 
     def get(self, request):
-        # Si el usuario está autenticado, filtra sus ingresos
+        # If the user is authenticated, filter their income
         if request.user.is_authenticated:
             incomes = Incomes.objects.filter(user=request.user)
         else:
-            # Devolver todos los ingresos si el usuario no está autenticado
             incomes = Incomes.objects.all()
 
         serializer = IncomeSerializer(incomes, many=True)
@@ -149,7 +148,8 @@ class IncomeSourceSummaryView(APIView):
 
         # Format the response data
         response_data = [
-            {"source": income["source"], "total_amount": income["total_amount"]}
+            {"source": income["source"],
+                "total_amount": income["total_amount"]}
             for income in source_summary
         ]
 
@@ -157,14 +157,24 @@ class IncomeSourceSummaryView(APIView):
 
 
 class ExpenseListCreateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Allows public access
 
     def get(self, request):
-        expenses = Expenses.objects.filter(user=request.user)
+        if request.user.is_authenticated:
+            expenses = Expenses.objects.filter(user=request.user)
+        else:
+            expenses = Expenses.objects.all()
+
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -203,4 +213,3 @@ class ExpenseCategorySummaryView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
-
