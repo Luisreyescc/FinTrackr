@@ -2,7 +2,7 @@
   <div class="edit-form scrollbar">
     <div class="header">
       <h2 class="form-title">Edit Profile</h2>
-      <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
+      <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
     </div>
 
     <div class="username-container">
@@ -349,7 +349,7 @@ export default {
 .form-title {
     font-size: 32px;
     font-weight: bold;
-    color: white;
+    color: #333;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -358,8 +358,8 @@ export default {
     height: 90px;
     margin-left: 200px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(59, 59, 90, 0.1);
+    border: 2px solid #333;
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
 }
 
@@ -370,7 +370,7 @@ input {
     background-color: transparent;
     border: none;
     outline: none;
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid #333;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -386,7 +386,7 @@ input {
     position: relative;
     margin-right: 20px;
     width: 150%;
-    color: white;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -398,7 +398,7 @@ input {
     align-items: center;
     position: relative;
     width: 130%;
-    color: white;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -409,7 +409,7 @@ input {
     position: relative;
     justify-content: space-between;
     width: 100%;
-    color: white;
+    color: #333;
     font-size: 18px;
     margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
@@ -417,7 +417,7 @@ input {
 
 .username-container input,
 .email-container input {
-    color: #25253C;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -428,13 +428,13 @@ input {
 .rfc-container input,
 .phone-container input {
     padding-left: 40px;
-    color: white;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .birth-container input {
-    color: white;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -443,53 +443,53 @@ input {
     flex: 1;
     padding-left: 40px;
     padding-right: 40px;
-    color: white;
+    color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .username-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .name-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .last-name-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .curp-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .rfc-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .email-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .phone-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .birth-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
 .password-container input::placeholder {
-    color: white;
+    color: #333;
     font-size: 18px;
 }
 
@@ -515,7 +515,7 @@ input {
 .phone-icon {
     margin-right: -25px;
     font-size: 18px;
-    color: white;
+    color: #333;
 }
 
 .padded-input {
@@ -536,33 +536,29 @@ input {
     margin-right: -25px;
     transform: translateX(850%);
     font-size: 18px;
-    color: white;
+    color: #333;
 }
 
 .save-btn,
-.cancel-btn {
-    padding: 14px 24px;
-    border-radius: 18px;
+.cancel-btn,
+.change-password-btn {
+    color: white;
+    border: none;
+    padding: 13px 30px;
+    border-radius: 2px;
+    cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
-    flex: 1;
-    margin: 0 10px;
-    text-align: center;
     font-family: "Wix Madefor Display", sans-serif;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .save-btn {
-    background-color: white;
-    color: #333;
-    border: 2px solid white;
+    background-color: #4caf50;
 }
 
 .cancel-btn {
     background-color: #333;
-    color: white;
-    border: 2px solid #333;
 }
 
 .show-password-btn {
@@ -572,7 +568,7 @@ input {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: white;
+    color: #333;
     cursor: pointer;
     font-size: 20px;
 }
@@ -582,15 +578,9 @@ input {
     margin-top: 20px;
     margin-bottom: 20px;
     background-color: #BF9F00;
-    border: 2px solid #BF9F00;
     padding: 12px 20px;
     font-size: 16px;
     font-weight: bold;
-    border-radius: 18px;  
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .save-btn:hover,

@@ -135,7 +135,7 @@ export default {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #3B3B5A;
+    background: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 </style>
