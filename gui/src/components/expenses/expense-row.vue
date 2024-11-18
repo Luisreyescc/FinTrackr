@@ -1,10 +1,10 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="20" color="black" />
+      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="black" />
     </div>
     <div class="expense-details">
-      <h4>{{ expense.categories }}</h4>
+      <h4>{{ formattedCategories }}</h4>
       <p class="expense-description">{{ expense.description }}</p>
       <span class="expense-date">{{ formattedDate }}</span>
     </div>
@@ -35,6 +35,9 @@ export default {
         currency: 'USD'
       });
       return `- ${formatter.format(this.expense.amount)}`;
+    },
+    formattedCategories() {
+      return this.expense.categories.join(", ");
     },
     formattedDate() {
       // Data format day-MONTH-year

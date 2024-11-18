@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="20" color="black"/>
+       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="black"/>
     </div>
     <div class="income-details">
       <h4>{{ income.source }}</h4>
