@@ -20,6 +20,7 @@
           </div>
 	</div>
       </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
       <div class="forms-section" v-if="showForm">
 	<IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
       </div>
@@ -321,6 +322,7 @@ export default {
     border-radius: 9px;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
+    z-index: 1001; 
 }
 
 .forms-section-enter-active, .forms-section-leave-active {
@@ -333,5 +335,16 @@ export default {
 
 .forms-section-leave-to {
     transform: translateX(100%);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(59, 59, 90, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 </style>
