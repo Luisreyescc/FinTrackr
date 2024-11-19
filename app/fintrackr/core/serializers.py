@@ -120,23 +120,25 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.CharField(write_only=True)  # Expect 'category' as an input field
+    categories = serializers.ListField(
+        child=serializers.CharField(),
+        write_only=True
+    )
 
     class Meta:
         model = Expenses
-        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category']
+        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'categories']
 
     def create(self, validated_data):
+        categories_data = validated_data.pop('categories', None)
 
-        category_name = validated_data.pop('category', None)
-
-        if category_name is None:
-            raise serializers.ValidationError({"category": "This field is required."})
-
-        category, created = Categories.objects.get_or_create(name=category_name)
+        if not categories_data:
+            raise serializers.ValidationError({"categories": "This field is required."})
 
         expense = Expenses.objects.create(**validated_data)
 
-        ExpenseCategories.objects.create(expense=expense, category=category)
+        for category_name in categories_data:
+            category, created = Categories.objects.get_or_create(name=category_name)
+            ExpenseCategories.objects.create(expense=expense, category=category)
 
         return expense

@@ -132,13 +132,15 @@ export default {
     async handleExpenseSubmission(expenseData) {
       try {
         const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+
         const userId = localStorage.getItem("user_id") ?? 1;
+
         const modifiedExpenseData = {
           ...expenseData,
           user: userId,
-          category: expenseData.categories,
+          categories: expenseData.categories,
         };
-        delete modifiedExpenseData.categories;
 
         const response = await axios.post(
           'http://localhost:8000/api/expenses/',
@@ -149,7 +151,10 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
       } catch (error) {
-        console.error('Error submitting expense:', error.response?.data || error.message);
+        console.error(
+          'Error submitting expense:',
+          error.response?.data || error.message
+        );
       }
     }
   },
