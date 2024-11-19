@@ -35,11 +35,12 @@
        <div class="activity-content">
 	<h3 class="activity-title">Activity</h3>
         <div class="activity-section"><div class="list-container">
-	<ExpenseRow v-for="(expense, index) in sortedExpenses" :key="index" :expense="expense" />
+	<ExpenseRow v-for="(expense, index) in sortedExpenses" :key="index" :expense="expense" @updateExpense="handleExpenseUpdate" @deleteIncome="handleExpenseDelete"/>
            </div>
 	</div>
        </div>
      </div>
+     <div v-if="showForm" class="overlay" @click="toggleForm"></div>
      <div class="forms-section" v-if="showForm">
        <ExpensesForm @submitForm="handleExpenseSubmission"  @closeForm="toggleForm"/>
      </div>
@@ -162,22 +163,22 @@ export default {
       }
     },
     async handleIncomeUpdate(updatedIncome) {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:8000/api/incomes/${updatedIncome.id}/`,
-        updatedIncome,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // We update the income in the local array
-      const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
-      if (index !== -1) {
+      try {
+	const token = localStorage.getItem("token");
+	await axios.put(
+          `http://localhost:8000/api/incomes/${updatedIncome.id}/`,
+          updatedIncome,
+          { headers: { Authorization: `Bearer ${token}` } }
+	);
+	// We update the income in the local array
+	const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
+	if (index !== -1) {
         this.$set(this.incomes, index, updatedIncome); // Replace content
+	}
+      } catch (error) {
+	console.error("Error updating income:", error);
       }
-    } catch (error) {
-      console.error("Error updating income:", error);
-    }
-  },
+    },
     async handleIncomeDelete(incomeId) {
       try {
 	const token = localStorage.getItem("token");
@@ -188,6 +189,35 @@ export default {
 	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
       } catch (error) {
 	console.error("Error deleting income:", error);
+      }
+    },
+    async handleExpenseUpdate(updatedExpense) {
+      try {
+	const token = localStorage.getItem("token");
+	await axios.put(
+          `http://localhost:8000/api/expenses/${updatedExpense.id}/`,
+          updatedExpense,
+          { headers: { Authorization: `Bearer ${token}` } }
+	);
+	// We update the income in the local array
+	const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
+	if (index !== -1) {
+        this.$set(this.expense, index, updatedExpense); // Replace content
+	}
+      } catch (error) {
+	console.error("Error updating expense:", error);
+      }
+    },
+    async handleExpenseDelete(expenseId) {
+      try {
+	const token = localStorage.getItem("token");
+	await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+	});
+	
+	this.expense = this.expense.filter((expense) => expense.id !== expenseId);
+      } catch (error) {
+	console.error("Error deleting expense:", error);
       }
     },
   },

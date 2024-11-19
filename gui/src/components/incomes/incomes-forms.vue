@@ -1,5 +1,4 @@
 <template>
-  
 <div class="form-container" >
   <h3 class="form-title">New Income Data</h3>
   <div class="form-content">
