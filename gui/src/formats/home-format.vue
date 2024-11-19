@@ -15,7 +15,7 @@
 	<div class="activity-content"><h3 class="activity-title">Activity</h3>
           <div class="activity-section">
             <div class="list-container">
-              <IncomeRow v-for="(income, index) in sortedIncomes" :key="index" :income="income" @deleteIncome="handleIncomeDelete"/>
+              <IncomeRow v-for="(income, index) in sortedIncomes" :key="index" :income="income" @updateIncome="handleIncomeUpdate" @deleteIncome="handleIncomeDelete"/>
             </div>
           </div>
 	</div>
@@ -160,6 +160,23 @@ export default {
         console.error('Error submitting expense:', error.response?.data || error.message);
       }
     },
+    async handleIncomeUpdate(updatedIncome) {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:8000/api/incomes/${updatedIncome.id}/`,
+        updatedIncome,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // We update the income in the local array
+      const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
+      if (index !== -1) {
+        this.$set(this.incomes, index, updatedIncome); // Replace content
+      }
+    } catch (error) {
+      console.error("Error updating income:", error);
+    }
+  },
     async handleIncomeDelete(incomeId) {
       try {
 	const token = localStorage.getItem("token");
