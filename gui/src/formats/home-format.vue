@@ -26,7 +26,7 @@
     </div>
   
    <div v-if="selectedContent === 'Expenses'" class="main-content">
-     <div class="expenses-containert">
+     <div class="expenses-container">
        <div class="header">
 	<h2 class="section-title">{{ selectedContent }}</h2>
 	<ExpenseButton @click="toggleForm" />
@@ -44,7 +44,6 @@
    </div>
   </div>
 </div>
-
 </template>
 
 <script>

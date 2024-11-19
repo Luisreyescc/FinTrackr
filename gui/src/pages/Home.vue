@@ -1,8 +1,6 @@
 <template>
 <div class="page-container">
   <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
-  
-   <!-- Sidebar component, visible based on isSidebarVisible -->
   <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 </div>
 </template>
