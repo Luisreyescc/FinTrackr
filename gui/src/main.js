@@ -22,7 +22,8 @@ import {
   faAngleDown ,
   faCircleDollarToSlot, 
   faMoneyBillTransfer,
-  faFilter
+  faFilter,
+  faTrashCan
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -46,7 +47,8 @@ library.add(
   faAngleDown,
   faCircleDollarToSlot,
   faMoneyBillTransfer,
-  faFilter
+  faFilter,
+  faTrashCan
 );
 
 const app = createApp(App)

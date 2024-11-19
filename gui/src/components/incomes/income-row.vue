@@ -11,8 +11,17 @@
     <div class="income-amount-section">
       <span class="income-amount">{{ formattedAmount }}</span>
       <div class="income-actions">
-        <button class="edit-button"></button>
-        <button class="delete-button"></button>
+	<div class="income-buttons-section">
+        <button class="edit-button">
+	<font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/>
+	</button>
+	<div class="edition-section" v-if="showEdit">
+	<IncomesEdition @submitEdit="handleIncomeEdition" @closeEdit="toggleEdit" />
+	</div>
+        <button class="delete-button" @click="deleteIncome">
+	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
+	</button>
+	</div>
       </div>
     </div>
   </div>
@@ -43,6 +52,11 @@ export default {
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
       return `${day}-${month}-${year}`;
+    }
+  },
+  methods: {
+    deleteIncome() {
+      this.$emit("deleteIncome", this.income.id);
     }
   }
 };
@@ -128,10 +142,25 @@ export default {
     margin-top: 5px;
 }
 
+.icome-buttons-section {
+    flex-direction: row;
+}
+
 .edit-button, .delete-button {
-    background: none;
-    border: none;
+    border-radius: 12px;
     cursor: pointer;
+}
+
+.edit-button {
+    background: #333;
+}
+
+.delete-button {
+    backgroun: red;
+}
+
+.icon {
     font-size: 16px;
+    color: "white";
 }
 </style>

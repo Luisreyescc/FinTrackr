@@ -15,7 +15,7 @@
 	<div class="activity-content"><h3 class="activity-title">Activity</h3>
           <div class="activity-section">
             <div class="list-container">
-              <IncomeRow v-for="(income, index) in incomes.sortedIncomes" :key="index" :income="income" />
+              <IncomeRow v-for="(income, index) in sortedIncomes" :key="index" :income="income" @deleteIncome="handleIncomeDelete"/>
             </div>
           </div>
 	</div>
@@ -34,7 +34,7 @@
        <div class="activity-content">
 	<h3 class="activity-title">Activity</h3>
         <div class="activity-section"><div class="list-container">
-	<ExpenseRow v-for="(expense, index) in expenses.sortedExpenses" :key="index" :expense="expense" />
+	<ExpenseRow v-for="(expense, index) in sortedExpenses" :key="index" :expense="expense" />
            </div>
 	</div>
        </div>
@@ -159,7 +159,19 @@ export default {
       } catch (error) {
         console.error('Error submitting expense:', error.response?.data || error.message);
       }
-    }
+    },
+    async handleIncomeDelete(incomeId) {
+      try {
+	const token = localStorage.getItem("token");
+	await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+	});
+	
+	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+      } catch (error) {
+	console.error("Error deleting income:", error);
+      }
+    },
   },
   mounted() {
     if (this.selectedContent === "Incomes") {
@@ -179,7 +191,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .home-form {
