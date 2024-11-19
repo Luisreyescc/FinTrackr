@@ -15,7 +15,7 @@
 	<div class="activity-content"><h3 class="activity-title">Activity</h3>
           <div class="activity-section">
             <div class="list-container">
-              <IncomeRow v-for="(income, index) in incomes" :key="index" :income="income" />
+              <IncomeRow v-for="(income, index) in incomes.sortedIncomes" :key="index" :income="income" />
             </div>
           </div>
 	</div>
@@ -33,7 +33,8 @@
        </div>
        <div class="activity-content">
 	<h3 class="activity-title">Activity</h3>
-         <div class="activity-section"><div class="list-container"><ExpenseRow v-for="(expense, index) in expenses" :key="index" :expense="expense" />
+        <div class="activity-section"><div class="list-container">
+	    <ExpenseRow v-for="(expense, index) in expenses.sortedExpenses" :key="index" :expense="expense" />
            </div>
 	</div>
        </div>
@@ -79,6 +80,14 @@ export default {
       expenses: [],
     };
   },
+  computed: {
+    sortedIncomes() {
+      return this.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    },
+    sortedExpenses() {
+      return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    },
+  },
   methods: {
     toggleSidebar() {
       this.$emit('toggleSidebar');
@@ -122,7 +131,7 @@ export default {
           incomeData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        this.incomes.push(response.data);
+        this.incomes.unshift(response.data);
         this.showForm = false;
       } catch (error) {
         console.error('Error submitting income:', error);
