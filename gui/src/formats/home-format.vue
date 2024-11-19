@@ -34,7 +34,7 @@
        <div class="activity-content">
 	<h3 class="activity-title">Activity</h3>
         <div class="activity-section"><div class="list-container">
-	    <ExpenseRow v-for="(expense, index) in expenses.sortedExpenses" :key="index" :expense="expense" />
+	<ExpenseRow v-for="(expense, index) in expenses.sortedExpenses" :key="index" :expense="expense" />
            </div>
 	</div>
        </div>
