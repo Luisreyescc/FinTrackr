@@ -78,8 +78,6 @@ export default {
         return;
       }
 
-      console.log("showAllGraphics is running");
-
       // Fetch both Incomes and Expenses for combined chart
       Promise.all([
         axios.get('http://localhost:8000/api/incomes/', {
@@ -102,17 +100,32 @@ export default {
           y: parseFloat(item.amount),
         }));
 
+        // Generate a complete list of unique dates from both data sets
+        const uniqueDates = [
+          ...new Set([...incomeData, ...expenseData].map(item => item.x))
+        ].sort();
+
+        // Populate data for missing dates with y: 0 to ensure continuity
+        const fillMissingData = (data, dates) => {
+          const dataMap = Object.fromEntries(data.map(item => [item.x, item.y]));
+          return dates.map(date => ({
+            x: date,
+            y: dataMap[date] || 0
+          }));
+        };
+
         this.chartData = [
-          { name: 'Incomes', data: incomeData },
-          { name: 'Expenses', data: expenseData },
-        ]; 
+          { name: 'Incomes', data: fillMissingData(incomeData, uniqueDates) },
+          { name: 'Expenses', data: fillMissingData(expenseData, uniqueDates) },
+        ];
 
         // Set xaxis categories based on unique dates from both data sets
-        this.chartOptions.xaxis.categories = [
-          ...new Set(
-            this.chartData.flatMap(series => series.data.map(item => item.x))
-          ),
-        ].sort();
+        this.chartOptions = {
+          ...this.chartOptions,
+          xaxis: {
+            categories: uniqueDates,
+          }
+        };
 
         console.log("Chart Data:", this.chartData);
         console.log("Categories:", this.chartOptions.xaxis.categories);
