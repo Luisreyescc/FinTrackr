@@ -11,8 +11,8 @@
       <div class="all-status-header">
         <h2>All Status</h2>
         <button @click="toggleAllStatus" class="close-button">
-	<font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
-	</button>
+          <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
+        </button>
       </div>
       <div class="all-status-content">
         <apexchart
@@ -62,43 +62,65 @@ export default {
   },
   methods: {
     toggleAllStatus() {
+      console.log("toggleAllStatus triggered");
       this.isAllStatusVisible = !this.isAllStatusVisible;
       if (this.isAllStatusVisible) {
         this.showAllGraphics();
       }
     },
+    formatDate(dateStr) {
+      return new Date(dateStr).toISOString().split('T')[0];
+    },
     showAllGraphics() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      console.log("showAllGraphics is running");
+
       // Fetch both Incomes and Expenses for combined chart
       Promise.all([
         axios.get('http://localhost:8000/api/incomes/', {
-          headers: { Authorization: 'Bearer ${token}' },
+          headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get('http://localhost:8000/api/expenses/', {
-          headers: { Authorization: 'Bearer ${token}'},
+          headers: { Authorization: `Bearer ${token}` },
         }),
       ])
-        .then(([incomeResponse, expenseResponse]) => {
-          const incomeData = incomeResponse.data.map((item) => ({
-            x: item.date,
-            y: item.amount,
-          }));
-          const expenseData = expenseResponse.data.map((item) => ({
-            x: item.date,
-            y: item.amount,
-          }));
-	this.chartData = [
-            { name: 'Incomes', data: incomeData },
-            { name: 'Expenses', data: expenseData },
-          ];
-          this.chartOptions.xaxis.categories = [
-            ...new Set(
-              incomeResponse.data
-                .concat(expenseResponse.data)
-                .map((item) => item.date)
-            ),
-          ].sort();
-        })
-        .catch((error) => console.error('Error fetching all data for the graphics:', error));
+      .then(([incomeResponse, expenseResponse]) => {
+        console.log("Income Response:", incomeResponse.data);
+        console.log("Expense Response:", expenseResponse.data);
+
+        const incomeData = incomeResponse.data.map((item) => ({
+          x: this.formatDate(item.date),
+          y: parseFloat(item.amount),
+        }));
+        const expenseData = expenseResponse.data.map((item) => ({
+          x: this.formatDate(item.date),
+          y: parseFloat(item.amount),
+        }));
+
+        this.chartData = [
+          { name: 'Incomes', data: incomeData },
+          { name: 'Expenses', data: expenseData },
+        ]; 
+
+        // Set xaxis categories based on unique dates from both data sets
+        this.chartOptions.xaxis.categories = [
+          ...new Set(
+            this.chartData.flatMap(series => series.data.map(item => item.x))
+          ),
+        ].sort();
+
+        console.log("Chart Data:", this.chartData);
+        console.log("Categories:", this.chartOptions.xaxis.categories);
+
+        // Trigger Vue reactivity for chartOptions
+        this.chartOptions = { ...this.chartOptions };
+      })
+      .catch((error) => console.error('Error fetching all data for the graphics:', error));
     },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;

@@ -59,8 +59,8 @@
 		:key="index"
 		@click="addCategory(category)">{{ category }}</li></ul>
 	<div class="selected-categories">
-              <span v-for="(category, index) in expense.categories" :key="index" class="tag">
-		{{ category }}
+    <span v-for="(category, index) in editExpense.categories || []" :key="index" class="tag">
+      {{ category }}
 		<button @click="removeCategory(index)" class="close-button">
 	<font-awesome-icon :icon="['fas', 'xmark']"/>
 		</button>
@@ -90,13 +90,17 @@ export default {
   props: {
     expense: {
       type: Object,
-      required: true
+      required: true,
+      default: () => ({ categories: [] })
     }
   },
   data() {
     return {
       isEditing: false,
-      editExpense: { ...this.expense },
+      editExpense: {
+        ...this.expense, 
+        categories: this.expense.categories || [] 
+      },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -114,7 +118,7 @@ export default {
       return `- ${formatter.format(this.expense.amount)}`;
     },
     formattedCategories() {
-      return this.expense.categories.join(", ");
+      return this.expense.categories ? this.expense.categories.join(", ") : "No categories";
     },
     formattedDate() {
       // Data format day-MONTH-year
@@ -170,7 +174,7 @@ export default {
         this.amountError = "Amount is required";
         return false;
       }
-      if (!amountPattern.test(this.editIncome.amount)) {
+      if (!amountPattern.test(this.editExpense.amount)) {  // Corrected this line
         this.amountError = "Invalid amount format";
         return false;
       }
@@ -178,7 +182,7 @@ export default {
     },
     validateTextField(field) {
       this[`${field}Error`] = "";
-      if (!this.editIncome[field]) {
+      if (!this.editExpense[field]) {  // Corrected this line
         this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
@@ -189,7 +193,7 @@ export default {
       return true;
     },
     validateDate() {
-      if (!this.editIncome.date) {
+      if (!this.editExpense.date) {  // Corrected this line
         this.dateError = "Date is required";
         return false;
       }
