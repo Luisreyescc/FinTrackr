@@ -165,30 +165,38 @@ export default {
     async handleIncomeUpdate(updatedIncome) {
       try {
 	const token = localStorage.getItem("token");
-	await axios.put(
+	const response = await axios.put(
           `http://localhost:8000/api/incomes/${updatedIncome.id}/`,
           updatedIncome,
           { headers: { Authorization: `Bearer ${token}` } }
 	);
+
+	if (response.status === 200) {
 	// We update the income in the local array
 	const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
 	if (index !== -1) {
-        this.$set(this.incomes, index, updatedIncome); // Replace content
+            this.$set(this.incomes, index, response.data); // Replace content
+	}
+	//message(update succesfully)
 	}
       } catch (error) {
 	console.error("Error updating income:", error);
+	//message failed to update income
       }
     },
     async handleIncomeDelete(incomeId) {
       try {
 	const token = localStorage.getItem("token");
-	await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
+	const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
           headers: { Authorization: `Bearer ${token}` },
 	});
-	
+	if (response.status === 204) {
 	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+	//message(income deleted successfully)
+	}
       } catch (error) {
 	console.error("Error deleting income:", error);
+	//mesagefailed to delete income
       }
     },
     async handleExpenseUpdate(updatedExpense) {
