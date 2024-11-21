@@ -63,8 +63,11 @@
     <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
     
     <div class="button-group">
-      <button class="accept-btn" @click="emitSignUp" >Create User</button>
-      <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
+      <button class="accept-btn" @click="emitSignUp" >Accept</button>
+      <div class="divider">
+	<span>or return to</span>
+      </div>
+      <button class="login-btn" @click="$emit('goToLogin')">Log-In</button>
     </div>
   </div>
 </template>
@@ -266,11 +269,36 @@ input {
     border-radius: 20px;
     background-color: white;
     border: 2px solid white;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     cursor: pointer;
     color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: white;
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    font-weight: bold;
 }
 
 .login-btn {
@@ -278,7 +306,7 @@ input {
     border-radius: 20px;
     background-color: #333;
     border: 2px solid #333;
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 20px;
     cursor: pointer;
     color: white;

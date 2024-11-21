@@ -13,6 +13,8 @@
 	:class="{ 'input-error': usernameError, 'padded-input': true }"
 	@input="clearError('username')" />
     </div>
+    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+    
     <div class="email-container">
       <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
       <input
@@ -21,11 +23,11 @@
 	id="email"
 	placeholder="Email"
 	:class="{ 'input-error': emailError, 'padded-input': true }"
-	@input="validateEmail" />
+	@input="clearError('email')"/>
     </div>
+    <span v-if="emailError" class="error-message">{{ emailError }}</span>
     <button class="send-code-btn" @click="sendCode">Send code</button>
   </div>
-    
   
   <div v-if="currentStep === 2" class="recovery-container">
     <font-awesome-icon class="key-icon" :icon="['fas', 'key']" />
@@ -36,8 +38,10 @@
       placeholder="Recovery code"
       :class="{ 'input-error': keyError, 'padded-input': true }"
       @input="clearError('recoveryCode')" />
+    <span v-if="keyError" class="error-message">{{ keyError }}</span>
     <button class="validate-code-btn" @click="validateCode">Validate Code</button>
   </div>
+  
   
   <div v-if="currentStep === 3">
     <div class="password-container">
@@ -56,12 +60,14 @@
 	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
       </button>
     </div>
+    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+    
     <div class="password-container">
       <input
 	v-model="password2"
 	:type="showConfirmPassword ? 'text': 'password'"
 	id="password2"
-	placeholder="Confirm newn password"
+	placeholder="Confirm new password"
 	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
 	@input="clearError('password2')" />
       <button 
@@ -71,134 +77,91 @@
 	aria-label="Show or Hide Confirm Password">
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
       </button>
-      <button v-if="codeSent" class="change-password-btn" @click="changePassword">Change Password</button>
     </div>
+    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+      <button class="change-password-btn" @click="changePassword">Change Password</button>
   </div>
 
-  <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
-</div>
-
-<div class="message-container">
-  <MessageAlerts
-    v-for="(msg, index) in messages" 
-    :key="msg.id" 
-    :text="msg.text" 
-    :type="msg.type" 
-    @close="removeMessage(index)" />
+  <div class="return-login">
+    <div class="divider">
+	<span>or return to</span>
+    </div>
+    <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
+  </div>
 </div>
 </template>
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MessageAlerts from '@/components/messages.vue';
-import isEmail from "validator/lib/isEmail";
 
 export default {
   name: 'RecoveryForm',
-  components: {
-    FontAwesomeIcon,
-    MessageAlerts
-  },
+  components: { FontAwesomeIcon },
   data() {
     return {
       currentStep: 1,
-      username: '',
-      email: '',
-      recoveryCode: '',
-      password: '',
-      password2: '',
+      username: "",
+      email: "",
+      recoveryCode: "",
+      password: "",
+      password2: "",
       codeSent: false, // State to track if the code has been sent
-      usernameError: false,
-      emailError: false,
-      keyError: false,
-      passwordError: false,
-      confirmPasswordError: false,
-      messages: []
+      usernameError: "",
+      emailError: "",
+      keyError: "",
+      passwordError: "",
+      confirmPasswordError: "",
     };
   },
   methods: {
-    addMessage(text, type = "neutral") {
-      const id = Date.now();
-      this.messages.push({ id, text, type });
-    },
-    removeMessage(index) {
-      this.messages.splice(index, 1);
-    },
     clearError(field) {
-      this[`${field}Error`] = false; // This instead of doing many if's
+      if (field === "username")
+	this.usernameError = "";
+      if (field === "email")
+	this.emailError = "";
+      if (field === 'recoveryCode')
+	this.keyError = "";
+      if (field === 'password')
+	this.passwordError = "";
+      if (field === 'password2')
+	this.confirmPasswordError = "";
     },
     sendCode() {
-      if (this.validateInputs() && this.validateEmail()) {
-	this.addMessage('Sending recovery code to ${email}', "neutral");
+      this.usernameError = "";
+      this.emailError = "";
+      if (!this.username)
+	this.usernameError = "Username is required.";
+      if (!this.email)
+	this.emailError = "Email is required.";
+      if (!this.usernameError && !this.emailError) {
 	this.$emit('sendCode', { username: this.username, email: this.email });
 	this.currentStep = 2; // Next state of the page, validate key code
       }
     },
     validateCode() {
-      if (!this.recoveryCode) {
-        this.keyError = true;
-        this.addMessage("Recovery code is required.", "error");
-      } else {
-	this.addMessage("Code validated successfully.", "success");
+      this.keyError = "";
+      if (!this.recoveryCode)
+	this.keyError = 'The recoveryCode is required';
+      else {
 	this.$emit("validateCode", { recoveryCode: this.recoveryCode });
         this.currentStep = 3; // Next state of the page, create new password
       }
     },
     changePassword() {
-      let isValid = true;
-      if (!this.password) {
-        this.addMessage("Password is required.", "error");
-        this.passwordError = true;
-        isValid = false;
+      this.passwordError = "";
+      this.confirmPasswordError = "";
+      
+      if (!this.password)
+	this.passwordError = 'Password is required';
+      if (!this.password2)
+	this.confirmPasswordError = 'Confirm password is required';
+      if (this.password && this.password2 && this.password !== this.password2) {
+	this.passwordError = 'Passwords don\'t match';
+	this.confirmPasswordError = 'Passwords don\'t match';
       }
-      if (!this.password2) {
-        this.addMessage("Confirm password is required.", "error");
-        this.confirmPasswordError = true;
-        isValid = false;
-      }
-      if (this.password !== this.password2) {
-        this.addMessage("Passwords do not match.", "error");
-        this.passwordError = true;
-        this.confirmPasswordError = true;
-        isValid = false;
-      }
-      if (isValid) {
+      if (!this.passwordError && !this.confirmPasswordError) {
         this.$emit("changePassword", { password: this.password });
       }
-    },
-    validateInputs() {
-      let isValid = true;
-
-      if (!this.username) {
-        this.addMessage("Username is required.", "error");
-        this.usernameError = true;
-        isValid = false;
-      } else if (this.username.length < 3 || this.username.length > 16) {
-        this.addMessage("Username must be 3-16 characters long.", "error");
-        this.usernameError = true;
-        isValid = false;
-      }
-      if (!this.email) {
-        this.addMessage("Email is required.", "error");
-        this.emailError = true;
-        isValid = false;
-      }
-      
-      return isValid;
-    },
-    validateEmail() {
-      if (this.email) {
-	if (isEmail(this.email)) {
-          this.emailError = false;
-          return true;
-	} else {
-          this.addMessage("Invalid email format.", "error");
-          this.emailError = true;
-          return false;
-	}
-      }
-      
-      return true;
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -245,6 +208,14 @@ input {
 
 .input-error {
     border-color: #D55C5C;
+}
+
+.error-message {
+    color: #D55C5C;
+    font-size: 14px;
+    align-self: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .username-container,
@@ -356,12 +327,45 @@ button {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    position: relative;
+}
+
+.return-login {
+    width: 60%;
+    display: flex;
+    margin-top: 5px;
+    flex-direction: column;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: white;
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    font-weight: bold;
+}
+
 .login-btn {
+    width: 100%;
     padding: 10px 20px;
     border-radius: 20px;
     background-color: #333;
     border: 2px solid #333;
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 20px;
     cursor: pointer;
     color: white;
