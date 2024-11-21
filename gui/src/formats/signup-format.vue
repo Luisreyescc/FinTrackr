@@ -75,9 +75,7 @@ import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "SignUpForm",
-  components: {
-    FontAwesomeIcon
-  },
+  components: { FontAwesomeIcon },
   data() {
     return {
       username: "",
@@ -93,13 +91,6 @@ export default {
     };
   },
   methods: {
-    addMessage(text, type = "neutral") {
-      const id = Date.now();
-      this.messages.push({ id, text, type });
-    },
-    removeMessage(index) {
-      this.messages.splice(index, 1);
-    },
     clearError(field) {
       if (field === 'username')
 	this.usernameError = '';
@@ -195,8 +186,8 @@ input {
 }
 
 .error-message {
-    color: #e42121;
-    font-size: 12px;
+    color: #D55C5C;
+    font-size: 14px;
     align-self: center;
     margin-top: -10px;
     margin-bottom: 10px;
