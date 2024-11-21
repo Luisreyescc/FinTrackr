@@ -1,14 +1,14 @@
 <template>
   <div id="app">
     <AppHeader v-if="showBanner" :isLoggedIn="isLoggedIn" @logout="logout"/>
-    <div class="main-content">
+    <div class="main-content scrollbar">
       <router-view @login="login"/>
     </div>
   </div>
 </template>
  
 <script>
-import AppHeader from './components/header.vue';
+import AppHeader from '@/components/header.vue';
  
 export default {
   name: 'App',

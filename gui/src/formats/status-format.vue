@@ -1,43 +1,45 @@
 <template>
 <div class="status-form">
-  <div class="content-wrapper">
-    <div class="status-container">
+  <div class="sidebar">
+    <button @click="toggleSidebar" class="menu-button">
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+    </button>
+  </div>
+  
+  <div class="content-wrapper scrollbar">
+    <div class="section">
       <div class="header">
-        <h2 class="section-title">Your account status</h2>
+	<h2 class="section-title">Account Status</h2>
 	<FilterGraphics
 	:filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
         :currentFilter="currentFilter"
         @filterSelected="applyFilter" />
-	</div>
-	<div class="graphics-content">
+      </div>
+      <div class="graphic-container scrollbar">
 	<apexchart
-            v-if="chartSeriesIncomes.length > 0"
-            type="bar"
-            :options="chartOptionsIncomes"
-            :series="chartSeriesIncomes"
-            height="400" />
-	</div>
+          v-if="chartData.length > 0"
+          type="line"
+          :options="chartOptions"
+          :series="chartData"
+          height="400" />
       </div>
     </div>
     
-    <div v-if="localSelectedContent === 'Expenses'" class="main-content">
-      <div class="expenses-container">
-	<div class="header">
-	<h2 class="section-title">{{ selectedContent }}</h2>
-	<ShowAll @click="showAll" />
+    <div class="section">
+      <div class="header">
+	<h2 class="section-title">Categories Graphic</h2>
 	<FilterGraphics
-	:filterOptions="['Categories', 'Day', 'Week', 'Month', 'Year']"
+	:filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
         :currentFilter="currentFilter"
         @filterSelected="applyFilter" />
-	</div>
-	<div class="graphics-content">
+      </div>
+      <div class="graphic-container scrollbar">
 	<apexchart
-            v-if="chartSeriesExpenses.length > 0"
-            type="bar"
-            :options="chartOptionsExpenses"
-            :series="chartSeriesExpenses"
-            height="400" />
-	</div>
+          v-if="chartData.length > 0"
+          type="pay"
+          :options="chartOptions"
+          :series="chartData"
+          height="400" />
       </div>
     </div>
   </div>
@@ -50,96 +52,106 @@ import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
 
 export default {
-  name: "StatusForm",
+ name: 'StatusForm',
   components: {
     apexchart: ApexCharts,
     FilterGraphics
   },
-  props: {
-    selectedContent: {
-      type: String,
-      default: 'Incomes',
-    },
-  },
   data() {
     return {
-      localSelectedContent: this.selectedContent,
-      incomes: [],
-      expenses: [],
-      chartSeriesIncomes: [],
-      chartSeriesExpenses: [],
-      chartOptionsIncomes: {
-        chart: {
-          height: 350,
-          type: 'bar',
-        },
-        xaxis: {
-          categories: [],
-        },
-        colors: ['#1E90FF'], // Blue for incomes
-      },
-      chartOptionsExpenses: {
-        chart: {
-          height: 350,
-          type: 'bar',
-        },
-        xaxis: {
-          categories: [],
-        },
-        colors: ['#FF6347'], // Red for expenses
-      },
       currentFilter: "Month",
+      chartData: [],
+      chartOptions: {
+        chart: {
+          height: 400,
+          type: 'line',
+        },
+        xaxis: {
+          categories: [],
+        },
+        stroke: {
+          curve: 'smooth',
+        },
+      },
     };
   },
   methods: {
+    applyFilter(filter) {
+      this.currentFilter = filter;
+      console.log("Filter applied:", filter);
+      // Future logic for filter graphic by date
+    },
+    formatDate(dateStr) {
+      return new Date(dateStr).toISOString().split('T')[0];
+    },
+    showAllGraphics() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      // Fetch both Incomes and Expenses for combined chart
+      Promise.all([
+        axios.get('http://localhost:8000/api/incomes/', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get('http://localhost:8000/api/expenses/', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ])
+      .then(([incomeResponse, expenseResponse]) => {
+        console.log("Income Response:", incomeResponse.data);
+        console.log("Expense Response:", expenseResponse.data);
+
+        const incomeData = incomeResponse.data.map((item) => ({
+          x: this.formatDate(item.date),
+          y: parseFloat(item.amount),
+        }));
+        const expenseData = expenseResponse.data.map((item) => ({
+          x: this.formatDate(item.date),
+          y: parseFloat(item.amount),
+        }));
+
+        // Generate a complete list of unique dates from both data sets
+        const uniqueDates = [
+          ...new Set([...incomeData, ...expenseData].map(item => item.x))
+        ].sort();
+
+        // Populate data for missing dates with y: 0 to ensure continuity
+        const fillMissingData = (data, dates) => {
+          const dataMap = Object.fromEntries(data.map(item => [item.x, item.y]));
+          return dates.map(date => ({
+            x: date,
+            y: dataMap[date] || 0
+          }));
+        };
+
+        this.chartData = [
+          { name: 'Incomes', data: fillMissingData(incomeData, uniqueDates) },
+          { name: 'Expenses', data: fillMissingData(expenseData, uniqueDates) },
+        ];
+
+        // Set xaxis categories based on unique dates from both data sets
+        this.chartOptions = {
+          ...this.chartOptions,
+          xaxis: {
+            categories: uniqueDates,
+          }
+        };
+
+        console.log("Chart Data:", this.chartData);
+        console.log("Categories:", this.chartOptions.xaxis.categories);
+
+        // Trigger Vue reactivity for chartOptions
+        this.chartOptions = { ...this.chartOptions };
+      })
+      .catch((error) => console.error('Error fetching all data for the graphics:', error));
+    },
     toggleSidebar() {
       this.$emit('toggleSidebar');
     },
-    updateContent(content) {
-      this.localSelectedContent = content;
-      this.fetchData();
-    },
-    async fetchData() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
-        const [incomeResponse, expenseResponse] = await Promise.all([
-          axios.get('http://localhost:8000/api/incomes/', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:8000/api/expenses/', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-	
-        this.incomes = incomeResponse.data;
-        this.expenses = expenseResponse.data;
-        this.updateCharts();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    },
-    updateCharts() {
-      const incomeCategories = this.incomes.map(income => income.date);
-      const incomeData = this.incomes.map(income => income.amount);
-      
-      this.chartSeriesIncomes = [{ name: 'Incomes', data: incomeData }];
-      this.chartOptionsIncomes.xaxis.categories = incomeCategories;
-
-      const expenseCategories = this.expenses.map(expense => expense.date);
-      const expenseData = this.expenses.map(expense => expense.amount);
-      
-      this.chartSeriesExpenses = [{ name: 'Expenses', data: expenseData }];
-      this.chartOptionsExpenses.xaxis.categories = expenseCategories;
-    },
-    applyFilter(filter) {
-      this.currentFilter = filter;
-      this.fetchData(); 
-    },
-    mounted() {
-      this.fetchData();
-    },
-  },
+  }
 };
 </script>
 
@@ -147,7 +159,6 @@ export default {
 .status-form {
     display: flex;
     width: 100%;
-    overflow: hidden;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -182,18 +193,22 @@ export default {
     display: flex;
     justify-content: center;
     padding: 20px;
+    height: 100%;
     margin-left: 70px;
     position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.main-content {
+.section {
     display: flex;
     flex-direction: column;
     max-width: 800px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: #ffffff;
     overflow: hidden;
 }
 
@@ -201,26 +216,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: "Wix Madefor Display", sans-serif;
     padding: 10px 20px;
     border-bottom: 1px solid #ddd;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .section-title {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: #25253C;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.graphics-content {
+.graphic-container {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 180px;
-    max-height: 100vh;
-    overflow: hidden;
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    height: 750px;
+    background-color: #ffffff;
     border-top: 1px solid #eee;
-    position: relative;
+    border-radius: 8px;
 }
 </style>
