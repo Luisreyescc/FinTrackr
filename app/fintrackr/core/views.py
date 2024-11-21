@@ -161,6 +161,7 @@ class ExpenseListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
@@ -171,16 +172,14 @@ class ExpenseCategorySummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Aggregate expenses by category for the authenticated user
         categories_summary = (
             ExpenseCategories.objects
-            .filter(expense__user=request.user)  # Filter by the current user
-            .values('category__name')  # Group by category name
-            .annotate(total_amount=Sum('expense__amount'))  # Sum the amount of related expenses
-            .order_by('category__name')  # Order by category name (optional)
+            .filter(expense__user=request.user)
+            .values('category__name')
+            .annotate(total_amount=Sum('expense__amount'))
+            .order_by('category__name')
         )
 
-        # Format the response data
         response_data = [
             {
                 "category": category["category__name"],

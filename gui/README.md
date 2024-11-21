@@ -1,20 +1,3 @@
-## When you recently pull this branch you must do this to view the interface page, only for test the ui
-## Project setup
-```
-npm install
-```
-```
-npm install vuex@next --save
-```
-```
-npm install vue-router
-```
-```
-npm install axios
-```
-npm install validator
-```
-
 ## Compiles and hot-reloads for development
 ```
 npm run serve
