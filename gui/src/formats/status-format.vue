@@ -21,7 +21,7 @@
           type="line"
           :options="chartOptions"
           :series="chartData"
-          height="400" />
+          height="400" width="800" />
       </div>
     </div>
     
@@ -36,9 +36,9 @@
       <div class="graphic-container scrollbar">
 	<apexchart
           v-if="chartData.length > 0"
-          type="pay"
-          :options="chartOptions"
-          :series="chartData"
+          type="donut"
+          :options="categoriesChartOptions"
+          :series="categoriesChartData"
           height="400" />
       </div>
     </div>
@@ -61,10 +61,12 @@ export default {
     return {
       currentFilter: "Month",
       chartData: [],
+      categoriesChartData: [],
       chartOptions: {
         chart: {
           height: 400,
           type: 'line',
+          width: 400,
         },
         xaxis: {
           categories: [],
@@ -73,7 +75,16 @@ export default {
           curve: 'smooth',
         },
       },
+      categoriesChartOptions: {
+        chart: {
+          type: 'donut',
+        },
+        labels: [], // Labels for the donut chart
+      },
     };
+  },
+  created() {
+    this.showAllGraphics();
   },
   methods: {
     applyFilter(filter) {
