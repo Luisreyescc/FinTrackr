@@ -21,7 +21,7 @@
           type="line"
           :options="chartOptions"
           :series="chartData"
-          height="400" width="800" />
+          height="600" width="800" />
       </div>
     </div>
     
@@ -39,7 +39,7 @@
           type="donut"
           :options="categoriesChartOptions"
           :series="categoriesChartData"
-          height="400" />
+          height="700" width="700" />
       </div>
     </div>
   </div>
@@ -84,7 +84,8 @@ export default {
     };
   },
   created() {
-    this.showAllGraphics();
+    this.fetchLineChartData();
+    this.fetchDonutChartData();
   },
   methods: {
     applyFilter(filter) {
@@ -95,7 +96,7 @@ export default {
     formatDate(dateStr) {
       return new Date(dateStr).toISOString().split('T')[0];
     },
-    showAllGraphics() {
+    fetchLineChartData() {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("No token found");
@@ -161,6 +162,36 @@ export default {
     },
     toggleSidebar() {
       this.$emit('toggleSidebar');
+    },
+    async fetchDonutChartData() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      try {
+        const response = await axios.get('http://localhost:8000/api/expenses/category-summary/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = response.data; // API response
+        console.log("Donut Chart Data:", data);
+
+        const amounts = data.map(item => item.total_amount);
+        const categories = data.map(item => item.category);
+
+        this.categoriesChartData = amounts; // Populate series
+        this.categoriesChartOptions = {
+          ...this.categoriesChartOptions,
+          labels: categories // Populate labels
+        };
+
+        console.log("Donut Chart Series:", this.categoriesChartData);
+        console.log("Donut Chart Labels:", this.categoriesChartOptions.labels);
+      } catch (error) {
+        console.error('Error fetching donut chart data:', error);
+      }
     },
   }
 };
