@@ -1,80 +1,67 @@
 <template>
-  <div class="login-form">
-    <h2 class="form-title">Log In</h2>
-
-    <div class="username-container">
-      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
-      <input
-	v-model="username"
-	type="text"
-	id="username"
-	placeholder="Username"
-	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="clearError('username')" />
-    </div>
-    
-    <div class="password-container">
-      <input
-        v-model="password"
-        :type="showPassword ? 'text' : 'password'"
-        id="password"
-        placeholder="Password"
-        :class="{ 'input-error': passwordError, 'padded-input': true }"
-        @input="clearError('password')" />
-      <button
-        type="button"
-        class="show-password-btn"
-        @click="togglePasswordVisibility"
-        aria-label="Show or Hide Password" >
-	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-      </button>
-    </div>
-
-    <div class="button-group">
-      <button class="sign-in-btn" @click="emitLogin">Log-in</button>
-      <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
-    </div>
+<div class="login-form">
+  <h2 class="form-title">Log In</h2>
   
-    <a href="#" class="recover-password" @click.prevent="goToRecovery"> Forget password?</a>
+  <div class="username-container">
+    <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+    <input
+      v-model="username"
+      type="text"
+      id="username"
+      placeholder="Username"
+      :class="{ 'input-error': usernameError, 'padded-input': true }"
+      @input="clearError('username')" />
   </div>
-
-  <div class="message-container">
-    <MessageAlerts
-      v-for="(msg, index) in messages" 
-      :key="msg.id" 
-      :text="msg.text" 
-      :type="msg.type" 
-      @close="removeMessage(index)" />
+  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+  
+  <div class="password-container">
+    <input
+      v-model="password"
+      :type="showPassword ? 'text' : 'password'"
+      id="password"
+      placeholder="Password"
+      :class="{ 'input-error': passwordError, 'padded-input': true }"
+      @input="clearError('password')" />
+    <button
+      type="button"
+      class="show-password-btn"
+      @click="togglePasswordVisibility"
+      aria-label="Show or Hide Password" >
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+    </button>
   </div>
+  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+  
+  <div class="button-group">
+    <button class="sign-in-btn" @click="emitLogin">Log-in</button>
+    <div class="divider">
+      <span>or</span>
+    </div>
+    <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
+  </div>
+  
+  <a href="#" class="recover-password" @click.prevent="goToRecovery"> Forget password?</a>
+</div>
 </template>
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MessageAlerts from '@/components/messages.vue';
 import "@/css/eye.css";
 import "@/css/eye-alt.css";
 
 export default {
   name: "LoginForm",
-  components: { FontAwesomeIcon, MessageAlerts },
+  components: { FontAwesomeIcon },
   data() {
     return {
       username: "",
       password: "",
-      usernameError: false,
-      passwordError: false,
-      showPassword: false,
-      messages: []
+      usernameError: "",
+      passwordError: "",
+      showPassword: false
     };
   },
   methods: {
-    addMessage(text, type = "neutral") {
-      const id = Date.now();
-      this.messages.push({ id, text, type });
-    },
-    removeMessage(index) {
-      this.messages.splice(index, 1);
-    },
     clearError(field) {
       if (field === 'username')
 	this.usernameError = false;
@@ -82,33 +69,19 @@ export default {
 	this.passwordError = false;
     },
     emitLogin() {
-      if (this.validateInputs()) {
+      this.usernameError = "";
+      this.passwordError = "";
+      if (!this.username)
+	this.usernameError = "Username is required";
+      if (!this.password)
+	this.passwordError = "Password is required";
+      if (!this.usernameError && !this.passwordError) {
         // Emit an event with username and password data to the parent
         this.$emit("login", {
           username: this.username,
           password: this.password,
         });
       }
-    },
-    validateInputs() {
-      let isValid = true;
-
-      if (!this.username) {
-        this.addMessage("Username is required.", "error");
-        this.usernameError = true;
-        isValid = false;
-      } else if (this.username.length < 3 || this.username.length > 16) {
-        this.addMessage("Username must be 3-16 characters long.", "error");
-        this.usernameError = true;
-        isValid = false;
-      }
-      if (!this.password) {
-        this.addMessage("Password is required.", "error");
-        this.passwordError = true;
-        isValid = false;
-      }
-      
-      return isValid;
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -156,6 +129,14 @@ input {
 
 .input-error {
     border-color: #D55C5C;
+}
+
+.error-message {
+    color: #D55C5C;
+    font-size: 14px;
+    align-self: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .username-container, .password-container {
@@ -213,7 +194,7 @@ input {
 .button-group {
     width: 60%;
     display: flex;
-    margin-top: 30px;
+    margin-top: 25px;
     flex-direction: column;
 }
 
@@ -222,11 +203,36 @@ input {
     border-radius: 20px;
     background-color: white;
     border: 2px solid white;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     cursor: pointer;
     color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: white;
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    font-weight: bold;
 }
 
 .register-btn {
@@ -234,7 +240,7 @@ input {
     border-radius: 20px;
     background-color: #333;
     border: 2px solid #333;
-    margin-top: 20px;
+    margin-top: 5px;
     cursor: pointer;
     color: white;
     font-size: 18px;

@@ -1,54 +1,57 @@
 <template>    
-<div class="signup-form">
-  <h2 class="form-title">Sign Up</h2>
-  
-  <div class="username-container">
-    <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
-    <input
-      v-model="username"
-      type="text"
-      id="username"
-      placeholder="Your username"
-      :class="{ 'input-error': usernameError, 'padded-input': true }"
-      @input="clearError('username')" />
-  </div>
-  
-  <div class="email-container">
-    <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
-    <input
-      v-model="email"
-      type="email"
-      id="email"
-      placeholder="Your email"
-      :class="{ 'input-error': emailError, 'padded-input': true }"
-      @input="validateEmail" />
-  </div>
-  
-  <div class="password-container">
-    <input
-      v-model="password"
-      :type="showPassword ? 'text' : 'password'"
-      id="password"
-      placeholder="Your password"
-      :class="{ 'input-error': passwordError, 'padded-input': true }"
-      @input="clearError('password')" />
-    <button
-      type="button" 
-      class="show-password-btn" 
-      @click="togglePasswordVisibility"
-      aria-label="Show or Hide Password" >
-      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-    </button>
-  </div>
-  
-  <div class="password-container">
-    <input
-      v-model="password2"
-      :type="showConfirmPassword ? 'text': 'password'"
-      id="password2"
-      placeholder="Confirm your password"
-      :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-      @input="clearError('password2')" />
+  <div class="signup-form">
+    <h2 class="form-title">Sign Up</h2>
+    
+    <div class="username-container">
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+      <input
+	v-model="username"
+	type="text"
+	id="username"
+	placeholder="Your username"
+	:class="{ 'input-error': usernameError, 'padded-input': true }"
+	@input="validateUser" />
+    </div>
+    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+    
+    <div class="email-container">
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
+      <input
+	v-model="email"
+	type="email"
+	id="email"
+	placeholder="Your email"
+	:class="{ 'input-error': emailError, 'padded-input': true }"
+	@input="validateEmail" />
+    </div>
+    <span v-if="emailError" class="error-message">{{ emailError }}</span>
+    
+    <div class="password-container">
+      <input
+	v-model="password"
+	:type="showPassword ? 'text' : 'password'"
+	id="password"
+	placeholder="Your password"
+	:class="{ 'input-error': passwordError, 'padded-input': true }"
+	@input="clearError('password')" />
+      <button
+	type="button" 
+	class="show-password-btn" 
+	@click="togglePasswordVisibility"
+	aria-label="Show or Hide Password" >
+	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+      </button>
+    </div>
+    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+    
+    <div class="password-container">
+      <input
+	v-model="password2"
+	:type="showConfirmPassword ? 'text': 'password'"
+	id="password2"
+	placeholder="Confirm your password"
+	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+	@input="clearError('password2')" />
     <button 
       type="button" 
       class="show-password-btn" 
@@ -56,122 +59,87 @@
       aria-label="Show or Hide Confirm Password">
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
     </button>
+    </div>
+    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+    
+    <div class="button-group">
+      <button class="accept-btn" @click="emitSignUp" >Accept</button>
+      <div class="divider">
+	<span>or return to</span>
+      </div>
+      <button class="login-btn" @click="$emit('goToLogin')">Log-In</button>
+    </div>
   </div>
-  
-  <div class="button-group">
-    <button class="accept-btn" @click="emitSignUp" >Create User</button>
-    <button class="login-btn" @click="$emit('goToLogin')">Log In</button>
-  </div>
-</div>
-
-<div class="message-container">
-  <MessageAlerts
-    v-for="(msg, index) in messages" 
-    :key="msg.id" 
-    :text="msg.text" 
-    :type="msg.type" 
-    @close="removeMessage(index)" />
-</div>
 </template>
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MessageAlerts from '@/components/messages.vue';
 import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "SignUpForm",
-  components: {
-    FontAwesomeIcon,
-    MessageAlerts
-  },
+  components: { FontAwesomeIcon },
   data() {
     return {
       username: "",
       email: "",
       password: "",
       password2: "",
-      usernameError: false,
-      emailError: false,
-      passwordError: false,
-      confirmPasswordError: false,
+      usernameError: "",
+      emailError: "",
+      passwordError: "",
+      confirmPasswordError: "",
       showPassword: false,
-      showConfirmPassword: false,
-      messages: []
+      showConfirmPassword: false
     };
   },
   methods: {
-    addMessage(text, type = "neutral") {
-      const id = Date.now();
-      this.messages.push({ id, text, type });
-    },
-    removeMessage(index) {
-      this.messages.splice(index, 1);
-    },
     clearError(field) {
       if (field === 'username')
-	this.usernameError = false;
+	this.usernameError = '';
       if (field === 'email')
-	this.emailError = false;
+	this.emailError = '';
       if (field === 'password')
-	this.passwordError = false;
+	this.passwordError = '';
       if (field === 'password2')
-	this.confirmPasswordError = false;
+	this.confirmPasswordError = '';
     },
     emitSignUp() {
-      if (this.validateInputs() && this.validateEmail()) {
+      this.usernameError = '';
+      this.emailError = '';
+      this.passwordError = '';
+      this.confirmPasswordError = '';
+      if (!this.username)
+	this.usernameError = 'Username is required';
+      else if (this.username.length < 3) this.usernameError = 'Username requieres at least 3 characters';
+      if (!this.email)
+	this.emailError = 'Email is required';
+      else if (!isEmail(this.email))
+	this.emailError = 'Invalid email format';
+      if (!this.password)
+	this.passwordError = 'Password is required';
+      if (!this.password2)
+	this.confirmPasswordError = 'Confirm password is required';
+      if (this.password && this.password2 && this.password !== this.password2) {
+	this.passwordError = 'Passwords don\'t match';
+	this.confirmPasswordError = 'Passwords don\'t match';
+      }
+      
+      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
         this.$emit("signUp", { username: this.username, email: this.email, password: this.password, password2: this.password2});
       }
     },
-    validateEmail() {
-      if (this.email) {
-	if (isEmail(this.email)) {
-          this.emailError = false;
-          return true;
-	} else {
-          this.addMessage("Invalid email format.", "error");
-          this.emailError = true;
-          return false;
-	}
+    validateUsername() {
+      this.usernameError = '';
+      if (this.username.length > 0 && this.username.length < 3 || this.username.length > 16) {
+        this.usernameError = 'Username must be 3-16 characters long';
       }
-      
-      return true;
     },
-    validateInputs() {
-      let isValid = true;
-
-      if (!this.username) {
-        this.addMessage("Username is required.", "error");
-        this.usernameError = true;
-        isValid = false;
-      } else if (this.username.length < 3 || this.username.length > 16) {
-        this.addMessage("Username must be 3-16 characters long.", "error");
-        this.usernameError = true;
-        isValid = false;
+    validateEmail() {
+      this.emailError = '';
+      if (this.email && !isEmail(this.email)) {
+        this.emailError = 'Invalid email format';
       }
-      if (!this.email) {
-        this.addMessage("Email is required.", "error");
-        this.emailError = true;
-        isValid = false;
-      }
-      if (!this.password) {
-        this.addMessage("Password is required.", "error");
-        this.passwordError = true;
-        isValid = false;
-      }
-      if (!this.password2) {
-        this.addMessage("Confirm Password is required.", "error");
-        this.confirmPasswordError = true;
-        isValid = false;
-      }
-      if (this.password2 !== this.password) {
-        this.addMessage("Passwords don't match.", "error");
-	this.passwordError = true;
-        this.confirmPasswordError = true;
-        isValid = false;
-      }
-      
-      return isValid;
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -218,6 +186,14 @@ input {
 
 .input-error {
     border-color: #D55C5C;
+}
+
+.error-message {
+    color: #D55C5C;
+    font-size: 14px;
+    align-self: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .username-container,
@@ -293,11 +269,36 @@ input {
     border-radius: 20px;
     background-color: white;
     border: 2px solid white;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     cursor: pointer;
     color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: white;
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    font-weight: bold;
 }
 
 .login-btn {
@@ -305,7 +306,7 @@ input {
     border-radius: 20px;
     background-color: #333;
     border: 2px solid #333;
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 20px;
     cursor: pointer;
     color: white;

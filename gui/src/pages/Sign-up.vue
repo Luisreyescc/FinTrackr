@@ -27,9 +27,7 @@ export default {
     MessageAlerts
   },
   data() {
-    return {
-      messages: [] // Array to store messages
-    };
+    return { messages: [] };
   },
   methods: {
     addMessage(text, type = "neutral") {
@@ -51,8 +49,10 @@ export default {
 
           if (response.status === 201) {
             this.addMessage("User registered successfully! Redirecting to login...", "success");
+	setTimeout(() => {
             this.$router.push("/login");
-          } else {
+	}, 3000);
+	} else {
             this.addMessage(response.data.error || "Registration failed", "error");
           }
         } catch (error) {
@@ -63,7 +63,9 @@ export default {
               errors.push(`${key}: ${error.response.data[key]}`);
             }
             this.addMessage(errors.join("\n"), "error");
-          } else { this.addMessage("There was an issue with your registration. Please try again.", "error"); }
+          } else {
+	this.addMessage("There was an issue with your registration. Please try again.", "error");
+	}
         }
       } else {
         this.addMessage("Please fill in all required fields.", "neutral");
@@ -83,7 +85,6 @@ export default {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    /*background: linear-gradient(to bottom, #d1d5f6, #a6a8f0, #7177f4); */
     background: #3B3B5A;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -95,7 +96,6 @@ export default {
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    /*background: #3B3B5A;*/
     background: rgba(59, 59, 90, 0.1);
     backdrop-filter: blur(15px);
 }
