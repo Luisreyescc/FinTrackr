@@ -8,13 +8,14 @@
     <div class="username-container">
       <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
       <input
-        v-model="formData.username"
+        v-model="formData.user_name"
         type="text"
-        id="username"
+        id="user_name"
         placeholder="Username"
         :class="{ 'input-error': usernameError, 'padded-input': true }"
-        @input="clearError('username')" />
+        @input="validateUser" />
     </div>
+    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
 
     <div class="row">
       <div class="column">
@@ -41,6 +42,7 @@
         :class="{ 'input-error': emailError, 'padded-input': true }"
         @input="validateEmail" />
     </div>
+    <span v-if="emailError" class="error-message">{{ emailError }}</span>
 
     <div class="curp-container">
       <font-awesome-icon class="curp-icon" :icon="['fas', 'passport']" />
@@ -51,6 +53,7 @@
 	placeholder="Your Curp"
 	@input="handleCurpInput"/>
     </div>
+    <span v-if="curpError" class="error-message">{{ curpError }}</span>
     
     <div class="rfc-container">
       <font-awesome-icon class="rfc-icon" :icon="['fas', 'passport']" />
@@ -61,6 +64,7 @@
 	placeholder="Your Rfc"
 	@input="handleRfcInput">
     </div>
+    <span v-if="rfcError" class="error-message">{{ rfcError }}</span>
     
     <div class="row">
       <div class="column">
@@ -74,6 +78,7 @@
             :class="{ 'input-error': phoneError, 'padded-input': true }"
             @input="validatePhone" />
         </div>
+	<span v-if="phoneError" class="error-message">{{ phoneError }}</span>
       </div>
       <div class="column">
 	<div class="birth-container">
@@ -121,6 +126,7 @@
           <span :class="{ 'gg-eye': true, 'gg-eye-alt': showNewPassword }" ></span>
         </button>
       </div>
+      <span v-if="newPasswordError" class="error-message">{{ newPasswordError }}</span>
 
       <div class="password-container">
         <input
@@ -137,6 +143,7 @@
           <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }" ></span>
         </button>
       </div>
+      <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
     </div>
 
     <div class="button-group">
@@ -144,28 +151,15 @@
       <button class="save-btn" @click="saveProfile">Save Changes</button>
     </div>
   </div>
-  
-  <div class="message-container">
-  <MessageAlerts
-    v-for="(msg, index) in messages" 
-    :key="msg.id" 
-    :text="msg.text" 
-    :type="msg.type" 
-    @close="removeMessage(index)" />
-</div>
 </template>
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MessageAlerts from '@/components/messages.vue';
 import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "EditProfileForm",
-  components: {
-    FontAwesomeIcon,
-    MessageAlerts
-  },
+  components: { FontAwesomeIcon },
   props: {
     initialData: {
       type: Object,
@@ -175,7 +169,7 @@ export default {
   data() {
     return {
       formData: {
-        username: this.initialData.user_name || "",
+        user_name: this.initialData.user_name || "",
         name: this.initialData.name || "",
         last_name: this.initialData.last_name || "",
         email: this.initialData.email || "",
@@ -191,12 +185,13 @@ export default {
       showNewPassword: false,
       showConfirmPassword: false,
       showPasswordFields: false,
-      usernameError: false,
-      emailError: false,
-      phoneError: false,
-      newPasswordError: false,
-      confirmPasswordError: false,
-      messages: []
+      usernameError: "",
+      emailError: "",
+      curpError: "",
+      rfcError: "",
+      phoneError: "",
+      newPasswordError: "",
+      confirmPasswordError: ""
     };
   },
   watch: {
@@ -222,46 +217,56 @@ export default {
     },
   },
   methods: {
-    validateUsername() {
-      if (!this.formData.username) {
-        this.addMessage('Username is required.', 'error');
-        this.usernameError = true;
-      } else if (this.formData.username.length < 3 || this.formData.username.length > 16) {
-        this.addMessage('Username must be 3-16 characters long.', 'error');
-        this.usernameError = true;
-      } else
-        this.usernameError = false;
+    validateUser() {
+      this.usernameError = "";
+      if (!this.formData.user_name)
+	this.usernameError = "Username is required";
+      else if (this.formData.user_name.length < 3 || this.formData.user_name.length > 16)
+	this.usernameError = "Username must be between 3 and 16 characters";
     },
     validateEmail() {
-      if (!this.formData.email) {
-        this.addMessage('Email is required.', 'error');
-        this.emailError = true;
-      } else if (!isEmail(this.formData.email)) {
-        this.addMessage('Invalid email format.', 'error');
-        this.emailError = true;
-      } else
-        this.emailError = false;
+      this.emailError = "";
+      if (!this.formData.email)
+	this.emailError = "Email is required";
+      else if (!isEmail(this.formData.email))
+	this.emailError = "Invalid email format";
     },
     validatePhone() {
-      if (this.formData.phone && !/^\d+$/.test(this.formData.phone)) {
-        this.addMessage('Phone number must be numeric.', 'error');
-        this.phoneError = true;
-      } else
-        this.phoneError = false;
+      this.phoneError = "";
+      if (this.formData.phone && !/^\d+$/.test(this.formData.phone))
+	this.phoneError = "Only digits accepted";
     },
     validatePasswords() {
-      if (this.formData.newPassword || this.formData.confirmPassword) {
-        if (this.formData.newPassword !== this.formData.confirmPassword) {
-          this.addMessage("Passwords don't match.", 'error');
-          this.newPasswordError = true;
-          this.confirmPasswordError = true;
-          return false;
-        }
+      this.newPasswordError = "";
+      this.confirmPasswordError = "";
+      
+      if (this.showPasswordFields) {
+	if (!this.formData.newPassword)
+	this.newPasswordError = "New password is required.";
+	if (!this.formData.confirmPassword)
+	this.confirmPasswordError = "Confirm password is required.";
+	if (this.formData.newPassword && this.formData.confirmPassword && this.formData.newPassword !== this.formData.confirmPassword) {
+	this.newPasswordError = "Passwords don't match.";
+	this.confirmPasswordError = "Passwords don't match.";
+	}
       }
-      return true;
+    },
+    handleCurpInput(event) {
+      const curp = event.target.value.toUpperCase();
+      this.curpError = "";
+      if (curp.length > 18)
+	this.curpError = "CURP can't have more than 18 characters";
+      this.formData.curp = curp;
+    },
+    handleRfcInput(event) {
+      const rfc = event.target.value.toUpperCase();
+      this.rfcError = "";
+      if (rfc.length > 13)
+	this.rfcError = "RFC can't have more than 13 characters";
+      this.formData.rfc = rfc;
     },
     clearError(field) {
-      this[`${field}Error`] = false;
+      this[`${field}Error`] = "";
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -280,10 +285,14 @@ export default {
       }
     },
     saveProfile() {
-      this.validateUsername();
+      this.validateUser();
       this.validateEmail();
+
       this.validatePhone();
-      if (!this.validatePasswords()) return;
+      this.validatePasswords();
+
+      if (this.usernameError || this.emailError ||  this.curpError || this.rfcError ||this.phoneError || this.newPasswordError || this.confirmPasswordError)
+	return;
       
       const sanitizedData = Object.fromEntries(
         Object.entries(this.formData).map(([key, value]) => [
@@ -292,27 +301,6 @@ export default {
         ]),
       );
       this.$emit("saveProfile", sanitizedData);
-    },
-    handleCurpInput(event) {
-      const curp = event.target.value.toUpperCase();
-      if (curp.length > 18) {
-	this.addMessage("CURP can't have more than 18 characters.", "error");
-      }
-      this.formData.curp = curp;
-    },
-    handleRfcInput(event) {
-      const rfc = event.target.value.toUpperCase();
-      if (rfc.length > 13) {
-	this.addMessage("RFC can't have more than 13 characters.", "error");
-      }
-      this.formData.rfc = rfc;
-    },
-    addMessage(text, type = "neutral") {
-      const id = Date.now();
-      this.messages.push({ id, text, type });
-    },
-    removeMessage(index) {
-      this.messages.splice(index, 1);
     },
     goToHome() {
       this.$emit("goToHome");
@@ -376,6 +364,14 @@ input {
 
 .input-error {
     border-color: #D55C5C;
+}
+
+.error-message {
+  color: #D55C5C;
+  font-size: 14px;
+  align-self: center;
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 
 .username-container,

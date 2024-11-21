@@ -131,8 +131,8 @@ export default {
     },
     validateUsername() {
       this.usernameError = '';
-      if (this.username.length > 0 && this.username.length < 3) {
-        this.usernameError = 'Username must be at least 3 characters long';
+      if (this.username.length > 0 && this.username.length < 3 || this.username.length > 16) {
+        this.usernameError = 'Username must be 3-16 characters long';
       }
     },
     validateEmail() {

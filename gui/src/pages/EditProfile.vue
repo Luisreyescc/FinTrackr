@@ -8,7 +8,6 @@
       :type="msg.type" 
       @close="removeMessage(index)" />
   </div>
-  
   <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />  
 </div>
 </template>
@@ -35,9 +34,9 @@ export default {
         curp: "",
         rfc: "",
         birth_date: "",
-        password: "",
-	messages: []
+        password: ""
       },
+      messages: []
     };
   },
   methods: {
@@ -71,9 +70,10 @@ export default {
             birth_date: response.data.birth_date || "",
             password: "", // We leave password field empty for security reasons
           };
-        } else { this.addMessage("Failed to fetch your data", "error"); }
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
+	this.addMessage("Failed to fetch your data", "error");
       }
     },
     async editProfile(profileData) {
@@ -108,13 +108,13 @@ export default {
         );
         console.log("API response:", response);
         if (response.status === 200) {
-          this.addMessage("User data updated succesfully", "success");
+          this.addMessage("User data updated succesfully.", "success");
         } else {
-          this.addMessage("Failed to save your data ", "error");
+          this.addMessage("Failed to save your data.", "error");
         }
       } catch (error) {
         console.error("Update failed:", error);
-        this.addMessage("An error occure while saving your data ", "error");
+        this.addMessage("An error occure while saving your data.", "error");
       }
     },
     goToHome() {
