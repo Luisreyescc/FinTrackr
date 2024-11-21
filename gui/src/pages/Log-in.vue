@@ -41,26 +41,22 @@ export default {
     },
     async login({ username, password }) {
       if (username && password) {
-        try {
-          const response = await axios.post(
-            "http://localhost:8000/api/login/",
-            {
-              user_name: username,
-              password: password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
-          console.log(response.data);
-          if (response.status === 200) {
-            const token = response.data.access;
-            localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
-          } else { this.addMessage("Invalid username or password. Please try again.", "error"); }
+       try {
+        const response = await axios.post(
+	"http://localhost:8000/api/login/", { user_name: username, password: password },
+	{ headers: { "Content-Type": "application/json" } } );
+        console.log(response.data);
+        if (response.status === 200) {
+	const token = response.data.access;
+	localStorage.setItem("token", token);
+	this.addMessage("Login successful", "success");
+	this.$emit("login");
+        } else {
+	this.addMessage("Invalid username or password. Please try again.", "error");
+	}
         } catch (error) {
           console.error("Login failed:", error);
+	this.addMessage("Login failed, please try again later.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");
@@ -94,7 +90,6 @@ export default {
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    /*background: #3B3B5A;*/
     background: rgba(59, 59, 90, 0.1);
     backdrop-filter: blur(15px);
 }

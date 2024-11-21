@@ -34,6 +34,9 @@
   
   <div class="button-group">
     <button class="sign-in-btn" @click="emitLogin">Log-in</button>
+    <div class="divider">
+      <span>or</span>
+    </div>
     <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
   </div>
   
@@ -191,7 +194,7 @@ input {
 .button-group {
     width: 60%;
     display: flex;
-    margin-top: 30px;
+    margin-top: 25px;
     flex-direction: column;
 }
 
@@ -200,11 +203,36 @@ input {
     border-radius: 20px;
     background-color: white;
     border: 2px solid white;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     cursor: pointer;
     color: #333;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: white;
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+    font-weight: bold;
 }
 
 .register-btn {
@@ -212,7 +240,7 @@ input {
     border-radius: 20px;
     background-color: #333;
     border: 2px solid #333;
-    margin-top: 20px;
+    margin-top: 5px;
     cursor: pointer;
     color: white;
     font-size: 18px;
