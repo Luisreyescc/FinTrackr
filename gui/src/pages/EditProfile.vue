@@ -1,27 +1,32 @@
 <template>
-<div class="edit-profile-page">
-  <div class="message-container">
-    <MessageAlerts
-      v-for="(msg, index) in messages" 
-      :key="msg.id" 
-      :text="msg.text" 
-      :type="msg.type" 
-      @close="removeMessage(index)" />
+  <div class="edit-profile-page">
+    <div class="message-container">
+      <MessageAlerts
+        v-for="(msg, index) in messages"
+        :key="msg.id"
+        :text="msg.text"
+        :type="msg.type"
+        @close="removeMessage(index)"
+      />
+    </div>
+    <EditProfileForm
+      :initialData="userData"
+      @saveProfile="editProfile"
+      @goToHome="goToHome"
+    />
   </div>
-  <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />  
-</div>
 </template>
 
 <script>
 import EditProfileForm from "@/formats/editprofile-format.vue";
-import MessageAlerts from '@/components/messages.vue';
+import MessageAlerts from "@/components/messages.vue";
 import axios from "axios";
 
 export default {
   name: "EditProfile",
   components: {
     EditProfileForm,
-    MessageAlerts
+    MessageAlerts,
   },
   data() {
     return {
@@ -34,9 +39,9 @@ export default {
         curp: "",
         rfc: "",
         birth_date: "",
-        password: ""
+        password: "",
       },
-      messages: []
+      messages: [],
     };
   },
   methods: {
@@ -73,7 +78,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-	this.addMessage("Failed to fetch your data", "error");
+        this.addMessage("Failed to fetch your data", "error");
       }
     },
     async editProfile(profileData) {
@@ -102,7 +107,7 @@ export default {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: 'Bearer ${token}',
+              Authorization: `Bearer ${token}`,
             },
           },
         );
@@ -130,12 +135,12 @@ export default {
 
 <style scoped>
 .edit-profile-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: white;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 </style>
