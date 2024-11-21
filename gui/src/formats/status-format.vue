@@ -1,19 +1,11 @@
 <template>
 <div class="status-form">
-  <div class="sidebar">
-    <button @click="toggleSidebar" class="menu-button">
-      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
-    </button>
-  </div>
-
   <div class="content-wrapper">
-    <div v-if="localSelectedContent === 'Incomes'" class="main-content">
-      <div class="incomes-container">
-	<div class="header">
-        <h2 class="section-title">{{ selectedContent }}</h2>
-	<ShowAll @click="showAll" />
+    <div class="status-container">
+      <div class="header">
+        <h2 class="section-title">Your account status</h2>
 	<FilterGraphics
-	:filterOptions="['Day', 'Week', 'Month', 'Year']"
+	:filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
         :currentFilter="currentFilter"
         @filterSelected="applyFilter" />
 	</div>

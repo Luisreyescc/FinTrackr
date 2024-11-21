@@ -1,35 +1,11 @@
 <template>
   <div class="page-container">
-    <StatusForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
-    <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
-
-    <button @click="toggleAllStatus" class="all-status-button">
-      Show All Status
-    </button>
     
-    <div v-if="isAllStatusVisible" class="all-status-container">
-      <div class="all-status-header">
-        <h2>All Status</h2>
-        <button @click="toggleAllStatus" class="close-button">
-          <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
-        </button>
-      </div>
-      <div class="all-status-content">
-        <apexchart
-          v-if="chartData.length > 0"
-          type="line"
-          :options="chartOptions"
-          :series="chartData"
-          height="400"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import StatusForm from '@/formats/status-format.vue';
-import SideBar from '@/components/side-bar.vue';
 import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
 
