@@ -1,145 +1,87 @@
-<template>
+=<template>
   <div class="page-container">
-    <StatusForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
     <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 
-    <button @click="toggleAllStatus" class="all-status-button">
-      Show All Status
-    </button>
-    
-    <div v-if="isAllStatusVisible" class="all-status-container">
-      <div class="all-status-header">
-        <h2>All Status</h2>
-        <button @click="toggleAllStatus" class="close-button">
-          <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
-        </button>
-      </div>
-      <div class="all-status-content">
-        <apexchart
-          v-if="chartData.length > 0"
-          type="line"
-          :options="chartOptions"
-          :series="chartData"
-          height="400"
-        />
-      </div>
+    <div class="chart-container">
+      <apexchart
+        type="donut"
+        :options="chartOptions"
+        :series="series"
+        height="400"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import StatusForm from '@/formats/status-format.vue';
 import SideBar from '@/components/side-bar.vue';
 import ApexCharts from 'vue3-apexcharts';
 import axios from 'axios';
 
 export default {
-  name: 'StatusPage',
+  name: 'PieChartPage',
   components: {
-    StatusForm,
     SideBar,
     apexchart: ApexCharts
   },
   data() {
     return {
       isSidebarVisible: false,
-      selectedContent: 'Incomes',
-      isAllStatusVisible: false,
-      chartData: [],
+      series: [], // Array for the amounts
       chartOptions: {
         chart: {
-          height: 400,
-          type: 'line',
+          type: 'donut',
         },
-        xaxis: {
-          categories: [],
-        },
-        stroke: {
-          curve: 'smooth',
-        },
-      },
+        labels: [], // Array for the categories
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      }
     };
   },
+  created() {
+    this.fetchChartData();
+  },
   methods: {
-    toggleAllStatus() {
-      console.log("toggleAllStatus triggered");
-      this.isAllStatusVisible = !this.isAllStatusVisible;
-      if (this.isAllStatusVisible) {
-        this.showAllGraphics();
-      }
-    },
-    formatDate(dateStr) {
-      return new Date(dateStr).toISOString().split('T')[0];
-    },
-    showAllGraphics() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
+    async fetchChartData() {
+      try {
+        const token = localStorage.getItem('token'); // Assuming you're using token-based auth
+        const response = await axios.get('http://localhost:8000/api/expenses/category-summary/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
-      // Fetch both Incomes and Expenses for combined chart
-      Promise.all([
-        axios.get('http://localhost:8000/api/incomes/', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get('http://localhost:8000/api/expenses/', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ])
-      .then(([incomeResponse, expenseResponse]) => {
-        console.log("Income Response:", incomeResponse.data);
-        console.log("Expense Response:", expenseResponse.data);
+        const data = response.data; // Assuming the API response is an array of objects
+        console.log("API Data:", data);
 
-        const incomeData = incomeResponse.data.map((item) => ({
-          x: this.formatDate(item.date),
-          y: parseFloat(item.amount),
-        }));
-        const expenseData = expenseResponse.data.map((item) => ({
-          x: this.formatDate(item.date),
-          y: parseFloat(item.amount),
-        }));
+        // Extract amounts and categories from the response
+        const amounts = data.map(item => item.total_amount);
+        const categories = data.map(item => item.category);
 
-        // Generate a complete list of unique dates from both data sets
-        const uniqueDates = [
-          ...new Set([...incomeData, ...expenseData].map(item => item.x))
-        ].sort();
-
-        // Populate data for missing dates with y: 0 to ensure continuity
-        const fillMissingData = (data, dates) => {
-          const dataMap = Object.fromEntries(data.map(item => [item.x, item.y]));
-          return dates.map(date => ({
-            x: date,
-            y: dataMap[date] || 0
-          }));
-        };
-
-        this.chartData = [
-          { name: 'Incomes', data: fillMissingData(incomeData, uniqueDates) },
-          { name: 'Expenses', data: fillMissingData(expenseData, uniqueDates) },
-        ];
-
-        // Set xaxis categories based on unique dates from both data sets
+        this.series = amounts;
         this.chartOptions = {
           ...this.chartOptions,
-          xaxis: {
-            categories: uniqueDates,
-          }
+          labels: categories // Set the labels dynamically
         };
 
-        console.log("Chart Data:", this.chartData);
-        console.log("Categories:", this.chartOptions.xaxis.categories);
-
-        // Trigger Vue reactivity for chartOptions
-        this.chartOptions = { ...this.chartOptions };
-      })
-      .catch((error) => console.error('Error fetching all data for the graphics:', error));
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
     },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },
     updateContent(content) {
-      this.selectedContent = content;
+      console.log('Content selected:', content);
       this.isSidebarVisible = false;
     }
   }
@@ -148,21 +90,20 @@ export default {
 
 <style scoped>
 .page-container {
-    display: flex;
-    position: relative;
-    padding-top: 70px;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
-.content {
-  flex: 1;
-  padding: 20px;
+.chart-container {
+  margin-top: 20px;
+  width: 90%;
+  max-width: 500px;
 }
 
-.all-status-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+button {
   background-color: #4CAF50;
   color: white;
   border: none;
@@ -170,51 +111,9 @@ export default {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
 }
 
-.all-status-button:hover {
+button:hover {
   background-color: #45a049;
-}
-
-.all-status-container {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-45%);
-  width: 90%;
-  max-width: 800px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  padding: 20px;
-}
-
-.all-status-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-}
-
-.all-status-header h2 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: #333;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.all-status-content {
-  padding-top: 20px;
 }
 </style>
