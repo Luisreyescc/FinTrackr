@@ -34,12 +34,13 @@ export default {
     position: relative;
     justify-content: space-between;
     padding-top: 70px;
-    min-height: 100vh;
+    overflow: hidden;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .content {
     flex: 1;
     padding: 20px;
+    overflow: hidden;
 }
 </style>

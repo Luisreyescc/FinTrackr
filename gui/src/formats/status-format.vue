@@ -6,7 +6,7 @@
     </button>
   </div>
   
-  <div class="content-wrapper scrollbar">
+  <div class="content-wrapper">
     <div class="section">
       <div class="header">
 	<h2 class="section-title">Account Status</h2>
@@ -159,6 +159,8 @@ export default {
 .status-form {
     display: flex;
     width: 100%;
+    height: 100%;
+    overflow: hidden;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -191,20 +193,19 @@ export default {
 .content-wrapper {
     flex: 1;
     display: flex;
-    justify-content: center;
-    padding: 20px;
-    height: 100%;
-    margin-left: 70px;
     position: relative;
-    max-height: 80vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    justify-content: center;
+    gap: 5px;
+    padding: 20px;
+    margin-left: 50px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .section {
     display: flex;
     flex-direction: column;
-    max-width: 800px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -232,7 +233,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 750px;
+    overflow: auto;
     background-color: #ffffff;
     border-top: 1px solid #eee;
     border-radius: 8px;
