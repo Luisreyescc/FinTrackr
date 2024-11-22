@@ -13,9 +13,9 @@
           <h2 class="section-title">{{ selectedContent }}</h2>
           <IncomeButton @click="toggleForm" />
           </div>
-        <div class="activity-content">
+        <div class="activity-content scrollbar">
           <h3 class="activity-title">Activity</h3>
-          <div class="activity-section scrollbar">
+          <div class="activity-section">
             <div class="list-container">
               <IncomeRow
                 v-for="(income, index) in sortedIncomes"
@@ -40,9 +40,9 @@
           <h2 class="section-title">{{ selectedContent }}</h2>
           <ExpenseButton @click="toggleForm" />
         </div>
-        <div class="activity-content">
+        <div class="activity-content scrollbar">
           <h3 class="activity-title">Activity</h3>
-          <div class="activity-section scrollbar">
+          <div class="activity-section">
             <div class="list-container">
               <ExpenseRow
                 v-for="(expense, index) in sortedExpenses"

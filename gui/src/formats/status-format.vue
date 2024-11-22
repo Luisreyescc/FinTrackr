@@ -23,7 +23,7 @@
           :options="chartOptions"
           :series="chartData"
           :style="{
-            minWidth: '600px',
+            minWidth: '900px',
             minHeight: '400px',
             maxWidth: '100%',
             maxHeight: '100%',
@@ -50,7 +50,7 @@
           :options="categoriesChartOptions"
           :series="categoriesChartData"
           :style="{
-            minWidth: '600px',
+            minWidth: '400px',
             minHeight: '400px',
             maxWidth: '100%',
             maxHeight: '100%',
@@ -80,26 +80,27 @@ export default {
       currentFilter: "Month",
       chartData: [],
       categoriesChartData: [],
-      chartOptions: {
+      chartOptions: Object.freeze({
         chart: {
-          height: 400,
-          type: 'area',
-          width: 400,
+          type: 'area'
         },
         xaxis: {
           categories: [],
+        },
+	dataLabels: {
+          enabled: false
         },
 	colors: ['#008FFB', '#FAA700'],
         stroke: {
           curve: 'straight',
         },
-      },
-      categoriesChartOptions: {
+      }),
+      categoriesChartOptions: Object.freeze({
         chart: {
           type: 'donut',
         },
         labels: [], // Labels for the donut chart
-      },
+      }),
     };
   },
   created() {
@@ -315,7 +316,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
     padding: 20px;
 }
 </style>
