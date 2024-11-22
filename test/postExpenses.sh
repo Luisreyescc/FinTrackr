@@ -35,7 +35,7 @@ get_random_date() {
 }
 
 get_random_amount() {
-  MAX_AMOUNT=99999
+  MAX_AMOUNT=999999
   RANDOM_AMOUNT=$(shuf -i 1-$MAX_AMOUNT -n 1)
   echo $RANDOM_AMOUNT
 }
