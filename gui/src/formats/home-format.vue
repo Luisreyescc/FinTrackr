@@ -1,69 +1,65 @@
 <template>
-  <div class="home-form">
-    <div class="sidebar">
-      <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="32" />
-      </button>
-    </div>
-
-    <div class="content-wrapper">
-      <div v-if="selectedContent === 'Incomes'" class="main-content">
-        <div class="incomes-container">
-          <div class="header">
-            <h2 class="section-title">{{ selectedContent }}</h2>
-            <IncomeButton @click="toggleForm" />
+<div class="home-form">
+  <div class="sidebar">
+    <button @click="toggleSidebar" class="menu-button">
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="32" />
+    </button>
+  </div>
+  
+  <div class="content-wrapper">
+    <div v-if="selectedContent === 'Incomes'" class="main-content">
+      <div class="incomes-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <IncomeButton @click="toggleForm" />
           </div>
-          <div class="activity-content">
-            <h3 class="activity-title">Activity</h3>
-            <div class="activity-section">
-              <div class="list-container">
-                <IncomeRow
-                  v-for="(income, index) in sortedIncomes"
-                  :key="index"
-                  :income="income"
-                  @updateIncome="handleIncomeUpdate"
-                  @deleteIncome="handleIncomeDelete"
+        <div class="activity-content">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container">
+              <IncomeRow
+                v-for="(income, index) in sortedIncomes"
+                :key="index"
+                :income="income"
+                @updateIncome="handleIncomeUpdate"
+                @deleteIncome="handleIncomeDelete"
                 />
-              </div>
             </div>
-          </div>
-        </div>
-        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-        <div class="forms-section" v-if="showForm">
-          <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
+            </div>
         </div>
       </div>
-
-      <div v-if="selectedContent === 'Expenses'" class="main-content">
-        <div class="expenses-container">
-          <div class="header">
-            <h2 class="section-title">{{ selectedContent }}</h2>
-            <ExpenseButton @click="toggleForm" />
-          </div>
-          <div class="activity-content">
-            <h3 class="activity-title">Activity</h3>
-            <div class="activity-section">
-              <div class="list-container">
-                <ExpenseRow
-                  v-for="(expense, index) in sortedExpenses"
-                  :key="index"
-                  :expense="expense"
-                  @updateExpense="handleExpenseUpdate"
-                  @deleteExpense="handleExpenseDelete"
-                />
-              </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
+      </div>
+    </div>
+    
+    <div v-if="selectedContent === 'Expenses'" class="main-content">
+      <div class="expenses-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <ExpenseButton @click="toggleForm" />
+        </div>
+        <div class="activity-content">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container">
+              <ExpenseRow
+                v-for="(expense, index) in sortedExpenses"
+                :key="index"
+                :expense="expense"
+                @updateExpense="handleExpenseUpdate"
+                @deleteExpense="handleExpenseDelete" />
             </div>
           </div>
         </div>
-        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-        <div class="forms-section" v-if="showForm">
-          <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm" />
-        </div>
+      </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm" />
       </div>
     </div>
   </div>
-<<<<<<< HEAD
-=======
 </div>
 
 <div class="message-container">
@@ -74,7 +70,6 @@
     :type="msg.type" 
     @close="removeMessage(index)" />
 </div>
->>>>>>> bceb157 (Message for the user implemented)
 </template>
 
 <script>
@@ -212,7 +207,6 @@ export default {
           `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
           updatedIncome,
           { headers: { Authorization: `Bearer ${token}` } }
-<<<<<<< HEAD
         );
 
         if (response.status === 200) {
@@ -221,24 +215,11 @@ export default {
             this.incomes[index] = response.data;
             this.fetchIncomes();
           }
+          this.addMessage("Income data edited successfully.", "success");
         }
       } catch (error) {
         console.error("Error updating income:", error);
-=======
-	);
-	
-	if (response.status === 200) {
-          // We update the income in the local array
-          const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
-          if (index !== -1) {
-            this.$set(this.incomes, index, response.data); // Replace content
-          }
-          this.addMessage("Income data edited successfully.", "success");
-	}
-      } catch (error) {
-	console.error("Error updating income:", error);
 	this.addMessage("There was an error while saving the income changes.", "error");
->>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleIncomeDelete(incomeId) {
@@ -246,25 +227,16 @@ export default {
         const token = localStorage.getItem("token");
         const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
           headers: { Authorization: `Bearer ${token}` },
-<<<<<<< HEAD
         });
         if (response.status === 204) {
           console.log("Succes");
           this.fetchIncomes();
           this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+          this.addMessage("Income deleted successfully.", "success");
         }
       } catch (error) {
         console.error("Error deleting income:", error);
-=======
-	});
-	if (response.status === 204) {
-	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
-	this.addMessage("Income deleted successfully.", "success");
-	}
-      } catch (error) {
-	console.error("Error deleting income:", error);
 	this.addMessage("There was an error while deleting the income.", "error");
->>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleExpenseUpdate(updatedExpense) {
@@ -275,7 +247,6 @@ export default {
           `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
           updatedExpense,
           { headers: { Authorization: `Bearer ${token}` } }
-<<<<<<< HEAD
         );
 
         if (response.status === 200) {
@@ -284,27 +255,13 @@ export default {
             this.expenses[index] = response.data;
             this.fetchExpenses();
           }
+          this.addMessage("Expense data edited succesfully.", "success");
         }
 
-        this.fetchExpenses();
-
+	this.fetchExpenses();
       } catch (error) {
         console.error("Error updating expense:", error);
-=======
-	);
-	
-	if (response.status === 200) {
-          // We update the income in the local array
-          const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
-          if (index !== -1) {
-            this.$set(this.expense, index, updatedExpense); // Replace content
-          }
-          this.addMessage("Expense data edited succesfully.", "success");
-	}
-      } catch (error) {
-	console.error("Error updating expense:", error);
 	this.addMessage("There was an error while saving the expense changes.", "error");
->>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleExpenseDelete(expenseId) {
@@ -312,26 +269,16 @@ export default {
         const token = localStorage.getItem("token");
         const response = await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`, {
           headers: { Authorization: `Bearer ${token}` },
-<<<<<<< HEAD
         });
 
         if (response.status === 204) {
           this.fetchExpenses();
           this.expenses = this.expenses.filter((expense) => expense.id !== expenseId);
+          this.addMessage("Expense deleted successfully.", "success");
         }
       } catch (error) {
         console.error("Error deleting expense:", error);
-=======
-	});
-	
-	if (response.status === 204) {
-          this.expense = this.expense.filter((expense) => expense.id !== expenseId);
-          this.addMessage("Expense deleted successfully.", "success");
-	}
-      } catch (error) {
-	console.error("Error deleting expense:", error);
 	this.addMessage("There was an error while deleting the expense.", "error");
->>>>>>> bceb157 (Message for the user implemented)
       }
     },
   },
