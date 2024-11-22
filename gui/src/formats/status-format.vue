@@ -16,12 +16,21 @@
         @filterSelected="applyFilter" />
       </div>
       <div class="graphic-container scrollbar">
+	<div class="chart-wrapper">
 	<apexchart
           v-if="chartData.length > 0"
           type="line"
           :options="chartOptions"
           :series="chartData"
-          height="600" width="800" />
+          :style="{
+            minWidth: '600px',
+            minHeight: '400px',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            height: '100%'
+          }" />
+	</div>
       </div>
     </div>
     
@@ -34,12 +43,21 @@
         @filterSelected="applyFilter" />
       </div>
       <div class="graphic-container scrollbar">
+	<div class="chart-wrapper">
 	<apexchart
           v-if="chartData.length > 0"
           type="donut"
           :options="categoriesChartOptions"
           :series="categoriesChartData"
-          height="700" width="700" />
+          :style="{
+            minWidth: '600px',
+            minHeight: '400px',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            height: '100%'
+          }" />
+	</div>
       </div>
     </div>
   </div>
@@ -272,12 +290,27 @@ export default {
 }
 
 .graphic-container {
+    flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     background-color: #ffffff;
     border-top: 1px solid #eee;
     border-radius: 8px;
+}
+
+.chart-wrapper {
+    min-width: 600px;
+    min-height: 400px;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 </style>

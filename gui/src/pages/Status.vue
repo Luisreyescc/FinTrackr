@@ -34,7 +34,7 @@ export default {
     position: relative;
     justify-content: space-between;
     padding-top: 70px;
-    overflow: hidden;
+    overflow: auto;
     font-family: "Wix Madefor Display", sans-serif;
 }
 

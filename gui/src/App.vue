@@ -53,6 +53,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    overflow: auto;
 }
 
 #app {
@@ -60,6 +61,7 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
+    overflow: auto;
     color: #2c3e50;
 }
 </style>
