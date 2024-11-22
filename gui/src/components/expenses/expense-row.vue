@@ -200,6 +200,7 @@ export default {
       return true;
     },
     deleteExpense() {
+      console.log("borrando expense");
       this.$emit("deleteExpense", this.expense.id);
     }
   }

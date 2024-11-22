@@ -1,52 +1,67 @@
 <template>
-<div class="home-form">
-  <div class="sidebar">
-    <button @click="toggleSidebar" class="menu-button">
-	<font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
-    </button>
-  </div>
-  
-  <div class="content-wrapper">
-    <div v-if="selectedContent === 'Incomes'" class="main-content">
-      <div class="incomes-container">
-	<div class="header">
-          <h2 class="section-title">{{ selectedContent }}</h2><IncomeButton @click="toggleForm" />
-	</div>
-	<div class="activity-content"><h3 class="activity-title">Activity</h3>
-          <div class="activity-section">
-            <div class="list-container">
-              <IncomeRow v-for="(income, index) in sortedIncomes" :key="index" :income="income" @updateIncome="handleIncomeUpdate" @deleteIncome="handleIncomeDelete"/>
+  <div class="home-form">
+    <div class="sidebar">
+      <button @click="toggleSidebar" class="menu-button">
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="32" />
+      </button>
+    </div>
+
+    <div class="content-wrapper">
+      <div v-if="selectedContent === 'Incomes'" class="main-content">
+        <div class="incomes-container">
+          <div class="header">
+            <h2 class="section-title">{{ selectedContent }}</h2>
+            <IncomeButton @click="toggleForm" />
+          </div>
+          <div class="activity-content">
+            <h3 class="activity-title">Activity</h3>
+            <div class="activity-section">
+              <div class="list-container">
+                <IncomeRow
+                  v-for="(income, index) in sortedIncomes"
+                  :key="index"
+                  :income="income"
+                  @updateIncome="handleIncomeUpdate"
+                  @deleteIncome="handleIncomeDelete"
+                />
+              </div>
             </div>
           </div>
-	</div>
+        </div>
+        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+        <div class="forms-section" v-if="showForm">
+          <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
+        </div>
       </div>
-      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-      <div class="forms-section" v-if="showForm">
-	<IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
+
+      <div v-if="selectedContent === 'Expenses'" class="main-content">
+        <div class="expenses-container">
+          <div class="header">
+            <h2 class="section-title">{{ selectedContent }}</h2>
+            <ExpenseButton @click="toggleForm" />
+          </div>
+          <div class="activity-content">
+            <h3 class="activity-title">Activity</h3>
+            <div class="activity-section">
+              <div class="list-container">
+                <ExpenseRow
+                  v-for="(expense, index) in sortedExpenses"
+                  :key="index"
+                  :expense="expense"
+                  @updateExpense="handleExpenseUpdate"
+                  @deleteExpense="handleExpenseDelete"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+        <div class="forms-section" v-if="showForm">
+          <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm" />
+        </div>
       </div>
     </div>
-  
-   <div v-if="selectedContent === 'Expenses'" class="main-content">
-     <div class="expenses-container">
-       <div class="header">
-	<h2 class="section-title">{{ selectedContent }}</h2>
-	<ExpenseButton @click="toggleForm" />
-       </div>
-       <div class="activity-content">
-	<h3 class="activity-title">Activity</h3>
-        <div class="activity-section"><div class="list-container">
-	<ExpenseRow v-for="(expense, index) in sortedExpenses" :key="index" :expense="expense" @updateExpense="handleExpenseUpdate" @deleteIncome="handleExpenseDelete"/>
-           </div>
-	</div>
-       </div>
-     </div>
-     <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-     <div class="forms-section" v-if="showForm">
-       <ExpensesForm @submitForm="handleExpenseSubmission"  @closeForm="toggleForm"/>
-     </div>
-   </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -101,11 +116,12 @@ export default {
       try {
         const token = localStorage.getItem("token");
         if (!token) return console.error("No token found");
-        
+
         const response = await axios.get('http://localhost:8000/api/incomes/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.incomes = response.data;
+        console.log(this.incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
       }
@@ -119,6 +135,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.expenses = response.data;
+        console.log(this.expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
       }
@@ -164,73 +181,70 @@ export default {
     },
     async handleIncomeUpdate(updatedIncome) {
       try {
-	const token = localStorage.getItem("token");
-	const response = await axios.put(
-          `http://localhost:8000/api/incomes/${updatedIncome.id}/`,
+        const token = localStorage.getItem("token");
+        const response = await axios.put(
+          `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
           updatedIncome,
           { headers: { Authorization: `Bearer ${token}` } }
-	);
+        );
 
-	if (response.status === 200) {
-	// We update the income in the local array
-	const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
-	if (index !== -1) {
-            this.$set(this.incomes, index, response.data); // Replace content
-	}
-	//message(update succesfully)
-	}
+        if (response.status === 200) {
+          const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
+          if (index !== -1) {
+            this.incomes[index] = response.data;
+            this.fetchIncomes();
+          }
+        }
       } catch (error) {
-	console.error("Error updating income:", error);
-	//message failed to update income
+        console.error("Error updating income:", error);
       }
     },
     async handleIncomeDelete(incomeId) {
       try {
-	const token = localStorage.getItem("token");
-	const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
           headers: { Authorization: `Bearer ${token}` },
-	});
-	if (response.status === 204) {
-	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
-	//message(income deleted successfully)
-	}
+        });
+        if (response.status === 204) {
+          this.fetchIncomes();
+          this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+        }
       } catch (error) {
-	console.error("Error deleting income:", error);
-	//mesagefailed to delete income
+        console.error("Error deleting income:", error);
       }
     },
     async handleExpenseUpdate(updatedExpense) {
       try {
-	const token = localStorage.getItem("token");
-	const response = await axios.put(
+        const token = localStorage.getItem("token");
+        const response = await axios.put(
           `http://localhost:8000/api/expenses/${updatedExpense.id}/`,
           updatedExpense,
           { headers: { Authorization: `Bearer ${token}` } }
-	);
+        );
 
-	if (response.status === 200) {
-	// We update the income in the local array
-	const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
-	if (index !== -1) {
-        this.$set(this.expense, index, updatedExpense); // Replace content
-	}
-	}
+        if (response.status === 200) {
+          const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
+          if (index !== -1) {
+            this.$set(this.expense, index, updatedExpense);
+          }
+        }
       } catch (error) {
-	console.error("Error updating expense:", error);
+        console.error("Error updating expense:", error);
       }
     },
     async handleExpenseDelete(expenseId) {
       try {
-	const token = localStorage.getItem("token");
-	const response = await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`, {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`, {
           headers: { Authorization: `Bearer ${token}` },
-	});
+        });
 
-	if (response.status === 204) {
-	this.expense = this.expense.filter((expense) => expense.id !== expenseId);
-	}
+        if (response.status === 204) {
+          this.fetchExpenses();
+          this.expense = this.expense.filter((expense) => expense.id !== expenseId);
+        }
       } catch (error) {
-	console.error("Error deleting expense:", error);
+        console.error("Error deleting expense:", error);
       }
     },
   },
@@ -249,145 +263,145 @@ export default {
         this.fetchExpenses();
       }
     }
-  }
+  },
 };
 </script>
 
 <style scoped>
 .home-form {
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .sidebar {
-    width: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    z-index: 1000;
-    padding-top: 20px;
-    font-family: "Wix Madefor Display", sans-serif;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 20px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .menu-button {
-    padding: 15px;
-    margin-top: -15px;
-    margin-left: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #25253C;
-    transition: transform 0.2s ease-in-out;
+  padding: 15px;
+  margin-top: -15px;
+  margin-left: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #25253C;
+  transition: transform 0.2s ease-in-out;
 }
 
 .menu-button:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .content-wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    margin-left: 70px;
-    position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin-left: 70px;
+  position: relative;
 }
 
 .main-content {
-    display: flex;
-    flex-direction: column;
-    max-width: 800px;
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  overflow: hidden;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: "Wix Madefor Display", sans-serif;
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Wix Madefor Display", sans-serif;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
 }
 
 .section-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    font-family: "Wix Madefor Display", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .activity-content {
-    display: flex;
-    flex-direction: column;
-    max-height: 100vh;
-    overflow: hidden;
-    padding: 20px;
-    border-top: 1px solid #eee;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  position: relative;
 }
 
 .activity-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: left;
-    font-family: "Wix Madefor Display", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: left;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .list-container {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    max-height: calc(70vh - 50px);
-    scrollbar-width: thin;
-    scrollbar-color: #00A0BE #e0e0e0;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: calc(70vh - 50px);
+  scrollbar-width: thin;
+  scrollbar-color: #00A0BE #e0e0e0;
 }
 
 .forms-section {
-    position: fixed;
-    right: 0;
-    top: 100px;
-    bottom: 40px;
-    width: 450px;
-    max-width: 100%;
-    padding: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border-radius: 9px;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-    z-index: 1001; 
+  position: fixed;
+  right: 0;
+  top: 100px;
+  bottom: 40px;
+  width: 450px;
+  max-width: 100%;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 9px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  z-index: 1001;
 }
 
 .forms-section-enter-active, .forms-section-leave-active {
-    transition: transform 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .forms-section-enter {
-    transform: translateX(100%);
+  transform: translateX(100%);
 }
 
 .forms-section-leave-to {
-    transform: translateX(100%);
+  transform: translateX(100%);
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(59, 59, 90, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(59, 59, 90, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
 }
 </style>

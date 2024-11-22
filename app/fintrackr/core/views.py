@@ -89,19 +89,6 @@ class IncomeListCreateView(APIView):
 class IncomeDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self, income_id, user):
-        try:
-            return Incomes.objects.get(income_id=income_id, user=user)
-        except Incomes.DoesNotExist:
-            return None
-
-    def get(self, request, income_id):
-        income = self.get_object(income_id, request.user)
-        if income is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = IncomeSerializer(income)
-        return Response(serializer.data)
-
     def put(self, request, income_id):
         income = self.get_object(income_id, request.user)
         if income is None:

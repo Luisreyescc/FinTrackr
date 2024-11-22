@@ -172,7 +172,8 @@ export default {
       return true;
     },
     deleteIncome() {
-      this.$emit("deleteIncome", this.income.id);
+      console.log(this.income.income_id);
+      this.$emit("deleteIncome", this.income.income_id);
     }
   }
 };

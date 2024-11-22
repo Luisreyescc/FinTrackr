@@ -145,3 +145,19 @@ class ExpenseSerializer(serializers.ModelSerializer):
             ExpenseCategories.objects.create(expense=expense, category=category)
 
         return expense
+    
+    def update(self, instance, validated_data):
+        category_names = validated_data.pop('category', None)
+        if category_names is not None:
+            # Remove old categories and replace with new ones
+            ExpenseCategories.objects.filter(expense=instance).delete()
+            for category_name in category_names:
+                category, created = Categories.objects.get_or_create(name=category_name)
+                ExpenseCategories.objects.create(expense=instance, category=category)
+
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
