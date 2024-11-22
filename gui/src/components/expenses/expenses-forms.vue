@@ -71,6 +71,7 @@ export default {
       descriptionError: "",
       dateError: "",
       categoryOptions: [
+	"Groceries",
 	"Food",
 	"Travel",
 	"Utilities",
@@ -78,7 +79,10 @@ export default {
 	"Entertainment",
 	"Shopping",
 	"Education",
-	"Health"],
+	"Health",
+	"Transportation",
+	"Bills",
+	"Taxes"],
       dropdownOpen: false,
     };
   },
