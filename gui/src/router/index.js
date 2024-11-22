@@ -6,7 +6,6 @@ import RecoveryPassword from '../pages/RecoveryPassword.vue';
 import Home from '../pages/Home.vue';
 import Status from '../pages/Status.vue';
 import History from '../pages/History.vue';
-import Leaderboard from '../pages/Leaderboard.vue';
 import EditProfile from '../pages/EditProfile.vue';
 
 const routes =  [
@@ -16,7 +15,6 @@ const routes =  [
   { path: '/home', name: 'Home', component: Home },
   { path: '/status', name: 'Status', component: Status },
   { path: '/history', name: 'History', component: History },
-  { path: '/leaderboard', name: 'Leaderboard', component: Leaderboard },
   { path: '/edit-profile', name: 'EditProfile', component: EditProfile }
 ];
 
