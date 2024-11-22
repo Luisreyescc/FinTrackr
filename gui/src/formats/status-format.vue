@@ -19,7 +19,7 @@
 	<div class="chart-wrapper">
 	<apexchart
           v-if="chartData.length > 0"
-          type="line"
+          type="area"
           :options="chartOptions"
           :series="chartData"
           :style="{
@@ -212,7 +212,10 @@ export default {
         console.error('Error fetching donut chart data:', error);
       }
     },
-  }
+  },
+  mounted() {
+    this.fetchLineChartData();
+  },
 };
 </script>
 
@@ -312,6 +315,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
     padding: 20px;
 }
 </style>

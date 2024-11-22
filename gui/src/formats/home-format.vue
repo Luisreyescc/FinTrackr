@@ -15,8 +15,8 @@
           </div>
         <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
-          <div class="activity-section">
-            <div class="list-container scrollbar">
+          <div class="activity-section scrollbar">
+            <div class="list-container">
               <IncomeRow
                 v-for="(income, index) in sortedIncomes"
                 :key="index"
@@ -42,8 +42,8 @@
         </div>
         <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
-          <div class="activity-section">
-            <div class="list-container scrollbar">
+          <div class="activity-section scrollbar">
+            <div class="list-container">
               <ExpenseRow
                 v-for="(expense, index) in sortedExpenses"
                 :key="index"
