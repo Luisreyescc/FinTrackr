@@ -186,7 +186,7 @@ export default {
         this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.editIncome[field].length > 180) {
+      if (this.editExpense[field].length > 180) {
         this[`${field}Error`] = "Exceeded the maximum character limit of 180";
         return false;
       }
@@ -201,7 +201,7 @@ export default {
     },
     deleteExpense() {
       console.log("borrando expense");
-      this.$emit("deleteExpense", this.expense.id);
+      this.$emit("deleteExpense", this.expense.expense_id);
     }
   }
 };

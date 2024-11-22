@@ -206,6 +206,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.status === 204) {
+          console.log("Succes");
           this.fetchIncomes();
           this.incomes = this.incomes.filter((income) => income.id !== incomeId);
         }
@@ -216,18 +217,23 @@ export default {
     async handleExpenseUpdate(updatedExpense) {
       try {
         const token = localStorage.getItem("token");
+        console.log(updatedExpense);
         const response = await axios.put(
-          `http://localhost:8000/api/expenses/${updatedExpense.id}/`,
+          `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
           updatedExpense,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (response.status === 200) {
-          const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
+          const index = this.expenses.findIndex((expense) => expense.id === updatedExpense.expense_id);
           if (index !== -1) {
-            this.$set(this.expense, index, updatedExpense);
+            this.expenses[index] = response.data;
+            this.fetchExpenses();
           }
         }
+
+        this.fetchExpenses();
+
       } catch (error) {
         console.error("Error updating expense:", error);
       }
@@ -241,7 +247,7 @@ export default {
 
         if (response.status === 204) {
           this.fetchExpenses();
-          this.expense = this.expense.filter((expense) => expense.id !== expenseId);
+          this.expenses = this.expenses.filter((expense) => expense.id !== expenseId);
         }
       } catch (error) {
         console.error("Error deleting expense:", error);
