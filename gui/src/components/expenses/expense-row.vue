@@ -1,7 +1,7 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="black" />
+      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="#25253C" />
     </div>
     <div class="expense-details">
       <h4>{{ formattedCategories }}</h4>
@@ -300,8 +300,8 @@ export default {
 }
 
 .edit-button {
-    background-color: #333;
-    color: white; 
+    background-color: #25253C;
+    color: white;
 }
 
 .edit-button:hover {

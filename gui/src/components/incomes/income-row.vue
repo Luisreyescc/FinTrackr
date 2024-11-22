@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="black"/>
+       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="#25253C"/>
     </div>
     <div class="income-details" >
       <h4>{{ income.source }}</h4>
@@ -272,7 +272,7 @@ export default {
 }
 
 .edit-button {
-    background-color: #333;
+    background-color: #25253C;
     color: white; 
 }
 
