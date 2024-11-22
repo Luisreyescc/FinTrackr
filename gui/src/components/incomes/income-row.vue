@@ -297,21 +297,21 @@ export default {
 }
 
 .edit-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  width: 400px;
-  z-index: 1000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 400px;
+    z-index: 1000;
 }
 
 .popup-content {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .overlay {
@@ -372,42 +372,42 @@ input {
 }
 
 .error-message {
-  color: red;
-  font-size: 12px;
+    color: red;
+    font-size: 12px;
 }
 
 .button-group {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
 .cancel-button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .submit-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-button:hover {
-  background-color: #555;
+    background-color: #555;
 }
 
 .submit-button:hover {
-  background-color: #237242;
+    background-color: #237242;
 }
 </style>

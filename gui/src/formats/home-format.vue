@@ -143,6 +143,7 @@ export default {
         console.log(this.incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
+	this.addMessage("There was an error fetching your incomes.", "error");
       }
     },
     async fetchExpenses() {
@@ -157,6 +158,7 @@ export default {
         console.log(this.expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
+	this.addMessage("There was an error fetching your expenses.", "error");
       }
     },
     async handleIncomeSubmission(incomeData) {
@@ -172,8 +174,10 @@ export default {
         this.incomes.unshift(response.data);
         this.showForm = false;
         this.fetchIncomes();
+	this.addMessage("New income added succesfully.", "success");
       } catch (error) {
         console.error('Error submitting income:', error);
+	this.addMessage("There was an error while adding the income.", "error");
       }
     },
     async handleExpenseSubmission(expenseData) {
@@ -196,8 +200,10 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
         this.fetchExpenses();
+	this.addMessage("New expense added succesfully.", "success");
       } catch (error) {
         console.error('Error submitting expense:', error.response?.data || error.message);
+	this.addMessage("There was an error while adding the expense.", "error");
       }
     },
     async handleIncomeUpdate(updatedIncome) {
