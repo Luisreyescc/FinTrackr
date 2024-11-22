@@ -152,6 +152,7 @@ export default {
         );
         this.incomes.unshift(response.data);
         this.showForm = false;
+        this.fetchIncomes();
       } catch (error) {
         console.error('Error submitting income:', error);
       }
@@ -175,6 +176,7 @@ export default {
 
         this.expenses.push(response.data);
         this.showForm = false;
+        this.fetchExpenses();
       } catch (error) {
         console.error('Error submitting expense:', error.response?.data || error.message);
       }
