@@ -74,7 +74,7 @@
 
 <script>
 import axios from 'axios';
-
+import '@/css/scrollbar.css';
 import MessageAlerts from '@/components/messages.vue';
 
 import IncomesForm from '@/components/incomes/incomes-forms.vue';

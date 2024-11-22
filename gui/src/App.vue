@@ -9,6 +9,7 @@
  
 <script>
 import AppHeader from '@/components/header.vue';
+import '@/css/scrollbar.css';
  
 export default {
   name: 'App',

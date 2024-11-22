@@ -1,5 +1,5 @@
 <template>
-<div class="page-container">
+<div class="page-container scrollbar">
   <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
   <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 </div>
@@ -18,6 +18,8 @@
 import MessageAlerts from '@/components/messages.vue';
 import HomeForm from '@/formats/home-format.vue';
 import SideBar from '@/components/side-bar.vue';
+import '@/css/scrollbar.css';
+
 import apiClient from "@/apiClient.js";
   
 export default {

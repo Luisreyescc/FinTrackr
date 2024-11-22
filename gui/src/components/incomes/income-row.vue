@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-       <font-awesome-icon class="icon" :icon="['fas', 'circle-dollar-to-slot']"/>
+       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="#25253C"/>
     </div>
     <div class="income-details" >
       <h4>{{ income.source }}</h4>
@@ -75,6 +75,8 @@
 </template>
 
 <script>
+import '@/css/scrollbar.css';
+  
 export default {
   name: "IncomeRow",
   props: {
@@ -202,10 +204,6 @@ export default {
     margin-right: 14px;
 }
 
-.icon {
-    font-size: 28px;
-    color: #25253C;
-}
 .income-details {
     flex: 1;
     display: flex;
