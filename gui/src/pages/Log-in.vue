@@ -56,7 +56,7 @@ export default {
 	}
         } catch (error) {
           console.error("Login failed:", error);
-	this.addMessage("Login failed, please try again later.", "error");
+	this.addMessage("Login failed. Please try again.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");

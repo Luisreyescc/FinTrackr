@@ -121,7 +121,7 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
     category = serializers.ListField(
-        child=serializers.CharField(), write_only=True
+        child=serializers.CharField(), write_only=True, source="categories"
     )
     categories = serializers.SerializerMethodField() 
 
@@ -133,10 +133,10 @@ class ExpenseSerializer(serializers.ModelSerializer):
         return obj.expensecategories_set.values_list('category__name', flat=True)
 
     def create(self, validated_data):
-        category_names = validated_data.pop('category', None)
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
         
         if not category_names:
-            raise serializers.ValidationError({"category": "Este campo es requerido."})
+            raise serializers.ValidationError({"categories": "Este campo es requerido."})
 
         expense = Expenses.objects.create(**validated_data)
 
@@ -145,3 +145,20 @@ class ExpenseSerializer(serializers.ModelSerializer):
             ExpenseCategories.objects.create(expense=expense, category=category)
 
         return expense
+    
+    def update(self, instance, validated_data):
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
+        if category_names is not None:
+            # Remove old categories and replace with new ones
+            ExpenseCategories.objects.filter(expense=instance).delete()
+            for category_name in category_names:
+                category, created = Categories.objects.get_or_create(name=category_name)
+                ExpenseCategories.objects.create(expense=instance, category=category)
+
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+

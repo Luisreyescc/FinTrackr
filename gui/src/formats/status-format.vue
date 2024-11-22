@@ -19,11 +19,11 @@
 	<div class="chart-wrapper">
 	<apexchart
           v-if="chartData.length > 0"
-          type="line"
+          type="area"
           :options="chartOptions"
           :series="chartData"
           :style="{
-            minWidth: '600px',
+            minWidth: '900px',
             minHeight: '400px',
             maxWidth: '100%',
             maxHeight: '100%',
@@ -80,25 +80,27 @@ export default {
       currentFilter: "Month",
       chartData: [],
       categoriesChartData: [],
-      chartOptions: {
+      chartOptions: Object.freeze({
         chart: {
-          height: 400,
-          type: 'line',
-          width: 400,
+          type: 'area'
         },
         xaxis: {
           categories: [],
         },
-        stroke: {
-          curve: 'smooth',
+	dataLabels: {
+          enabled: false
         },
-      },
-      categoriesChartOptions: {
+	colors: ['#008FFB', '#FAA700'],
+        stroke: {
+          curve: 'straight',
+        },
+      }),
+      categoriesChartOptions: Object.freeze({
         chart: {
           type: 'donut',
         },
         labels: [], // Labels for the donut chart
-      },
+      }),
     };
   },
   created() {
@@ -211,7 +213,10 @@ export default {
         console.error('Error fetching donut chart data:', error);
       }
     },
-  }
+  },
+  mounted() {
+    this.fetchLineChartData();
+  },
 };
 </script>
 

@@ -10,7 +10,9 @@ from .views import (
     CategoryListCreateView,
     ExpenseListCreateView,
     ExpenseCategorySummaryView, 
-    IncomeSourceSummaryView
+    IncomeSourceSummaryView, 
+    ExpenseDetailView
+
 )
 
 urlpatterns = [
@@ -33,4 +35,5 @@ urlpatterns = [
     # Expense views
     path("expenses/", ExpenseListCreateView.as_view(), name="expense-list-create"),
     path('expenses/category-summary/', ExpenseCategorySummaryView.as_view(), name='expense-category-summary'),
+    path("expenses/<int:expense_id>/", ExpenseDetailView.as_view(), name="expense-detail"),
 ]

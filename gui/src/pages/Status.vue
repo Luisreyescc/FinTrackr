@@ -8,6 +8,7 @@
 <script>
 import StatusForm from '@/formats/status-format.vue';
 import SideBar from '@/components/side-bar.vue';
+import '@/css/scrollbar.css';
 
 export default {
   name: 'StatusPage',
