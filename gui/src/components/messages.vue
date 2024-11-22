@@ -48,7 +48,7 @@ export default {
     autoClose() {
       setTimeout(() => {
         this.visible = false;
-      }, 11000);
+      }, 6000);
     }
   }
 };

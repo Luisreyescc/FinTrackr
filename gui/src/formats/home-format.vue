@@ -62,10 +62,25 @@
       </div>
     </div>
   </div>
+<<<<<<< HEAD
+=======
+</div>
+
+<div class="message-container">
+  <MessageAlerts
+    v-for="(msg, index) in messages" 
+    :key="msg.id" 
+    :text="msg.text" 
+    :type="msg.type" 
+    @close="removeMessage(index)" />
+</div>
+>>>>>>> bceb157 (Message for the user implemented)
 </template>
 
 <script>
 import axios from 'axios';
+
+import MessageAlerts from '@/components/messages.vue';
 
 import IncomesForm from '@/components/incomes/incomes-forms.vue';
 import IncomeButton from '@/components/incomes/incomes-header.vue';
@@ -83,6 +98,7 @@ export default {
     ExpensesForm,
     ExpenseButton,
     ExpenseRow,
+    MessageAlerts
   },
   props: {
     selectedContent: {
@@ -95,6 +111,7 @@ export default {
       showForm: false,
       incomes: [],
       expenses: [],
+      messages: []
     };
   },
   computed: {
@@ -106,6 +123,13 @@ export default {
     },
   },
   methods: {
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
     toggleSidebar() {
       this.$emit('toggleSidebar');
     },
@@ -188,6 +212,7 @@ export default {
           `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
           updatedIncome,
           { headers: { Authorization: `Bearer ${token}` } }
+<<<<<<< HEAD
         );
 
         if (response.status === 200) {
@@ -199,6 +224,21 @@ export default {
         }
       } catch (error) {
         console.error("Error updating income:", error);
+=======
+	);
+	
+	if (response.status === 200) {
+          // We update the income in the local array
+          const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
+          if (index !== -1) {
+            this.$set(this.incomes, index, response.data); // Replace content
+          }
+          this.addMessage("Income data edited successfully.", "success");
+	}
+      } catch (error) {
+	console.error("Error updating income:", error);
+	this.addMessage("There was an error while saving the income changes.", "error");
+>>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleIncomeDelete(incomeId) {
@@ -206,6 +246,7 @@ export default {
         const token = localStorage.getItem("token");
         const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`, {
           headers: { Authorization: `Bearer ${token}` },
+<<<<<<< HEAD
         });
         if (response.status === 204) {
           console.log("Succes");
@@ -214,6 +255,16 @@ export default {
         }
       } catch (error) {
         console.error("Error deleting income:", error);
+=======
+	});
+	if (response.status === 204) {
+	this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+	this.addMessage("Income deleted successfully.", "success");
+	}
+      } catch (error) {
+	console.error("Error deleting income:", error);
+	this.addMessage("There was an error while deleting the income.", "error");
+>>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleExpenseUpdate(updatedExpense) {
@@ -224,6 +275,7 @@ export default {
           `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
           updatedExpense,
           { headers: { Authorization: `Bearer ${token}` } }
+<<<<<<< HEAD
         );
 
         if (response.status === 200) {
@@ -238,6 +290,21 @@ export default {
 
       } catch (error) {
         console.error("Error updating expense:", error);
+=======
+	);
+	
+	if (response.status === 200) {
+          // We update the income in the local array
+          const index = this.expense.findIndex((expense) => expense.id === updatedExpense.id);
+          if (index !== -1) {
+            this.$set(this.expense, index, updatedExpense); // Replace content
+          }
+          this.addMessage("Expense data edited succesfully.", "success");
+	}
+      } catch (error) {
+	console.error("Error updating expense:", error);
+	this.addMessage("There was an error while saving the expense changes.", "error");
+>>>>>>> bceb157 (Message for the user implemented)
       }
     },
     async handleExpenseDelete(expenseId) {
@@ -245,6 +312,7 @@ export default {
         const token = localStorage.getItem("token");
         const response = await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`, {
           headers: { Authorization: `Bearer ${token}` },
+<<<<<<< HEAD
         });
 
         if (response.status === 204) {
@@ -253,6 +321,17 @@ export default {
         }
       } catch (error) {
         console.error("Error deleting expense:", error);
+=======
+	});
+	
+	if (response.status === 204) {
+          this.expense = this.expense.filter((expense) => expense.id !== expenseId);
+          this.addMessage("Expense deleted successfully.", "success");
+	}
+      } catch (error) {
+	console.error("Error deleting expense:", error);
+	this.addMessage("There was an error while deleting the expense.", "error");
+>>>>>>> bceb157 (Message for the user implemented)
       }
     },
   },
