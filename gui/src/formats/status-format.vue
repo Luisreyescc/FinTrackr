@@ -83,14 +83,15 @@ export default {
       chartOptions: {
         chart: {
           height: 400,
-          type: 'line',
+          type: 'area',
           width: 400,
         },
         xaxis: {
           categories: [],
         },
+	colors: ['#008FFB', '#FAA700'],
         stroke: {
-          curve: 'smooth',
+          curve: 'straight',
         },
       },
       categoriesChartOptions: {
