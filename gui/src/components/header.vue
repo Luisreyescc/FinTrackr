@@ -3,29 +3,13 @@
     <div class="header-content">
       <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo" />
 
-      <!-- Display menu if user is logged in -->
       <div class="nav-profile-wrapper">
         <nav v-if="isLoggedIn" class="nav-menu">
           <router-link to="/home" class="nav-item">Home<span></span></router-link>
           <router-link to="/status" class="nav-item">Status<span></span></router-link>
           <router-link to="/history" class="nav-item">History<span></span></router-link>
-          <router-link to="/leaderboard" class="nav-item">Leaderboard<span></span></router-link>
-        </nav>
-
-        <!-- Welcome Message and Profile Icon with Dropdown -->
-        <div v-if="isLoggedIn" class="profile-menu">
-          <span class="welcome-message"> {{ userName }}</span>
-          <img
-            src="@/assets/profile_white.svg"
-            alt="Profile"
-            class="profile-icon"
-            @click="toggleDropdown"
-          />
-          <div v-if="dropdownOpen" class="dropdown">
-            <button @click="editProfile">Edit Profile</button>
-            <button @click="logout">Sign-out</button>
-          </div>
-        </div>
+          <router-link v-if="isLoggedIn" to="/edit-profile" class="nav-item user-item">Hello, {{ userName }} <span></span></router-link>
+	</nav>
       </div>
     </div>
   </header>
@@ -81,14 +65,15 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #21255b;
-  padding: 13px;
-  color: #ffffff;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+    background-color: #25253C;
+    border-bottom: 1px solid white;
+    padding: 13px;
+    color: #ffffff;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 .header-content {
@@ -127,7 +112,7 @@ export default {
 }
 
 .nav-item:hover {
-  color: #21255B;
+  color: #25253C;
 }
 
 .nav-item::before,

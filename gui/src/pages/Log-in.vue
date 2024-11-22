@@ -1,23 +1,22 @@
 <template>
-  <div class="login-page">
-    <!-- Profile Icon -->
-    <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
-
-    <div class="message-container">
-      <MessageAlerts
-        v-for="(msg, index) in messages" 
-        :key="msg.id" 
-        :text="msg.text" 
-        :type="msg.type" 
-        @close="removeMessage(index)" />
-    </div>
-    
-    <login-form @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
+<div class="login-page">
+  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
+  
+  <div class="message-container">
+    <MessageAlerts
+      v-for="(msg, index) in messages" 
+      :key="msg.id" 
+      :text="msg.text" 
+      :type="msg.type" 
+      @close="removeMessage(index)" />
   </div>
+  
+  <LoginForm @login="login" @goToSignUp="goToSignUp" @goToRecovery="goToRecovery" />
+</div>
 </template>
 
 <script>
-import LoginForm from '@/formats/login-form.vue';
+import LoginForm from '@/formats/login-format.vue';
 import MessageAlerts from '@/components/messages.vue';
 import axios from 'axios';
 
@@ -42,29 +41,22 @@ export default {
     },
     async login({ username, password }) {
       if (username && password) {
-        try {
-          const response = await axios.post(
-            "http://localhost:8000/api/login/", // Login endpoint of the backend
-            {
-              user_name: username,
-              password: password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
-          console.log(response.data);
-          if (response.status === 200) {
-            const token = response.data.access;
-            localStorage.setItem("token", token); this.addMessage("Login successful", "success"); this.$emit("login");
-          } else {
-            this.addMessage("Invalid credentials", "error");
-          }
+       try {
+        const response = await axios.post(
+	"http://localhost:8000/api/login/", { user_name: username, password: password },
+	{ headers: { "Content-Type": "application/json" } } );
+        console.log(response.data);
+        if (response.status === 200) {
+	const token = response.data.access;
+	localStorage.setItem("token", token);
+	this.addMessage("Login successful", "success");
+	this.$emit("login");
+        } else {
+	this.addMessage("Invalid username or password. Please try again.", "error");
+	}
         } catch (error) {
           console.error("Login failed:", error);
-          this.addMessage("Invalid username or password. Please try again.", "error");
+	this.addMessage("Login failed. Please try again.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");
@@ -86,22 +78,19 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 220px;
+    min-height: 100vh;
+    background: #3B3B5A;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.error-message {
-    color: rgb(8, 34, 183);
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-}
-
 .profile-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
+    width: 120px;
+    height: 120px;
+    margin-bottom: -70px;
+    border-radius: 50%;
+    z-index: 1000;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(59, 59, 90, 0.1);
+    backdrop-filter: blur(15px);
 }
 </style>

@@ -92,7 +92,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
-    
+
 
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,12 +100,14 @@ class IncomeSerializer(serializers.ModelSerializer):
         fields = ["income_id", "user", "amount", "description", "date", "source"]
         read_only_fields = ["user"]
 
+
 class CategorySerializer(serializers.ModelSerializer):
     category_id = serializers.ReadOnlyField()
 
     class Meta:
         model = Categories
         fields = ["category_id", "name"]
+
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
     expense = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
@@ -115,32 +117,48 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
         model = ExpenseCategories
         fields = ['expense', 'category']
 
+
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.CharField(write_only=True)  # Expect 'category' as an input field
+    category = serializers.ListField(
+        child=serializers.CharField(), write_only=True, source="categories"
+    )
+    categories = serializers.SerializerMethodField() 
 
     class Meta:
         model = Expenses
-        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category']
+        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category', 'categories']
+
+    def get_categories(self, obj):
+        return obj.expensecategories_set.values_list('category__name', flat=True)
 
     def create(self, validated_data):
-        # Extract the single category name and remove it from validated_data
-        category_name = validated_data.pop('category', None)
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
         
-        if category_name is None:
-            raise serializers.ValidationError({"category": "This field is required."})
+        if not category_names:
+            raise serializers.ValidationError({"categories": "Este campo es requerido."})
 
-        # Create or retrieve the category
-        category, created = Categories.objects.get_or_create(name=category_name)
-
-        # Now validated_data only contains fields for Expenses, so we can create the instance
         expense = Expenses.objects.create(**validated_data)
 
-        # Create the association in the ExpenseCategories table
-        ExpenseCategories.objects.create(expense=expense, category=category)
-        
+        for category_name in category_names:
+            category, created = Categories.objects.get_or_create(name=category_name)
+            ExpenseCategories.objects.create(expense=expense, category=category)
+
         return expense
+    
+    def update(self, instance, validated_data):
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
+        if category_names is not None:
+            # Remove old categories and replace with new ones
+            ExpenseCategories.objects.filter(expense=instance).delete()
+            for category_name in category_names:
+                category, created = Categories.objects.get_or_create(name=category_name)
+                ExpenseCategories.objects.create(expense=instance, category=category)
 
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
-
+        instance.save()
+        return instance
 

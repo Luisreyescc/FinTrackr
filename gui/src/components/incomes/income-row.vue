@@ -1,20 +1,20 @@
 <template>
-  <div class="expense-row">
-    <div class="expense-icon">
-      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="#25253C" />
+  <div class="income-row">
+    <div class="income-icon">
+       <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="#25253C"/>
     </div>
-    <div class="expense-details">
-      <h4>{{ formattedCategories }}</h4>
-      <p class="expense-description">{{ expense.description }}</p>
-      <span class="expense-date">{{ formattedDate }}</span>
+    <div class="income-details" >
+      <h4>{{ income.source }}</h4>
+      <p class="income-description">{{ income.description }}</p>
+      <span class="income-date">{{ formattedDate }}</span>
     </div>
-    <div class="expense-amount-section">
-      <span class="expense-amount">{{ formattedAmount }}</span>
-      <div class="expense-actions">
+    <div class="income-amount-section">
+      <span class="income-amount">{{ formattedAmount }}</span>
+      <div class="income-actions">
         <button class="edit-button" @click="startEdit">
           <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
         </button>
-        <button class="delete-button" @click="deleteExpense">
+        <button class="delete-button" @click="deleteIncome">
 	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
 	</button>
       </div>
@@ -23,89 +23,76 @@
 
   <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
   <div v-if="isEditing" class="edit-popup">
-    <h3 class="edit-title">Edit Expense</h3>
+    <h3 class="edit-title">Edit Income</h3>
     <div class="popup-content">
       <form @submit.prevent="submitEdit">
         <label>
           Amount:
           <input type="text"
-            v-model="editExpense.amount"
+            v-model="editIncome.amount"
             @input="validateAmount"
-            :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
+            :class="{ 'input-error': amountError, 'input-valid': !amountError && editIncome.amount }"
             placeholder="Enter amount (e.g., 1000.00)" />
         </label>
         <span v-if="amountError" class="error-message">{{ amountError }}</span>
+        
+        <label>
+          Source:
+          <input type="text"
+            v-model="editIncome.source"
+            @input="validateTextField('source')"
+            :class="{ 'input-error': sourceError, 'input-valid': !sourceError && editIncome.source }"
+            placeholder="Enter the source of the income" />
+        </label>
+          <span v-if="sourceError" class="error-message">{{ sourceError }}</span>
 
           <label>
             Description:
             <input type="text"
-              v-model="editExpense.description"
+              v-model="editIncome.description"
               @input="validateTextField('description')"
-              :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editExpense.description }"
-              placeholder="Enter a description for the expense" />
+              :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editIncome.description }"
+              placeholder="Enter a description for the income" />
           </label>
           <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-	<div class="categories-wrapper">
-	<div class="categories-select" @click="toggleDropdown">
-              Categories
-              <span class="dropdown-icon">
-		<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-		<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-	</span>
-	</div>
-	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-              <li
-		v-for="(category, index) in categoryOptions"
-		:key="index"
-		@click="addCategory(category)">{{ category }}</li></ul>
-	<div class="selected-categories">
-    <span v-for="(category, index) in editExpense.categories || []" :key="index" class="tag">
-      {{ category }}
-		<button @click="removeCategory(index)" class="close-button">
-	<font-awesome-icon :icon="['fas', 'xmark']"/>
-		</button>
-              </span>
-	</div>
-	</div>
-	<label>
-          Date:
-              <input
-		v-model="editExpense.date"
-		type="date"
-		@input="validateDate"
-		:class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }" />
-	</label>
-	<span v-if="dateError" class="error-message">{{ dateError }}</span>
-	<div class="button-group">
-            <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button><button type="submit" class="submit-button">Save</button>
-	</div>
-      </form>
+
+          <label>
+            Date:
+            <input
+              v-model="editIncome.date"
+              type="date"
+              @input="validateDate"
+              :class="{ 'input-error': dateError, 'input-valid': !dateError && editIncome.date }" />
+          </label>
+          <span v-if="dateError" class="error-message">{{ dateError }}</span>
+
+          <div class="button-group">
+          <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button><button type="submit" class="submit-button">Save</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
+import '@/css/scrollbar.css';
+  
 export default {
-  name: "ExpenseRow",
+  name: "IncomeRow",
   props: {
-    expense: {
+    income: {
       type: Object,
-      required: true,
-      default: () => ({ categories: [] })
+      required: true
     }
   },
   data() {
     return {
       isEditing: false,
-      editExpense: {
-        ...this.expense, 
-        categories: this.expense.categories || [] 
-      },
+      editIncome: { ...this.income },
       amountError: "",
+      sourceError: "",
       descriptionError: "",
       dateError: "",
-      categoryOptions: ["Food", "Travel", "Utilities", "Rent", "Entertainment", "Shopping", "Education", "Health"],
-      dropdownOpen: false,
     };
   },
   computed: {
@@ -115,66 +102,53 @@ export default {
         style: 'currency',
         currency: 'USD'
       });
-      return `- ${formatter.format(this.expense.amount)}`;
-    },
-    formattedCategories() {
-      return this.expense.categories ? this.expense.categories.join(", ") : "No categories";
+      return `+ ${formatter.format(this.income.amount)}`;
     },
     formattedDate() {
       // Data format day-MONTH-year
-      const date = new Date(this.expense.date);
+      const date = new Date(this.income.date);
       const day = String(date.getDate()).padStart(2, '0');
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
       return `${day}-${month}-${year}`;
-    },
+    }
   },
   methods: {
     startEdit() {
       this.isEditing = true;
-      this.editExpense = { ...this.expense };
+      this.editIncome = { ...this.income };
     },
     cancelEdit() {
       this.isEditing = false;
-      this.editExpense = { ...this.expense };
+      this.editIncome = { ...this.income };
       this.clearErrors();
     },
     submitEdit() {
       this.clearErrors();
-      
+
       const isAmountValid = this.validateAmount();
+      const isSourceValid = this.validateTextField("source");
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
 
-      if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateExpense", this.editExpense);
+      if (isAmountValid && isSourceValid && isDescriptionValid && isDateValid) {
+        this.$emit("updateIncome", this.editIncome);
         this.isEditing = false;
       }
     },
     clearErrors() {
       this.amountError = "";
+      this.sourceError = "";
       this.descriptionError = "";
       this.dateError = "";
     },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
-    addCategory(category) {
-      if (!this.editExpense.categories.includes(category)) {
-        this.editExpense.categories.push(category);
-      }
-      this.dropdownOpen = false;
-    },
-    removeCategory(index) {
-      this.editExpense.categories.splice(index, 1);
-    },
     validateAmount() {
       const amountPattern = /^\d{1,10}(\.\d{0,2})?$/;
-      if (!this.editExpense.amount) {
+      if (!this.editIncome.amount) {
         this.amountError = "Amount is required";
         return false;
       }
-      if (!amountPattern.test(this.editExpense.amount)) {  // Corrected this line
+      if (!amountPattern.test(this.editIncome.amount)) {
         this.amountError = "Invalid amount format";
         return false;
       }
@@ -182,33 +156,33 @@ export default {
     },
     validateTextField(field) {
       this[`${field}Error`] = "";
-      if (!this.editExpense[field]) {  // Corrected this line
+      if (!this.editIncome[field]) {
         this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.editExpense[field].length > 180) {
+      if (this.editIncome[field].length > 180) {
         this[`${field}Error`] = "Exceeded the maximum character limit of 180";
         return false;
       }
       return true;
     },
     validateDate() {
-      if (!this.editExpense.date) {  // Corrected this line
+      if (!this.editIncome.date) {
         this.dateError = "Date is required";
         return false;
       }
       return true;
     },
-    deleteExpense() {
-      console.log("borrando expense");
-      this.$emit("deleteExpense", this.expense.expense_id);
+    deleteIncome() {
+      console.log(this.income.income_id);
+      this.$emit("deleteIncome", this.income.income_id);
     }
   }
 };
 </script>
 
 <style scoped>
-.expense-row {
+.income-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -219,7 +193,7 @@ export default {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.expense-icon {
+.income-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,7 +204,7 @@ export default {
     margin-right: 14px;
 }
 
-.expense-details {
+.income-details {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -238,7 +212,7 @@ export default {
     overflow: hidden;
 }
 
-.expense-details h4, .expense-description {
+.income-details h4, .income-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -247,19 +221,19 @@ export default {
     margin-left: 10px;
 }
 
-.expense-details h4 {
+.income-details h4 {
     font-size: 16px;
     color: #21255b;
     font-weight: bold;
 }
 
-.expense-description {
+.income-description {
     color: #777;
     font-weight: bold;
     font-size: 14px;
 }
 
-.expense-date {
+.income-date {
     color: #aaa;
     font-weight: bold;
     font-size: 12px;
@@ -267,21 +241,21 @@ export default {
     white-space: nowrap;
 }
 
-.expense-amount-section {
+.income-amount-section {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     margin-left: 15px;
 }
 
-.expense-amount {
+.income-amount {
     font-weight: bold;
-    color: #e42121;
+    color: #4CAF50;
     font-size: 16px;
     flex-shrink: 0;
 }
 
-.expense-actions {
+.income-actions {
     display: flex;
     gap: 10px;
     margin-top: 5px;
@@ -298,9 +272,10 @@ export default {
     border: none;
     transition: transform 0.2s, background-color 0.2s;
 }
+
 .edit-button {
     background-color: #25253C;
-    color: white;
+    color: white; 
 }
 
 .edit-button:hover {
@@ -436,86 +411,5 @@ input {
 
 .submit-button:hover {
     background-color: #237242;
-}
-
-.categories-wrapper {
-    position: relative;
-    margin-bottom: 20px;
-    font-family: "Wix Madefor Display", sans-serif;
-}
-
-.categories-select {
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: 110px;
-    font-weight: bold;
-    background-color: #ffffff;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s;
-}
-
-.categories-select:hover {
-    background-color: #f8f9fa;
-}
-
-.dropdown-icon {
-    width: 16px;
-    height: 16px;
-    margin-left: 8px;
-    transform: translateY(-1px);
-    color: #21255b;
-}
-
-.categories-dropdown {
-    position: absolute;
-    top: 80%;
-    left: 0;
-    right: 0;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 0;
-    list-style: none;
-    z-index: 1000;
-    overflow-y: auto;
-    max-height: 160px;
-    max-width: 200px;
-    animation: fadeIn 0.2s ease-out;
-}
-
-.categories-dropdown li {
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    text-align: left;
-}
-
-.categories-dropdown li:hover {
-    background-color: #f0f8ff;
-    border-radius: 12px;
-    color: #1010AC;
-    font-weight: bold;
-}
-
-.selected-categories {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    gap: 5px;
-}
-
-.tag {
-    display: flex;
-    align-items: center;
-    border-radius: 16px;
-    padding: 5px 10px;
-    font-weight: bold;
-    background-color: #F3F3F9;
-    border: 1px solid #6F6F7A;
 }
 </style>

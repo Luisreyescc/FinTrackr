@@ -1,6 +1,7 @@
 <template>
-<div class="form-container">
+<div class="form-container" >
   <h3 class="form-title">New Income Data</h3>
+  <div class="form-content">
   <form @submit.prevent="submitForm">
     <label>
       Amount:
@@ -50,6 +51,7 @@
       <button type="submit" class="submit-button">Submit</button>
       </div>
   </form>
+  </div>
 </div>
 </template>
 
@@ -137,6 +139,7 @@ export default {
     padding: 20px;
     border-radius: 8px;
     font-family: "Wix Madefor Display", sans-serif;
+    box-sizing: border-box;
 }
 
 .form-title {
@@ -144,9 +147,18 @@ export default {
     font-weight: bold;
     color: #333;
     text-align: left;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     color: #21255b;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.form-content {
+    max-height: calc(80vh - 220px);
+    padding: 10px;
+    margin: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #1B1F9C #e0e0e0;
 }
 
 label {
@@ -174,29 +186,29 @@ input {
 }
 
 .input-error {
-  border-bottom-color: #e42121;
-  background-color: #ffebee;
-  outline: none;
+    border-bottom-color: #e42121;
+    background-color: #ffebee;
+    outline: none;
 }
 
 .input-valid {
-  border-bottom-color: #1B1F9C;
-  background-color: #e0f7fa;
-  outline: none;
+    border-bottom-color: #1B1F9C;
+    background-color: #e0f7fa;
+    outline: none;
 }
 
 .error-message {
-  color: #e42121;
-  font-size: 12px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  text-align: left;
+    color: #e42121;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
 }
 
 .button-group {
     display: flex;
     gap: 10px;
-    margin-top: 55px;
+    margin-top: 80px;
     justify-content: space-between;
 }
 

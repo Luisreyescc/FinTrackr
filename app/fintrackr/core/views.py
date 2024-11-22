@@ -85,21 +85,23 @@ class IncomeListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class IncomeDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, income_id, user):
         try:
-            return Incomes.objects.get(income_id=income_id, user=user)
+            return Incomes.objects.get(pk=income_id, user=user)
         except Incomes.DoesNotExist:
             return None
 
     def get(self, request, income_id):
         income = self.get_object(income_id, request.user)
-        if income is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not income:
+            return Response({"error": "Income not found."}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = IncomeSerializer(income)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, income_id):
         income = self.get_object(income_id, request.user)
@@ -117,7 +119,8 @@ class IncomeDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         income.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class IncomeSourceSummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -141,7 +144,8 @@ class IncomeSourceSummaryView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
-    
+
+
 class ExpenseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -150,6 +154,7 @@ class ExpenseListCreateView(APIView):
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
 
+
     def post(self, request):
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
@@ -157,28 +162,61 @@ class ExpenseListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ExpenseDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, expense_id, user):
+        try:
+            return Expenses.objects.get(pk=expense_id, user=user)
+        except Expenses.DoesNotExist:
+            return None
+
+    def get(self, request, expense_id):
+        expense = self.get_object(expense_id, request.user)
+        if not expense:
+            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ExpenseSerializer(expense)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, expense_id):
+        expense = self.get_object(expense_id, request.user)
+        if not expense:
+            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ExpenseSerializer(expense, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, expense_id):
+        expense = self.get_object(expense_id, request.user)
+        if not expense:
+            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        expense.delete()
+        return Response({"message": "Expense deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]  # Make this view publicly accessible
 
 
- 
-
 class ExpenseCategorySummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Aggregate expenses by category for the authenticated user
         categories_summary = (
             ExpenseCategories.objects
-            .filter(expense__user=request.user)  # Filter by the current user
-            .values('category__name')  # Group by category name
-            .annotate(total_amount=Sum('expense__amount'))  # Sum the amount of related expenses
-            .order_by('category__name')  # Order by category name (optional)
+            .filter(expense__user=request.user)
+            .values('category__name')
+            .annotate(total_amount=Sum('expense__amount'))
+            .order_by('category__name')
         )
 
-        # Format the response data
         response_data = [
             {
                 "category": category["category__name"],

@@ -1,6 +1,6 @@
 <template>
 <div class="signup-page">
-  <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
+  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
   
   <div class="message-container">
     <MessageAlerts
@@ -11,12 +11,12 @@
       @close="removeMessage(index)" />
   </div>
   
-  <sign-up-form @signUp="signUp" @goToLogin="goToLogin" />
+  <SignUpForm @signUp="signUp" @goToLogin="goToLogin" />
 </div>
 </template>
 
 <script>
-import SignUpForm from '@/formats/signup-form.vue';
+import SignUpForm from '@/formats/signup-format.vue';
 import MessageAlerts from '@/components/messages.vue';
 import apiClient from "@/apiClient.js";
 
@@ -27,9 +27,7 @@ export default {
     MessageAlerts
   },
   data() {
-    return {
-      messages: [] // Array to store messages
-    };
+    return { messages: [] };
   },
   methods: {
     addMessage(text, type = "neutral") {
@@ -51,8 +49,10 @@ export default {
 
           if (response.status === 201) {
             this.addMessage("User registered successfully! Redirecting to login...", "success");
+	setTimeout(() => {
             this.$router.push("/login");
-          } else {
+	}, 3000);
+	} else {
             this.addMessage(response.data.error || "Registration failed", "error");
           }
         } catch (error) {
@@ -63,7 +63,9 @@ export default {
               errors.push(`${key}: ${error.response.data[key]}`);
             }
             this.addMessage(errors.join("\n"), "error");
-          } else { this.addMessage("There was an issue with your registration. Please try again.", "error"); }
+          } else {
+	this.addMessage("There was an issue with your registration. Please try again.", "error");
+	}
         }
       } else {
         this.addMessage("Please fill in all required fields.", "neutral");
@@ -82,21 +84,19 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 150px;
+    min-height: 100vh;
+    background: #3B3B5A;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 20px;
+    width: 120px;
+    height: 120px;
+    margin-bottom: -70px;
     border-radius: 50%;
-    border: 2px solid #ccc;
-}
-
-.message-container {
-    width: 100%;
-    max-width: 400px;
-    position: absolute;
+    z-index: 1000;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(59, 59, 90, 0.1);
+    backdrop-filter: blur(15px);
 }
 </style>

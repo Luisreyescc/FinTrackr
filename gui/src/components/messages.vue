@@ -1,14 +1,14 @@
 <template>
-  <div :class="['message', messageType]" v-if="visible">
+  <transition name="fade-up" @after-leave="$emit('close')">
+  <div :class="['message', messageType]" v-if="visible" >
     <div class="message-content">
       <span class="message-text">{{ text }}</span>
     </div>
     <button class="close-button" @click="closeMessage">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" height="16" fill="currentColor">
-	<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
-      </svg>
+      <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
     </button>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -48,7 +48,7 @@ export default {
     autoClose() {
       setTimeout(() => {
         this.visible = false;
-      }, 11000);
+      }, 6000);
     }
   }
 };
@@ -72,6 +72,17 @@ export default {
     transition: opacity 0.5s ease, transform 0.5s ease;
     opacity: 1;
     z-index: 1000;
+}
+
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-up-enter, 
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 .message-hidden {
@@ -112,11 +123,5 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.close-button svg {
-    width: 16px;
-    height: 16px;
-    fill: currentColor;
 }
 </style>
