@@ -115,7 +115,7 @@ export default {
 
 .logo-icon {
     margin-right: 10px;
-    font-size: 28px;
+    font-size: 32px;
 }
 
 .logo {

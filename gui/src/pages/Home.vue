@@ -1,39 +1,58 @@
 <template>
-<div class="page-container">
+<div class="page-container scrollbar">
   <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
-  
-   <!-- Sidebar component, visible based on isSidebarVisible -->
   <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
+</div>
+
+<div class="message-container">
+  <MessageAlerts
+    v-for="(msg, index) in messages" 
+    :key="msg.id" 
+    :text="msg.text" 
+    :type="msg.type" 
+    @close="removeMessage(index)" />
 </div>
 </template>
 
 <script>
+import MessageAlerts from '@/components/messages.vue';
 import HomeForm from '@/formats/home-format.vue';
 import SideBar from '@/components/side-bar.vue';
+import '@/css/scrollbar.css';
+
 import apiClient from "@/apiClient.js";
   
 export default {
   name: 'HomePage',
-   components: {
+  components: {
     HomeForm,
-    SideBar
+    SideBar,
+    MessageAlerts
   },
   data() {
     return {
       isSidebarVisible: false,
-      selectedContent: 'Incomes' // We set the Incomes option as the default selection
+      selectedContent: 'Incomes', // We set the Incomes option as the default selection
+      messages: []
     };
   },
   methods: {
+    addMessage(text, type = "neutral") {
+      const id = Date.now();
+      this.messages.push({ id, text, type });
+    },
+    removeMessage(index) {
+      this.messages.splice(index, 1);
+    },
     async newIncome(incomeData) {
       const { amount, source, description, date } = incomeData;
       if (amount && source && description && date) {
         try {
           const response = await apiClient.post("/api/incomes", incomeData);
           if (response.status === 201) {
-            alert("New income added");
+            this.addMessage("New income added succesfully.", "success");
           } else {
-            alert(response.data.error || "Failed adding new income");
+            this.addMessage("Failed adding the income.", "error");
           }
         } catch (error) {
           console.error("New income error:", error);
@@ -42,13 +61,11 @@ export default {
             for (const key in error.response.data) {
               errors.push(`${key}: ${error.response.data[key]}`);
             }
-            alert(errors.join("\n"));
+            this.addMessage(errors.join("\n"), "error");
           } else {
-            alert("There was an issue while adding your new income. Please try again.");
+            this.addMessage("There was an issue while adding your income. Please try again.", "error");
           }
         }
-      } else {
-        alert("Please fill in all required fields.");
       }
     },
     async newExpense(expenseData) {
@@ -57,9 +74,9 @@ export default {
         try {
           const response = await apiClient.post("/api/expenses", expenseData);
           if (response.status === 201) {
-            alert("New expense added");
+            this.addMessage("New expense added succesfully.", "success");
           } else {
-            alert(response.data.error || "Failed adding new expense");
+            this.addMessage("Failed adding the expense.", "error");
           }
         } catch (error) {
           console.error("New expense error:", error);
@@ -68,13 +85,11 @@ export default {
             for (const key in error.response.data) {
               errors.push(`${key}: ${error.response.data[key]}`);
             }
-            alert(errors.join("\n"));
+            this.addMessage(errors.join("\n"), "error");
           } else {
-            alert("There was an issue while adding your new expense. Please try again.");
+            this.addMessage("There was an issue while adding your expense. Please try again.", "error");
           }
         }
-      } else {
-        alert("Please fill in all required fields.");
       }
     },
     toggleSidebar() {
@@ -82,7 +97,7 @@ export default {
     },
     updateContent(content) {
       this.selectedContent = content;
-      this.isSidebarVisible = false; // Close sidebar after selection
+      this.isSidebarVisible = false;
     }
   }
 };

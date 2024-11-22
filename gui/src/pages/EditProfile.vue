@@ -1,28 +1,32 @@
 <template>
-<div class="edit-profile-page">
-  <div class="message-container">
-    <MessageAlerts
-      v-for="(msg, index) in messages" 
-      :key="msg.id" 
-      :text="msg.text" 
-      :type="msg.type" 
-      @close="removeMessage(index)" />
+  <div class="edit-profile-page">
+    <div class="message-container">
+      <MessageAlerts
+        v-for="(msg, index) in messages"
+        :key="msg.id"
+        :text="msg.text"
+        :type="msg.type"
+        @close="removeMessage(index)"
+      />
+    </div>
+    <EditProfileForm
+      :initialData="userData"
+      @saveProfile="editProfile"
+      @goToHome="goToHome"
+    />
   </div>
-  
-  <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome" />  
-</div>
 </template>
 
 <script>
 import EditProfileForm from "@/formats/editprofile-format.vue";
-import MessageAlerts from '@/components/messages.vue';
+import MessageAlerts from "@/components/messages.vue";
 import axios from "axios";
 
 export default {
   name: "EditProfile",
   components: {
     EditProfileForm,
-    MessageAlerts
+    MessageAlerts,
   },
   data() {
     return {
@@ -36,8 +40,8 @@ export default {
         rfc: "",
         birth_date: "",
         password: "",
-	messages: []
       },
+      messages: [],
     };
   },
   methods: {
@@ -71,9 +75,10 @@ export default {
             birth_date: response.data.birth_date || "",
             password: "", // We leave password field empty for security reasons
           };
-        } else { this.addMessage("Failed to fetch your data", "error"); }
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        this.addMessage("Failed to fetch your data", "error");
       }
     },
     async editProfile(profileData) {
@@ -102,19 +107,19 @@ export default {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: 'Bearer ${token}',
+              Authorization: `Bearer ${token}`,
             },
           },
         );
         console.log("API response:", response);
         if (response.status === 200) {
-          this.addMessage("User data updated succesfully", "success");
+          this.addMessage("User data updated succesfully.", "success");
         } else {
-          this.addMessage("Failed to save your data ", "error");
+          this.addMessage("Failed to save your data.", "error");
         }
       } catch (error) {
         console.error("Update failed:", error);
-        this.addMessage("An error occure while saving your data ", "error");
+        this.addMessage("An error occure while saving your data.", "error");
       }
     },
     goToHome() {
@@ -130,12 +135,12 @@ export default {
 
 <style scoped>
 .edit-profile-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: white;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 </style>

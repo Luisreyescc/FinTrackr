@@ -27,7 +27,7 @@ login() {
 
 get_random_date() {
   START=$(date -d "2000-01-01" +%s)
-  END=$(date -d "2024-12-31" +%s)
+  END=$(date -d "2024-11-22" +%s)
 
   RANDOM_TIME=$((START + $(od -An -N4 -i /dev/urandom) % (END - START)))
   RANDOM_DATE=$(date -d @$RANDOM_TIME +"%Y-%m-%d")
@@ -40,18 +40,31 @@ get_random_amount() {
   echo $RANDOM_AMOUNT
 }
 
+get_random_description() {
+  DESCRIPTIONS=("Groceries" "Electronics" "Clothing" "Dining Out" "Utilities" "Entertainment")
+  RANDOM_INDEX=$(shuf -i 0-$((${#DESCRIPTIONS[@]} - 1)) -n 1)
+  echo "${DESCRIPTIONS[$RANDOM_INDEX]}"
+}
+
+get_random_category() {
+  CATEGORIES=("Food" "Shopping" "Bills" "Transportation" "Health" "Education")
+  NUM_CATEGORIES=$(shuf -i 1-2 -n 1)
+  SELECTED_CATEGORIES=$(shuf -e "${CATEGORIES[@]}" -n $NUM_CATEGORIES | jq -R . | jq -s .)
+  echo $SELECTED_CATEGORIES
+}
+
 post_expense() {
   RANDOM_DATE=$(get_random_date)
   RANDOM_AMOUNT=$(get_random_amount)
-  DESCRIPTION="."
-  CATEGORY="."
+  RANDOM_DESCRIPTION=$(get_random_description)
+  RANDOM_CATEGORY=$(get_random_category)
 
   DATA='{
     "user": '"$USER_ID"',
     "amount": '"$RANDOM_AMOUNT"',
-    "description": "'"$DESCRIPTION"'",
+    "description": "'"$RANDOM_DESCRIPTION"'",
     "date": "'"$RANDOM_DATE"'",
-    "category": "'"$CATEGORY"'"
+    "category": '"$RANDOM_CATEGORY"'
   }'
 
   RESPONSE=$(curl -s -X POST $EXPENSES_URL \

@@ -120,25 +120,44 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    categories = serializers.ListField(
-        child=serializers.CharField(),
-        write_only=True
+    category = serializers.ListField(
+        child=serializers.CharField(), write_only=True, source="categories"
     )
+    categories = serializers.SerializerMethodField() 
 
     class Meta:
         model = Expenses
-        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'categories']
+        fields = ['expense_id', 'user', 'amount', 'description', 'date', 'category', 'categories']
+
+    def get_categories(self, obj):
+        return obj.expensecategories_set.values_list('category__name', flat=True)
 
     def create(self, validated_data):
-        categories_data = validated_data.pop('categories', None)
-
-        if not categories_data:
-            raise serializers.ValidationError({"categories": "This field is required."})
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
+        
+        if not category_names:
+            raise serializers.ValidationError({"categories": "Este campo es requerido."})
 
         expense = Expenses.objects.create(**validated_data)
 
-        for category_name in categories_data:
+        for category_name in category_names:
             category, created = Categories.objects.get_or_create(name=category_name)
             ExpenseCategories.objects.create(expense=expense, category=category)
 
         return expense
+    
+    def update(self, instance, validated_data):
+        category_names = validated_data.pop('categories', None)  # Changed from 'category' to 'categories'
+        if category_names is not None:
+            # Remove old categories and replace with new ones
+            ExpenseCategories.objects.filter(expense=instance).delete()
+            for category_name in category_names:
+                category, created = Categories.objects.get_or_create(name=category_name)
+                ExpenseCategories.objects.create(expense=instance, category=category)
+
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance

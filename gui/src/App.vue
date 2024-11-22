@@ -1,14 +1,15 @@
 <template>
   <div id="app">
     <AppHeader v-if="showBanner" :isLoggedIn="isLoggedIn" @logout="logout"/>
-    <div class="main-content">
+    <div class="main-content scrollbar">
       <router-view @login="login"/>
     </div>
   </div>
 </template>
  
 <script>
-import AppHeader from './components/header.vue';
+import AppHeader from '@/components/header.vue';
+import '@/css/scrollbar.css';
  
 export default {
   name: 'App',
@@ -53,6 +54,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    overflow: auto;
 }
 
 #app {
@@ -60,6 +62,7 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
+    overflow: auto;
     color: #2c3e50;
 }
 </style>
