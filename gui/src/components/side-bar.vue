@@ -13,13 +13,20 @@
     
     <div class="divider_top"></div>
     
-    <div class="menu-options">
+    <div v-if="currentPage === 'Home'" class="menu-options">
       <button @click="selectOption('Incomes')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-line']" class="icon"/> Incomes</button>
       <button @click="selectOption('Expenses')" class="menu-option">
-	<font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon"/>Expenses</button>
+	<font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon"/> Expenses</button>
       <button @click="selectOption('Debts')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'credit-card']" class="icon"/> Debts</button>
+    </div>
+
+    <div v-if="currentPage === 'Status'" class="menu-options">
+      <button @click="selectOption('Account')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'chart-area']" class="icon a"/>Account Status</button>
+      <button @click="selectOption('Categories')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Categories Pie</button>
     </div>
     
     <div class="divider_bottom"></div>
@@ -46,6 +53,10 @@ export default {
     isVisible: {
       type: Boolean,
       default: false
+    },
+    currentPage: {
+      type: String,
+      required: true
     }
   },
   methods: {
@@ -160,6 +171,9 @@ export default {
     font-size: 24px;
 }
 
+.icon.a {
+    margin-right: 15px;
+}
 .menu-option:hover, .bottom-option:hover {
     background-color: #3B3B5A;
     transform: translateX(10px);

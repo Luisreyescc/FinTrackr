@@ -1,7 +1,7 @@
 <template>
 <div class="page-container scrollbar">
   <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
-  <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
+  <SideBar :isVisible="isSidebarVisible" :currentPage="'Home'" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 </div>
 
 <div class="message-container">

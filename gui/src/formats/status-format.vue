@@ -7,56 +7,56 @@
   </div>
   
   <div class="content-wrapper">
-    <div class="section">
+    <div v-if="selectedContent === 'Account'" class="section">
       <div class="header">
-	<h2 class="section-title">Account Status</h2>
-	<FilterGraphics
-	:filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
-        :currentFilter="currentFilter"
-        @filterSelected="applyFilter" />
+        <h2 class="section-title">Account Status</h2>
+        <FilterGraphics
+          :filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
+          :currentFilter="currentFilter"
+          @filterSelected="applyFilter" />
       </div>
-      <div class="graphic-container scrollbar">
-	<div class="chart-wrapper">
-	<apexchart
-          v-if="chartData.length > 0"
-          type="area"
-          :options="chartOptions"
-          :series="chartData"
-          :style="{
-            minWidth: '900px',
-            minHeight: '400px',
-            maxWidth: '100%',
+      <div class="graphic-container">
+        <div class="chart-wrapper">
+          <apexchart
+            v-if="chartData.length > 0"
+            type="area"
+            :options="chartOptions"
+            :series="chartData"
+            :style="{
+            minWidth: '85%',
+            maxWidth: '85%',
+            minHeight: '100%',
             maxHeight: '100%',
-            width: '100%',
+            width: '85%',
             height: '100%'
-          }" />
-	</div>
+            }" />
+        </div>
       </div>
     </div>
-    
-    <div class="section">
+  
+    <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
 	<h2 class="section-title">Categories Graphic</h2>
 	<FilterGraphics
-	:filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
-        :currentFilter="currentFilter"
-        @filterSelected="applyFilter" />
+          :filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
+          :currentFilter="currentFilter"
+          @filterSelected="applyFilter" />
       </div>
-      <div class="graphic-container scrollbar">
+      <div class="graphic-container">
 	<div class="chart-wrapper">
-	<apexchart
-          v-if="chartData.length > 0"
-          type="donut"
-          :options="categoriesChartOptions"
-          :series="categoriesChartData"
-          :style="{
-            minWidth: '600px',
-            minHeight: '400px',
-            maxWidth: '100%',
+          <apexchart
+            v-if="chartData.length > 0"
+            type="donut"
+            :options="categoriesChartOptions"
+            :series="categoriesChartData"
+            :style="{
+            minWidth: '85%',
+            maxWidth: '85%',
+            minHeight: '100%',
             maxHeight: '100%',
-            width: '100%',
+            width: '85%',
             height: '100%'
-          }" />
+            }" />
 	</div>
       </div>
     </div>
@@ -67,6 +67,7 @@
 <script>
 import FilterGraphics from "@/components/filter-graphics.vue";
 import ApexCharts from 'vue3-apexcharts';
+import '@/css/scrollbar.css';
 import axios from 'axios';
 
 export default {
@@ -74,6 +75,12 @@ export default {
   components: {
     apexchart: ApexCharts,
     FilterGraphics
+  },
+  props: {
+    selectedContent: {
+      type: String,
+      default: 'Account',
+    },
   },
   data() {
     return {
@@ -216,7 +223,21 @@ export default {
   },
   mounted() {
     this.fetchLineChartData();
+    if (this.selectedContent === "Account") {
+      this.fetchLineChartData();
+    } else if (this.selectedContent === "Categories") {
+      this.fetchDonutChartData();
+    }
   },
+  watch: {
+    selectedContent(newValue) {
+      if (newValue === "Account") {
+        this.fetchLineChartData();
+      } else if (newValue === "Categories") {
+        this.fetchDonutChartData();
+      }
+    }
+  }
 };
 </script>
 
@@ -264,14 +285,14 @@ export default {
     padding: 20px;
     margin-left: 50px;
     width: 100%;
-    height: 100%;
     overflow: hidden;
 }
 
 .section {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 85%;
+    height: 100%;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
@@ -304,13 +325,12 @@ export default {
     background-color: #ffffff;
     border-top: 1px solid #eee;
     border-radius: 8px;
+    max-height: 100%;
 }
 
 .chart-wrapper {
-    min-width: 600px;
-    min-height: 400px;
-    max-width: 100%;
-    max-height: 100%;
+    min-height: 100%;
+    max-height:100%;
     width: 100%;
     height: 100%;
     display: flex;

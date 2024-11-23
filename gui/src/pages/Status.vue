@@ -1,7 +1,7 @@
 <template>
 <div class="page-container scrollbar">
-  <StatusForm @toggleSidebar="toggleSidebar"/>
-  <SideBar :isVisible="isSidebarVisible" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
+  <StatusForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar"/>
+  <SideBar :isVisible="isSidebarVisible" :currentPage="'Status'" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
 </div>
 </template>
 
@@ -19,11 +19,16 @@ export default {
   data() {
     return {
       isSidebarVisible: false,
+      selectedContent: 'Account',
     };
   },
   methods: {
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
+    },
+    updateContent(content) {
+      this.selectedContent = content;
+      this.isSidebarVisible = false;
     }
   }
 };
