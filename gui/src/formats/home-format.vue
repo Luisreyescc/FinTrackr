@@ -248,10 +248,15 @@ export default {
     async handleExpenseUpdate(updatedExpense) {
       try {
         const token = localStorage.getItem("token");
-        console.log(updatedExpense);
+        const modifiedExpenseData = {
+          ...updatedExpense,
+          category: updatedExpense.categories,
+        };
+        delete modifiedExpenseData.categories;
+
         const response = await axios.put(
           `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
-          updatedExpense,
+          modifiedExpenseData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
