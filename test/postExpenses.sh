@@ -35,19 +35,20 @@ get_random_date() {
 }
 
 get_random_amount() {
+  MIN_AMOUNT=1000
   MAX_AMOUNT=999999
-  RANDOM_AMOUNT=$(shuf -i 1-$MAX_AMOUNT -n 1)
+  RANDOM_AMOUNT=$(shuf -i $MIN_AMOUNT-$MAX_AMOUNT -n 1)
   echo $RANDOM_AMOUNT
 }
 
 get_random_description() {
-  DESCRIPTIONS=("Groceries" "Electronics" "Clothing" "Dining Out" "Utilities" "Entertainment")
+  DESCRIPTIONS=("Groceries for the week" "Rent paid" "New gamer PC" "New smartphone" "Party with friends" "Dining Out" "Utilities" "Entertainment")
   RANDOM_INDEX=$(shuf -i 0-$((${#DESCRIPTIONS[@]} - 1)) -n 1)
   echo "${DESCRIPTIONS[$RANDOM_INDEX]}"
 }
 
 get_random_category() {
-  CATEGORIES=("Food" "Shopping" "Bills" "Transportation" "Health" "Education")
+  CATEGORIES=("Groceries" "Food" "Travel" "Rent" "Utilities" "Entertainment" "Shopping" "Education" "Health" "Transportation" "Bills" "Taxes")
   NUM_CATEGORIES=$(shuf -i 1-2 -n 1)
   SELECTED_CATEGORIES=$(shuf -e "${CATEGORIES[@]}" -n $NUM_CATEGORIES | jq -R . | jq -s .)
   echo $SELECTED_CATEGORIES
