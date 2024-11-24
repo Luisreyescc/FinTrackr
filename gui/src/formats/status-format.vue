@@ -11,9 +11,9 @@
       <div class="header">
         <h2 class="section-title">Account Status</h2>
 	<div class="section-filter">
-          <h3>End date:</h3>
+          <h3>Status date:</h3>
           <input id="end-date" type="date" class="date-input" />
-          <h3>Filtered by:</h3><h3>{{ currentFilter }}</h3>
+          <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterGraphics
             :filterOptions="['Day', 'Fortnight', 'Month', 'Year', Custom]"
             :currentFilter="currentFilter"
@@ -22,41 +22,43 @@
       </div>
       <div class="main-content">
 	<div class="graphic-container">
-          <apexchart
-            v-if="chartData.length > 0"
-            type="area"
-            :options="chartOptions"
-            :series="chartData"
-            :style="{ width: '100%', height: '300px' }" />
-        </div>
+          <div class="chart-area">
+            <apexchart
+              v-if="chartData.length > 0"
+              type="area"
+              :options="chartOptions"
+              :series="chartData"
+              :style="{ width: '100%', height: '100%' }" />
+          </div>
+	</div>
 	<div class="stats-container">
           <div class="stats-box">
             <div class="stats-header">
-              <h3>Your network</h3>
+              <h3>Your network:</h3>
               <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
             </div>
             <p v-html="currency"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
-              <h3>Your incomes</h3>
+              <h3>Your incomes this  {{ currentFilter}}:</h3>
               <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
             </div>
-            <p>{{ incomes }}</p>
+            <p v-html="incomes"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
-              <h3>Your expenses</h3>
+              <h3>Your expenses this  {{ currentFilter}}:</h3>
               <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
             </div>
-            <p>{{ expenses }}</p>
+            <p v-html="expenses"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
-              <h3>Pending debts</h3>
+              <h3>Pending debts this  {{ currentFilter}}:</h3>
               <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
             </div>
-            <p>{{ debts }}</p>
+            <p v-html="debts"></p>
           </div>
 	</div>
       </div>
@@ -66,12 +68,12 @@
       <div class="header">
 	<h2 class="section-title">Categories Graphic</h2>
 	<FilterGraphics
-          :filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
+          :filterOptions="['Day', 'Fortnight', 'Month', 'Year', 'Custom']"
           :currentFilter="currentFilter"
           @filterSelected="applyFilter" />
       </div>
       <div class="graphic-container">
-	<div class="chart-wrapper">
+	<div class="chart-pie">
           <apexchart
             v-if="chartData.length > 0"
             type="donut"
@@ -117,7 +119,8 @@ export default {
       categoriesChartData: [],
       chartOptions: Object.freeze({
         chart: {
-          type: 'area'
+          type: 'area',
+          height: 650,
         },
         xaxis: {
           categories: [],
@@ -143,6 +146,9 @@ export default {
     this.fetchDonutChartData();
   },
   methods: {
+    formatDate(dateStr) {
+      return new Date(dateStr).toISOString().split('T')[0];
+    },
     fetchLineChartData() {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -207,9 +213,6 @@ export default {
       })
       .catch((error) => console.error('Error fetching all data for the graphics:', error));
     },
-    toggleSidebar() {
-      this.$emit('toggleSidebar');
-    },
     async fetchDonutChartData() {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -245,24 +248,74 @@ export default {
       console.log("Filter applied:", filter);
       // Future logic for filter graphic by date
     },
+    formatCurrency(amount, isNegative = false) {
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount);
+
+      const [integerPart, decimalPart] = formatted.replace('$', '').split('.');
+      const sign = isNegative ? '-' : '';
+
+      return `<span><span class="integer-part">${sign}$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup></span>`;
+    },
+    formatCount(count) {
+      if (count > 999999999999999) {
+        return '999,999,999,999,999';
+      }
+      return count.toLocaleString();
+    },
     getNetwork() {
-      //const incomes = fetch incomes total amount;
-      //const expenses = fetch expenses total amount;
-      //const total = incomes - expenses;
-      // Give two decimals for the total amount
-      //const formatTotal = total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      // Split itegers from decimals
-      //const [integerPart, decimalPart] = formatTotal.replace('$', '').split('.');
-    
-      //return '<span class="integer-part">$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup>';
-      // $0.00 by default, 'true' by the moment, maybe:
-      //if(!this.chartData.lengt)
-      return '<span class="integer-part">$</span>0<sup class="decimal-part">00</sup>';
+      const networkAmount = 3456789.99; //
+      const amount = this.formatCurrency(networkAmount, false);
+
+      return `<span <span style="color: #25253C;">${amount}</span>`;
+    },
+    getIncomes() {
+      const incomeCount = 15000; //get incomes count  on date by the filter selected
+      const incomeAmount = 917075; //get incomes amount on date by the filter selected
+
+      const count = this.formatCount(incomeCount);
+      const amount = this.formatCurrency(incomeAmount);
+
+      return `<span class="count-part">${count}:</span> <span style="color: #4CAF50;">${amount}</span>`;
+    },
+    getExpenses() {
+      const expenseCount = 12000; //get expenses count on date by the filter selected
+      const expenseAmount = 83456789.45; //get expenses amount on date by the filter selected
+
+      const count = this.formatCount(expenseCount);
+      const amount = this.formatCurrency(expenseAmount, true);
+
+      return `<span class="count-part">${count}:</span> <span style="color: #21255b;">${amount}</span>`;
+    },
+    getDebts() {
+      const debtCount = 5000; //get debts count on date by the filter selected
+      const debtAmount = 3456789.99; //get debts amount on date by the filter selected
+
+      const count = this.formatCount(debtCount);
+      const amount = this.formatCurrency(debtAmount, true);
+
+      return `<span class="count-part">${count}:</span> <span style="color: darkred;">${amount}</span>`;
+    },
+    toggleSidebar() {
+      this.$emit('toggleSidebar');
     },
   },
   computed: {
     currency() {
       return this.getNetwork();
+    },
+    incomes() {
+      return this.getIncomes();
+    },
+    expenses() {
+      return this.getExpenses();
+    },
+    debts() {
+      return this.getDebts();
     },
   },
   mounted() {
@@ -367,7 +420,7 @@ select {
 
 .main-content {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     justify-content: space-between;
 }
 
@@ -376,20 +429,43 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
-    height: 300px;
+    width: 100%;
+    height: 670px;
+    overflow: hidden;
+}
+
+.chart-area {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.chart-pie {
+    min-width: 600px;
+    min-height: 400px;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
 .stats-content {
     display: grid;
-    gap: 30px;
+    gap: 20px;
     padding: 20px;
     justify-content: center;
-
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .stats-box {
@@ -399,9 +475,10 @@ select {
     justify-content: center;
     align-items: center;
     flex: 1;
-    gap: 30px;
+    gap: 20px;
     margin: 20px;
-    padding: 40px;
+    margin-right: 0px;
+    padding: 20px;
     width: 400px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -420,6 +497,7 @@ select {
     font-size: 24px;
     font-weight: bold;
     color: #25253C;
+    flex-direction: column;
     margin: 0;
 }
 
@@ -428,20 +506,28 @@ select {
 }
 
 .stats-box p {
-    font-size: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-weight: bold;
     margin: 0;
     color: #333;
+    font-size: 28px;
+}
+
+.count-part {
+    font-size: 20px;
+    font-weight: bold;
+    color: #25253C;
 }
 
 .interger-part {
-    font-size: 36px;
+    font-size: 44px;
     vertical-align: top;
     margin-right: 4px;
 }
 
 .decimal-part {
-    font-size: 16px;
     vertical-align: super;
 }
 </style>
