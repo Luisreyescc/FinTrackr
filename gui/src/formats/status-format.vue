@@ -35,7 +35,7 @@
               <h3>Your network</h3>
               <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
             </div>
-            <p>{{ network }}</p>
+            <p v-html="currency"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
@@ -143,14 +143,6 @@ export default {
     this.fetchDonutChartData();
   },
   methods: {
-    applyFilter(filter) {
-      this.currentFilter = filter;
-      console.log("Filter applied:", filter);
-      // Future logic for filter graphic by date
-    },
-    formatDate(dateStr) {
-      return new Date(dateStr).toISOString().split('T')[0];
-    },
     fetchLineChartData() {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -247,6 +239,30 @@ export default {
       } catch (error) {
         console.error('Error fetching donut chart data:', error);
       }
+    },
+    applyFilter(filter) {
+      this.currentFilter = filter;
+      console.log("Filter applied:", filter);
+      // Future logic for filter graphic by date
+    },
+    getNetwork() {
+      //const incomes = fetch incomes total amount;
+      //const expenses = fetch expenses total amount;
+      //const total = incomes - expenses;
+      // Give two decimals for the total amount
+      //const formatTotal = total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      // Split itegers from decimals
+      //const [integerPart, decimalPart] = formatTotal.replace('$', '').split('.');
+    
+      //return '<span class="integer-part">$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup>';
+      // $0.00 by default, 'true' by the moment, maybe:
+      //if(!this.chartData.lengt)
+      return '<span class="integer-part">$</span>0<sup class="decimal-part">00</sup>';
+    },
+  },
+  computed: {
+    currency() {
+      return this.getNetwork();
     },
   },
   mounted() {
@@ -383,7 +399,7 @@ select {
     justify-content: center;
     align-items: center;
     flex: 1;
-    gap: 50px;
+    gap: 30px;
     margin: 20px;
     padding: 40px;
     width: 400px;
@@ -412,9 +428,20 @@ select {
 }
 
 .stats-box p {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
     margin: 0;
     color: #333;
+}
+
+.interger-part {
+    font-size: 36px;
+    vertical-align: top;
+    margin-right: 4px;
+}
+
+.decimal-part {
+    font-size: 16px;
+    vertical-align: super;
 }
 </style>
