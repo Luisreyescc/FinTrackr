@@ -10,30 +10,58 @@
     <div v-if="selectedContent === 'Account'" class="section">
       <div class="header">
         <h2 class="section-title">Account Status</h2>
-        <FilterGraphics
-          :filterOptions="['Day', 'Fortnight', 'Month', 'Year']"
-          :currentFilter="currentFilter"
-          @filterSelected="applyFilter" />
+	<div class="section-filter">
+          <h3>End date:</h3>
+          <input id="end-date" type="date" class="date-input" />
+          <h3>Filtered by:</h3><h3>{{ currentFilter }}</h3>
+          <FilterGraphics
+            :filterOptions="['Day', 'Fortnight', 'Month', 'Year', Custom]"
+            :currentFilter="currentFilter"
+            @filterSelected="applyFilter" />
+	</div>
       </div>
-      <div class="graphic-container">
-        <div class="chart-wrapper">
+      <div class="main-content">
+	<div class="graphic-container">
           <apexchart
             v-if="chartData.length > 0"
             type="area"
             :options="chartOptions"
             :series="chartData"
-            :style="{
-            minWidth: '85%',
-            maxWidth: '85%',
-            minHeight: '100%',
-            maxHeight: '100%',
-            width: '85%',
-            height: '100%'
-            }" />
+            :style="{ width: '100%', height: '300px' }" />
         </div>
+	<div class="stats-container">
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your network</h3>
+              <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
+            </div>
+            <p>{{ network }}</p>
+          </div>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your incomes</h3>
+              <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
+            </div>
+            <p>{{ incomes }}</p>
+          </div>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your expenses</h3>
+              <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
+            </div>
+            <p>{{ expenses }}</p>
+          </div>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Pending debts</h3>
+              <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
+            </div>
+            <p>{{ debts }}</p>
+          </div>
+	</div>
       </div>
     </div>
-  
+    
     <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
 	<h2 class="section-title">Categories Graphic</h2>
@@ -50,12 +78,12 @@
             :options="categoriesChartOptions"
             :series="categoriesChartData"
             :style="{
-            minWidth: '85%',
-            maxWidth: '85%',
-            minHeight: '100%',
-            maxHeight: '100%',
-            width: '85%',
-            height: '100%'
+            minWidth: '880px',
+            maxWidth: '880px',
+            minHeight: '880px',
+            maxHeight: '880px',
+            width: '880px',
+            height: '880px'
             }" />
 	</div>
       </div>
@@ -104,7 +132,7 @@ export default {
       }),
       categoriesChartOptions: Object.freeze({
         chart: {
-          type: 'donut',
+          type: 'donut'
         },
         labels: [], // Labels for the donut chart
       }),
@@ -129,7 +157,7 @@ export default {
         console.error("No token found");
         return;
       }
-
+      
       // Fetch both Incomes and Expenses for combined chart
       Promise.all([
         axios.get('http://localhost:8000/api/incomes/', {
@@ -278,25 +306,14 @@ export default {
 
 .content-wrapper {
     flex: 1;
-    display: flex;
-    position: relative;
-    justify-content: center;
-    gap: 5px;
     padding: 20px;
     margin-left: 50px;
-    width: 100%;
-    overflow: hidden;
 }
 
 .section {
     display: flex;
     flex-direction: column;
-    width: 85%;
-    height: 100%;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    overflow: hidden;
+    gap: 10px;
 }
 
 .header {
@@ -304,38 +321,100 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #ffffff;
     border-bottom: 1px solid #ddd;
-    font-family: "Wix Madefor Display", sans-serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
     color: #25253C;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.graphic-container {
-    flex: 1;
+.section-filter {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    overflow-x: auto;
-    overflow-y: hidden;
-    background-color: #ffffff;
-    border-top: 1px solid #eee;
-    border-radius: 8px;
-    max-height: 100%;
+    gap: 15px;
+    font-size: 18px;
 }
 
-.chart-wrapper {
-    min-height: 100%;
-    max-height:100%;
-    width: 100%;
-    height: 100%;
+.date-input,
+select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.graphic-container {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    height: 300px;
+}
+
+.stats-content {
+    display: grid;
+    gap: 30px;
+    padding: 20px;
+    justify-content: center;
+
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.stats-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    gap: 50px;
+    margin: 20px;
+    padding: 40px;
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.stats-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.stats-header h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #25253C;
+    margin: 0;
+}
+
+.icon {
+    font-size: 36px;
+}
+
+.stats-box p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
 }
 </style>

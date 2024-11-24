@@ -25,7 +25,9 @@ import {
   faFilter,
   faTrashCan,
   faChartPie,
-  faChartArea
+  faChartArea,
+  faPiggyBank,
+  faHandHoldingDollar
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -52,7 +54,9 @@ library.add(
   faFilter,
   faTrashCan,
   faChartPie,
-  faChartArea
+  faChartArea,
+  faPiggyBank,
+  faHandHoldingDollar
 );
 
 const app = createApp(App)
