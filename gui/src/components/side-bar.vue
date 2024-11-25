@@ -34,6 +34,8 @@
     <div class="bottom-options">
       <button @click="editProfile" class="bottom-option">
 	<font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/> Edit Profile</button>
+      <button @click="pdfMail" class="bottom-option">
+	<font-awesome-icon :icon="['fas', 'envelope-open-text']" class="icon"/> PDF Mails</button>
       <button @click="logout" class="bottom-option">
         <font-awesome-icon :icon="['fas', 'right-from-bracket']" class="icon"/> Log-out</button>
     </div>
@@ -182,12 +184,12 @@ export default {
 .divider_bottom {
     height: 2px;
     background: white;
-    margin: 250px 20px;
+    margin: 190px 20px;
     opacity: 0.8;
 }
 
 .bottom-options {
-    margin-top: -220px;
+    margin-top: -180px;
 }
 
 .bottom-option {

@@ -27,7 +27,8 @@ import {
   faChartPie,
   faChartArea,
   faPiggyBank,
-  faHandHoldingDollar
+  faHandHoldingDollar,
+  faEnvelopeOpenText
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -56,7 +57,8 @@ library.add(
   faChartPie,
   faChartArea,
   faPiggyBank,
-  faHandHoldingDollar
+  faHandHoldingDollar,
+  faEnvelopeOpenText
 );
 
 const app = createApp(App)
