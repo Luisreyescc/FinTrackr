@@ -95,3 +95,8 @@ class Debts(models.Model):
     date = models.DateField()
     categories = models.TextField(null=True, blank=True)
     is_payed = models.BooleanField(default=False)
+
+
+class DebtCategories(models.Model):
+    debt = models.ForeignKey(Debts, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
