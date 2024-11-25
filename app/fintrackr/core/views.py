@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, status, viewsets
-from django.db.models import Sum 
+from django.db.models import Sum
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -69,16 +69,28 @@ class UserProfileView(generics.RetrieveAPIView):
     def get(self, request):
         user = request.user
         return Response({"user_name": user.user_name})
-    
+
+
 class IncomeListCreateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Allows public access
 
     def get(self, request):
-        incomes = Incomes.objects.filter(user=request.user)
+        # If the user is authenticated, filter their income
+        if request.user.is_authenticated:
+            incomes = Incomes.objects.filter(user=request.user)
+        else:
+            incomes = Incomes.objects.all()
+
         serializer = IncomeSerializer(incomes, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         serializer = IncomeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -127,19 +139,18 @@ class IncomeSourceSummaryView(APIView):
     def get(self, request):
         # Aggregate incomes by source for the authenticated user
         source_summary = (
-            Incomes.objects
-            .filter(user=request.user)  # Filter by the current user
-            .values('source')  # Group by source
-            .annotate(total_amount=Sum('amount'))  # Sum amounts for each source
-            .order_by('source')  # Optional: order by source
+            # Filter by the current user
+            Incomes.objects.filter(user=request.user)
+            .values("source")  # Group by source
+            # Sum amounts for each source
+            .annotate(total_amount=Sum("amount"))
+            .order_by("source")  # Optional: order by source
         )
 
         # Format the response data
         response_data = [
-            {
-                "source": income["source"],
-                "total_amount": income["total_amount"]
-            }
+            {"source": income["source"],
+                "total_amount": income["total_amount"]}
             for income in source_summary
         ]
 
@@ -147,15 +158,24 @@ class IncomeSourceSummaryView(APIView):
 
 
 class ExpenseListCreateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Allows public access
 
     def get(self, request):
-        expenses = Expenses.objects.filter(user=request.user)
+        if request.user.is_authenticated:
+            expenses = Expenses.objects.filter(user=request.user)
+        else:
+            expenses = Expenses.objects.all()
+
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
 
-
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -198,7 +218,6 @@ class ExpenseDetailView(APIView):
         expense.delete()
         return Response({"message": "Expense deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
-
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
@@ -220,7 +239,7 @@ class ExpenseCategorySummaryView(APIView):
         response_data = [
             {
                 "category": category["category__name"],
-                "total_amount": category["total_amount"]
+                "total_amount": category["total_amount"],
             }
             for category in categories_summary
         ]

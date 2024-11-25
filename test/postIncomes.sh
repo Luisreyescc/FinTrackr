@@ -29,7 +29,7 @@ login() {
 
 get_random_date() {
   START=$(date -d "2000-01-01" +%s)
-  END=$(date -d "2024-12-31" +%s)
+  END=$(date -d "2024-11-22" +%s)
 
   RANDOM_TIME=$((START + $(od -An -N4 -i /dev/urandom) % (END - START)))
   RANDOM_DATE=$(date -d @$RANDOM_TIME +"%Y-%m-%d")

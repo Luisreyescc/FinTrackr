@@ -161,4 +161,3 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
