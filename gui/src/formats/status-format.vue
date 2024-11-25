@@ -130,7 +130,7 @@ export default {
         },
 	colors: ['#008FFB', '#FAA700'],
         stroke: {
-          curve: 'straight',
+          curve: 'smooth',
         },
       }),
       categoriesChartOptions: Object.freeze({
