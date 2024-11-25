@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import generics, permissions, status, viewsets
 from django.db.models import Sum 
 from rest_framework.response import Response
@@ -74,9 +75,30 @@ class IncomeListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        incomes = Incomes.objects.filter(user=request.user)
-        serializer = IncomeSerializer(incomes, many=True)
-        return Response(serializer.data)
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        filters = {"user": request.user}
+
+        try: 
+            if start_date:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                filters["date__gte"] = start_date
+
+            if end_date:
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                filters["date__lte"] = end_date
+        
+        except ValueError:
+            return Response(
+                {"error": "Dates must be in the format YYYY-MM-DD."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        incomes = Incomes.objects.filter(**filters)
+        serializer = IncomeSerializer(incomes, many = True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = IncomeSerializer(data=request.data)
@@ -84,7 +106,6 @@ class IncomeListCreateView(APIView):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class IncomeDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -150,10 +171,31 @@ class ExpenseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        expenses = Expenses.objects.filter(user=request.user)
-        serializer = ExpenseSerializer(expenses, many=True)
-        return Response(serializer.data)
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        
+        filters = {"user": request.user}
 
+        try: 
+            if start_date:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                filters["date__gte"] = start_date
+
+            if end_date:
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                filters["date__lte"] = end_date
+        
+        except ValueError:
+            return Response(
+                {"error": "Dates must be in the format YYYY-MM-DD."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        expenses = Expenses.objects.filter(**filters)
+        serializer = ExpenseSerializer(expenses, many = True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
     def post(self, request):
         serializer = ExpenseSerializer(data=request.data)
@@ -209,9 +251,29 @@ class ExpenseCategorySummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        try: 
+            filters = {"expense__user": request.user}
+
+            if start_date:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                filters["expense__date__gte"] = start_date
+
+            if end_date:
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                filters["expense__date__lte"] = end_date
+        
+        except ValueError:
+            return Response(
+                {"error": "Dates must be in the format YYYY-MM-DD."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         categories_summary = (
             ExpenseCategories.objects
-            .filter(expense__user=request.user)
+            .filter(**filters)
             .values('category__name')
             .annotate(total_amount=Sum('expense__amount'))
             .order_by('category__name')

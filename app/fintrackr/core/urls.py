@@ -11,7 +11,7 @@ from .views import (
     ExpenseListCreateView,
     ExpenseCategorySummaryView, 
     IncomeSourceSummaryView, 
-    ExpenseDetailView
+    ExpenseDetailView, 
 
 )
 
@@ -25,6 +25,7 @@ urlpatterns = [
     path("profile/", UserProfileView.as_view(), name="user-profile"),
 
     #income views
+    # for incomes/ you can acces it by date, by adding /?satart_date=x&end_date=y
     path("incomes/", IncomeListCreateView.as_view(), name="income-list-create"),
     path("incomes/<int:income_id>/", IncomeDetailView.as_view(), name="income-detail"),
     path('incomes/source-summary/', IncomeSourceSummaryView.as_view(), name='income-source-summary'),
