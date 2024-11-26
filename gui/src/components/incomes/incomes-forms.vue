@@ -1,7 +1,7 @@
 <template>
 <div class="form-container" >
   <h3 class="form-title">New Income Data</h3>
-  <div class="form-content">
+  <div class="form-content scrollbar">
   <form @submit.prevent="submitForm">
     <label>
       Amount:
@@ -14,16 +14,30 @@
     </label>
     <span v-if="amountError" class="error-message">{{ amountError }}</span>
     
-    <label>
-      Source:
-      <input
-	type="text"
-	v-model="income.source"
-	@input="validateTextField('source')"
-	:class="{ 'input-error': sourceError, 'input-valid': !sourceError && income.source }"
-	placeholder="Enter the source of the income" />
-    </label>
-    <span v-if="sourceError" class="error-message">{{ sourceError }}</span>
+    <div class="sources-wrapper">
+      <div class="sources-select" @click="toggleDropdown">
+	Sources
+	<span class="dropdown-icon">
+	<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+	<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+	</span>
+      </div>
+
+      <ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
+        <li
+          v-for="(source, index) in sourceOptions"
+          :key="index"
+          @click="addSource(source)">{{ source }}</li></ul>
+      
+      <div class="selected-sources">
+        <span v-for="(source, index) in income.sources" :key="index" class="tag">
+          {{ source }}
+          <button @click="removeSource(index)" class="close-button">
+            <font-awesome-icon :icon="['fas', 'xmark']"/>
+          </button>
+        </span>
+      </div>
+    </div>
     
     <label>
       Description:
@@ -56,15 +70,30 @@
 </template>
 
 <script>
+import '@/css/scrollbar.css';
+  
 export default {
   name: "IncomesForm",
   data() {
     return {
-      income: { amount: '', source: '', description: '', date: '' },
+      income: { amount: '', sources: [], description: '', date: '' },
       amountError: "",
-      sourceError: "",
       descriptionError: "",
-      dateError: ""
+      dateError: "",
+      sourceOptions: [
+	"Groceries",
+	"Food",
+	"Travel",
+	"Utilities",
+	"Rent",
+	"Entertainment",
+	"Shopping",
+	"Education",
+	"Health",
+	"Transportation",
+	"Bills",
+	"Taxes"],
+      dropdownOpen: false,
     };
   },
   methods: {
@@ -72,11 +101,10 @@ export default {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
-      const isSourceValid = this.validateTextField('source');
       const isDescriptionValid = this.validateTextField('description');
       const isDateValid = this.validateDate();
       
-      if (isAmountValid && isSourceValid && isDescriptionValid && isDateValid) {
+      if (isAmountValid && isDescriptionValid && isDateValid) {
 	this.$emit('submitForm', { ...this.income });
 	this.$emit('closeForm');
 	this.resetForm();
@@ -84,16 +112,27 @@ export default {
     },
     clearErrors() {
       this.amountError = "";
-      this.sourceError = "";
       this.descriptionError = "";
       this.dateError = "";
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    addSource(source) {
+      if (!this.income.sources.includes(source)) {
+        this.income.sources.push(source);
+      }
+      this.dropdownOpen = false;
+    },
+    removeSource(index) {
+      this.income.sources.splice(index, 1);
     },
     cancelForm() {
       this.resetForm();
       this.$emit('closeForm');
     },
     resetForm() {
-      this.income = { amount: '', source: '', description: '', date: '' };
+      this.income = { amount: '', source: [], description: '', date: '' };
       this.clearErrors();
     },
     validateAmount() {
@@ -242,5 +281,98 @@ input {
 
 .submit-button:hover {
     background-color: #237242;
+}
+
+.sources-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.sources-select {
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 110px;
+    font-weight: bold;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+}
+
+.sources-select:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    transform: translateY(-1px);
+    color: #21255b;
+}
+
+.sources-dropdown {
+    position: absolute;
+    top: 80%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    list-style: none;
+    z-index: 1000;
+    overflow-y: auto;
+    max-height: 160px;
+    max-width: 200px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.sources-dropdown li {
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: left;
+}
+
+.sources-dropdown li:hover {
+    background-color: #f0f8ff;
+    border-radius: 12px;
+    color: #1010AC;
+    font-weight: bold;
+}
+
+.selected-sources {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    border-radius: 16px;
+    padding: 5px 10px;
+    font-weight: bold;
+    background-color: #F3F3F9;
+    border: 1px solid #6F6F7A;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: -10px;
+}
+
+.close-button .gg-close {
+    font-size: 12px;
+    color: #333;
 }
 </style>
