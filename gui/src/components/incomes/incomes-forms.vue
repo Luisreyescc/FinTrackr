@@ -24,10 +24,32 @@
       </div>
 
       <ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
+	<li @click="showNewSourceDialog" style="color: green; font-weight: bold;">
+          <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
+	</li>
         <li
           v-for="(source, index) in sourceOptions"
           :key="index"
-          @click="addSource(source)">{{ source }}</li></ul>
+          @click="newSource(source)">{{ source }}
+	</li>
+      </ul>
+
+      <div v-if="showNewSource" class="overlay" @click="cancelNewSource"></div>
+      <div v-if="showNewSource" class="new-source-dialog">
+	<h4>Enter new source</h4>
+	<input
+          type="text"
+          v-model="newSource"
+          placeholder="New source"
+          :maxlength="18" />
+	<div class="button-group">
+          <button @click="cancelNewSource" class="cancel-source">Cancel</button>
+          <button
+            @click="acceptNewSource"
+            class="accept-source"
+            :disabled="!isAcceptEnabled">Accept</button>
+	</div>
+      </div>
       
       <div class="selected-sources">
         <span v-for="(source, index) in income.sources" :key="index" class="tag">
@@ -62,7 +84,7 @@
     
     <div class="button-group">
       <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-      <button type="submit" class="submit-button">Submit</button>
+      <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
       </div>
   </form>
   </div>
@@ -94,6 +116,8 @@ export default {
 	"Bills",
 	"Taxes"],
       dropdownOpen: false,
+      showNewSource: false,
+      newSource: "",
     };
   },
   methods: {
@@ -110,11 +134,6 @@ export default {
 	this.resetForm();
       }
     },
-    clearErrors() {
-      this.amountError = "";
-      this.descriptionError = "";
-      this.dateError = "";
-    },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
@@ -124,8 +143,31 @@ export default {
       }
       this.dropdownOpen = false;
     },
+    showNewSourceDialog() {
+      this.newSource = "";
+      this.showNewSource = true;
+    },
+    cancelNewSource() {
+      this.showNewSource = false;
+    },
+    acceptNewSource() {
+      if (this.newSource.trim()) {
+        if (!this.sourceOptions.includes(this.newSource)) {
+          this.sourceOptions.push(this.newSource);
+        }
+        this.income.source.push(this.newSource);
+        this.showNewSource = false;
+        this.newSource = "";
+	this.dropdownOpen = false;
+      }
+    },
     removeSource(index) {
       this.income.sources.splice(index, 1);
+    },
+    clearErrors() {
+      this.amountError = "";
+      this.descriptionError = "";
+      this.dateError = "";
     },
     cancelForm() {
       this.resetForm();
@@ -169,6 +211,14 @@ export default {
       }
       return true;
     }
+  },
+  computed: {
+    isSubmitEnabled() {
+      return this.income.sources.length > 0;
+    },
+    isAcceptEnabled() {
+      return this.newSource.trim().length > 0;
+    },
   }
 };
 </script>
@@ -374,5 +424,79 @@ input {
 .close-button .gg-close {
     font-size: 12px;
     color: #333;
+}
+
+.new-source-dialog {
+    position: fixed;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    width: 220px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.new-source-dialog h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #21255b;
+  font-family: "Wix Madefor Display", sans-serif;
+}
+
+.new-source-dialog input {
+    width: 90%;
+    padding: 14px;
+    margin-top: 10px;
+    border: none;
+    outline: none;
+    background-color: #f0f0f0;
+    border-radius: 4px 4px 0 0;
+    border-bottom: 2px solid #ccc;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.new-source-dialog .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.cancel-source, .accept-source {
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.cancel-source {
+    background-color: #333; 
+}
+
+.accept-source {
+    background-color: #4caf50; 
+}
+
+.cancel-button:hover {
+    background-color: #616161;
+}
+
+.submit-button:hover {
+    background-color: #237242;
+}
+
+.submit-button:disabled,
+.accept-source:disabled {
+    background-color: #A2CBB2;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 </style>

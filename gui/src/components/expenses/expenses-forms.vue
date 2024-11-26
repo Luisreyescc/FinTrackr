@@ -5,13 +5,23 @@
   <form @submit.prevent="submitForm">
     <label>
       Amount:
-      <input type="text" v-model="expense.amount" @input="validateAmount" :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }" placeholder="Enter amount (e.g., 1000.00)" />
+      <input
+	type="text"
+	v-model="expense.amount"
+	@input="validateAmount"
+	:class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
+	placeholder="Enter amount (e.g., 1000.00)" />
     </label>
     <span v-if="amountError" class="error-message">{{ amountError }}</span>
     
     <label>
       Description:
-      <input type="text" v-model="expense.description" @input="validateTextField('description')" :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }" placeholder="Enter a description for the expense" />
+      <input
+	type="text"
+	v-model="expense.description"
+	@input="validateTextField('description')"
+	:class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
+	placeholder="Enter a description for the expense" />
     </label>
     <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
     
@@ -26,8 +36,8 @@
       
       <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
 	<li @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
-        <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
-      </li>
+          <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+	</li>
         <li
           v-for="(category, index) in categoryOptions"
           :key="index"
