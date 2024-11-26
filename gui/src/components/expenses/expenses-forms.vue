@@ -35,7 +35,8 @@
       </div>
       
       <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-	<li @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+	<li v-if="loadingCategories">Loading categories...</li>
+	<li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
           <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
 	</li>
         <li
@@ -93,6 +94,7 @@
 
 <script>
 import '@/css/scrollbar.css';
+import axios from 'axios';
  
 export default {
   name: "ExpensesForm",
@@ -102,22 +104,11 @@ export default {
       amountError: "",
       descriptionError: "",
       dateError: "",
-      categoryOptions: [
-	"Groceries",
-	"Food",
-	"Travel",
-	"Utilities",
-	"Rent",
-	"Entertainment",
-	"Shopping",
-	"Education",
-	"Health",
-	"Transportation",
-	"Bills",
-	"Taxes"],
+      categoryOptions: [],
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
+      loadingCategories: false,
     };
   },
   methods: {
@@ -137,6 +128,31 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    async fetchCategories() {
+      try {
+        this.loadingCategories = true;
+        const response = await axios.get('/api/categories-backend-url');
+        this.categoryOptions = response.data; // Asuming backend returns an array of categories
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        this.loadingCategories = false;
+      }
+    },
+    async sendNewCategory() {
+      try {
+        const response = await axios.post('/api/categories', { name: this.newCategory.trim() });
+        if (response.status === 201) {
+          // Add new category to the user's categories table if the backend respons with success
+          this.categoryOptions.push(this.newCategory.trim());
+          this.expense.categories.push(this.newCategory.trim());
+        } else {
+          console.error("Failed to add category:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error adding new category:", error);
+      }
+    },
     addCategory(category) {
       if (!this.expense.categories.includes(category)) {
         this.expense.categories.push(category);
@@ -150,11 +166,9 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    acceptNewCategory() {
+    async acceptNewCategory() {
       if (this.newCategory.trim()) {
-        if (!this.categoryOptions.includes(this.newCategory)) {
-          this.categoryOptions.push(this.newCategory);
-        }
+        await this.sendNewCategory();
         this.expense.categories.push(this.newCategory);
         this.showNewCategory = false;
         this.newCategory = "";
@@ -221,7 +235,10 @@ export default {
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
     },
-  }
+  },
+  mounted() {
+    this.fetchCategories();
+  },
 };
 </script>
 
