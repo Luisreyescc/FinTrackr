@@ -24,7 +24,8 @@
       </div>
 
       <ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
-	<li @click="showNewSourceDialog" style="color: green; font-weight: bold;">
+	<li v-if="loadingSources">Loading sources...</li>
+	<li v-else @click="showNewSourceDialog" style="color: green; font-weight: bold;">
           <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
 	</li>
         <li
@@ -93,6 +94,7 @@
 
 <script>
 import '@/css/scrollbar.css';
+import axios from 'axios';
   
 export default {
   name: "IncomesForm",
@@ -102,22 +104,11 @@ export default {
       amountError: "",
       descriptionError: "",
       dateError: "",
-      sourceOptions: [
-	"Groceries",
-	"Food",
-	"Travel",
-	"Utilities",
-	"Rent",
-	"Entertainment",
-	"Shopping",
-	"Education",
-	"Health",
-	"Transportation",
-	"Bills",
-	"Taxes"],
+      sourceOptions: [],
       dropdownOpen: false,
       showNewSource: false,
       newSource: "",
+      loadingSources: false,
     };
   },
   methods: {
@@ -137,6 +128,31 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    async fetchSources() {
+      try {
+        this.loadingSources = true;
+        const response = await axios.get('/api/sources-backend-url');
+        this.sourceOptions = response.data; // Asuming backend returns an array of categories
+      } catch (error) {
+        console.error("Error fetching sources:", error);
+      } finally {
+        this.loadingSources = false;
+      }
+    },
+    async sendNewSource() {
+      try {
+        const response = await axios.post('/api/sources', { name: this.newSource.trim() });
+        if (response.status === 201) {
+          // Add new category to the user's categories table if the backend respons with success
+          this.sourceOptions.push(this.newSource.trim());
+          this.income.sources.push(this.newSource.trim());
+        } else {
+          console.error("Failed to add source:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error adding new source:", error);
+      }
+    },
     addSource(source) {
       if (!this.income.sources.includes(source)) {
         this.income.sources.push(source);
@@ -150,11 +166,9 @@ export default {
     cancelNewSource() {
       this.showNewSource = false;
     },
-    acceptNewSource() {
+    async acceptNewSource() {
       if (this.newSource.trim()) {
-        if (!this.sourceOptions.includes(this.newSource)) {
-          this.sourceOptions.push(this.newSource);
-        }
+        await this.sendNewSource();
         this.income.source.push(this.newSource);
         this.showNewSource = false;
         this.newSource = "";
@@ -219,7 +233,10 @@ export default {
     isAcceptEnabled() {
       return this.newSource.trim().length > 0;
     },
-  }
+  },
+  mounted() {
+    this.fetchSources();
+  },
 };
 </script>
 
@@ -346,7 +363,7 @@ input {
     cursor: pointer;
     display: flex;
     align-items: center;
-    width: 110px;
+    width: 85px;
     font-weight: bold;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
