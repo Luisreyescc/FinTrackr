@@ -140,12 +140,17 @@ export default {
     },
     validateCode() {
       this.keyError = "";
-      if (!this.recoveryCode)
-	this.keyError = 'The recoveryCode is required';
-      else {
-	this.$emit("validateCode", { recoveryCode: this.recoveryCode });
-        this.currentStep = 3; // Next state of the page, create new password
-      }
+      if (!this.recoveryCode) {
+      this.keyError = "The recovery code is required";
+      } else {
+      this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
+        if (isValid) {
+          this.currentStep = 3;
+        } else {
+          this.keyError = "";
+        }
+      });
+    }
     },
     changePassword() {
       this.passwordError = "";

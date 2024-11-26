@@ -15,7 +15,7 @@
     :currentStep="currentStep"
     @sendCode="handleSendCode"
     @validateCode="handleValidateCode"
-    @changePassword="goToLogin"
+    @changePassword="handleChangePassword"
     @goToLogin="goToLogin" />
 </div>
 </template>
@@ -35,6 +35,7 @@ export default {
     return {
       messages: [],
       currentStep: 1,
+      username: "",
     };
   },
   methods: {
@@ -46,37 +47,45 @@ export default {
       this.messages.splice(index, 1);
     },
     async handleSendCode({ username, email }) {
+      const requestData = { user_name: username, email: email };
       try {
-	const response = await axios.post(
-          "http://url-for-send-code/",
-          { username, email },
+          const response = await axios.post(
+          "http://localhost:8000/api/send-code/",
+          requestData,
           { headers: { "Content-Type": "application/json" } }
         );
-	if (response.status === 200) {
+        if (response.status === 200) {
           this.addMessage("Recovery code sent successfully!", "success");
           this.currentStep = 2;
+          this.username = username;
         }
       } catch (error) {
         this.addMessage("Failed to send recovery code. Please try again.", "error");
       }
     },
-    async handleValidateCode({ recoveryCode }) {
+    async handleValidateCode({ recoveryCode }, callback) {
+      const requestData = { user_name: this.username, recovery_code: recoveryCode };
       try {
-	const response = await axios.post("htpp://url-for-validate-code/", { recoveryCode }, { headers: { "Content-Type": "application/json" } }
+        const response = await axios.post(
+          "http://localhost:8000/api/validate-code/",
+          requestData,
+          { headers: { "Content-Type": "application/json" } }
         );
-	if (response.status === 200) {
+        if (response.status === 200) {
           this.addMessage("Code validated successfully!", "success");
-          this.currentStep = 3;
+          callback(true);
         }
       } catch (error) {
         this.addMessage("Invalid recovery code. Please try again.", "error");
+        callback(false);
       }
     },
     async handleChangePassword({ password }) {
+      const requestData = { user_name: this.username, password };
       try {
         const response = await axios.post(
-          "http://url-for-change-password/",
-          { password },
+          "http://localhost:8000/api/change-password/",
+          requestData,
           { headers: { "Content-Type": "application/json" } }
         );
         if (response.status === 200) {

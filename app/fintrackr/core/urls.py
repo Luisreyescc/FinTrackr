@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     RegisterView,
     LoginView,
@@ -36,4 +36,7 @@ urlpatterns = [
     path("expenses/", ExpenseListCreateView.as_view(), name="expense-list-create"),
     path('expenses/category-summary/', ExpenseCategorySummaryView.as_view(), name='expense-category-summary'),
     path("expenses/<int:expense_id>/", ExpenseDetailView.as_view(), name="expense-detail"),
+
+    # Emails views
+    path("", include("emails.urls")),
 ]
