@@ -35,56 +35,63 @@
       <button @click="editProfile" class="bottom-option">
 	<font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/> Edit Profile</button>
       <button @click="pdfMail" class="bottom-option">
-	<font-awesome-icon :icon="['fas', 'envelope-open-text']" class="icon"/> PDF Mails</button>
+	<font-awesome-icon :icon="['fas', 'envelope-open-text']" class="icon"/> PDF Report</button>
       <button @click="logout" class="bottom-option">
         <font-awesome-icon :icon="['fas', 'right-from-bracket']" class="icon"/> Log-out</button>
     </div>
   </div>
 
   <div v-if="showPdfModal" class="modal-overlay" @click="closePdfModal">
-    <div class="modal-content"  @click.stop>
-      <h2>PDF Mails Clicked</h2>
-      <button @click="closePDFModal" class="modal-close-icon">
+    <div class="modal-content" @click.stop>
+      <h2>PDF Report</h2>
+      <button @click="closePdfModal" class="modal-close-icon">
         <font-awesome-icon :icon="['fas', 'xmark']"/>
       </button>
+      
       <div class="time-selector">
         <h3>Set Time</h3>
         <div class="time-controls">
-          <input 
-            type="number" 
-            v-model.number="time.hour" 
-            min="1" max="12" 
-            class="time-input" 
-            @input="validateTime" /> :
-           <input 
-            type="number" 
-            v-model.number="time.minute" 
-            min="0" max="59" 
-            class="time-input" 
-            @input="validateTime" />
-          <select v-model="time.amPm" class="time-period">
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
+          <button @click="incrementTime('hour')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" />
+          </button>
+          <span>{{ formatNumber(time.hour) }}</span>
+          <button @click="decrementTime('hour')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" />
+          </button>
+          :
+          <button @click="incrementTime('minute')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" />
+          </button>
+          <span>{{ formatNumber(time.minute) }}</span>
+          <button @click="decrementTime('minute')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" />
+          </button>
+          <button @click="toggleAmPm" class="period-button">
+            {{ time.amPm }}
+          </button>
         </div>
       </div>
       
       <div class="period-selector">
         <h3>Set Period</h3>
         <div class="period-controls">
-          <select v-model="period.type" class="period-type">
-            <option value="Monthly">Month</option>
-            <option value="Bimonthly">Bimonthly</option>
-            <option value="Quarterly">Quarterly</option>
-          </select>
-          <input 
-            type="number" 
-            v-model.number="period.day" 
-            min="1" max="31" 
-            class="period-day-input" 
-            @input="validateDay" />
-        </div>
+          <button @click="incrementPeriod('type')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" />
+          </button>
+          <span>{{ period.type }}</span>
+          <button @click="decrementPeriod('type')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" />
+          </button>
+          <button @click="incrementPeriod('day')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" />
+          </button>
+          <span>{{ period.day }}</span>
+          <button @click="decrementPeriod('day')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" />
+          </button>
+	</div>
       </div>
+      
       <button @click="confirmSettings" class="confirm-button">Set</button>
     </div>
   </div> 
@@ -120,7 +127,8 @@ export default {
       period: {
         type: 'Monthly',
         day: 1
-      }
+      },
+      periodTypes: ['Monthly', 'Bimonthly', 'Quarterly'],
     };
   },
   methods: {
@@ -142,43 +150,58 @@ export default {
     closePdfModal() {
       this.showPdfModal = false;
     },
-     validateTime() {
-      if (this.time.hour < 1) this.time.hour = 1;
-      if (this.time.hour > 12) this.time.hour = 12;
-      if (this.time.minute < 0) this.time.minute = 0;
-      if (this.time.minute > 59) this.time.minute = 59;
+    formatNumber(value) {
+      return value.toString().padStart(2, '0');
     },
-    validateDay() {
-      if (this.period.day < 1) this.period.day = 1;
-      if (this.period.day > 31) this.period.day = 31;
-    },
-    confirmSettings() {
-      // Ajustar día para meses cortos
-      const maxDay = this.getMaxDay(this.period.type);
-      if (this.period.day > maxDay) {
-        this.period.day = maxDay;
+    incrementTime(field) {
+      if (field === 'hour') {
+        this.time.hour = this.time.hour < 12 ? this.time.hour + 1 : 1;
+      } else if (field === 'minute') {
+        this.time.minute = this.time.minute < 59 ? this.time.minute + 1 : 0;
       }
-
-      // Aquí podrías enviar los datos al backend
-      console.log('Time:', `${this.time.hour}:${this.time.minute} ${this.time.amPm}`);
-      console.log('Period:', `${this.period.type} on day ${this.period.day}`);
-
-      this.closePdfModal();
     },
-    getMaxDay(type) {
+    decrementTime(field) {
+      if (field === 'hour') {
+        this.time.hour = this.time.hour > 1 ? this.time.hour - 1 : 12;
+      } else if (field === 'minute') {
+        this.time.minute = this.time.minute > 0 ? this.time.minute - 1 : 59;
+      }
+    },
+    toggleAmPm() {
+      this.time.amPm = this.time.amPm === 'AM' ? 'PM' : 'AM';
+    },
+    incrementPeriod(field) {
+      if (field === 'type') {
+        const currentIndex = this.periodTypes.indexOf(this.period.type);
+        this.period.type = this.periodTypes[(currentIndex + 1) % this.periodTypes.length];
+      } else if (field === 'day') {
+        const maxDay = this.getMaxDay();
+        this.period.day = this.period.day < maxDay ? this.period.day + 1 : 1;
+      }
+    },
+    decrementPeriod(field) {
+      if (field === 'type') {
+        const currentIndex = this.periodTypes.indexOf(this.period.type);
+        this.period.type =
+          this.periodTypes[(currentIndex - 1 + this.periodTypes.length) % this.periodTypes.length];
+      } else if (field === 'day') {
+        const maxDay = this.getMaxDay();
+        this.period.day = this.period.day > 1 ? this.period.day - 1 : maxDay;
+      }
+    },
+    getMaxDay() {
       const today = new Date();
       const currentMonth = today.getMonth();
       const year = today.getFullYear();
-
-      // Manejo de períodos según el tipo seleccionado
-      if (type === 'Monthly') {
-        return new Date(year, currentMonth + 1, 0).getDate(); // Último día del mes actual
-      } else if (type === 'Bimonthly') {
-        return 31; // Máximo día de dos meses
-      } else if (type === 'Quarterly') {
-        return 31; // Máximo día de tres meses
+      return new Date(year, currentMonth + 1, 0).getDate();
+    },
+    confirmSettings() {
+      const maxDay = this.getMaxDay();
+      if (this.period.day > maxDay) {
+        this.period.day = maxDay;
       }
-      return 31;
+      console.log('Time:', `${this.time.hour}:${this.time.minute} ${this.time.amPm}`);
+      console.log('Period:', `${this.period.type} on day ${this.period.day}`);
     }
   }
 };
@@ -342,46 +365,37 @@ export default {
     color: #555;
 }
 
-.time-selector, .period-selector {
-    margin: 20px 0;
+.arrow-button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.time-controls, .period-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
+.period-button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.time-input, .period-day-input {
-    width: 50px;
-    padding: 5px;
-    font-size: 16px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.time-period, .period-type {
-    padding: 5px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.time-controls,
+.period-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .confirm-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.confirm-button:hover {
-    background-color: #3a9340;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
