@@ -226,3 +226,16 @@ class ExpenseCategorySummaryView(APIView):
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class UserCategoriesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        categories = (
+            ExpenseCategories.objects
+            .filter(expense__user=request.user)
+            .values_list('category__name', flat=True)
+            .distinct()
+        )
+        return Response({"categories": list(categories)}, status=status.HTTP_200_OK)

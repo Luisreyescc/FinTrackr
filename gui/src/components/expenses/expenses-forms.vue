@@ -6,22 +6,22 @@
     <label>
       Amount:
       <input
-	type="text"
-	v-model="expense.amount"
-	@input="validateAmount"
-	:class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
-	placeholder="Enter amount (e.g., 1000.00)" />
+    type="text"
+    v-model="expense.amount"
+    @input="validateAmount"
+    :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
+    placeholder="Enter amount (e.g., 1000.00)" />
     </label>
     <span v-if="amountError" class="error-message">{{ amountError }}</span>
     
     <label>
       Description:
       <input
-	type="text"
-	v-model="expense.description"
-	@input="validateTextField('description')"
-	:class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-	placeholder="Enter a description for the expense" />
+    type="text"
+    v-model="expense.description"
+    @input="validateTextField('description')"
+    :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
+    placeholder="Enter a description for the expense" />
     </label>
     <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
     
@@ -29,38 +29,38 @@
       <div class="categories-select" @click="toggleDropdown">
         Categories
         <span class="dropdown-icon">
-	<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-	<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-	</span>
+    <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+    <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+    </span>
       </div>
       
       <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-	<li v-if="loadingCategories">Loading categories...</li>
-	<li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+    <li v-if="loadingCategories">Loading categories...</li>
+    <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
           <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
-	</li>
+    </li>
         <li
           v-for="(category, index) in categoryOptions"
           :key="index"
-          @click="newCategory(category)">{{ category }}
-	</li>
+          @click="addCategory(category)">{{ category }}
+    </li>
       </ul>
 
       <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
       <div v-if="showNewCategory" class="new-category-dialog">
-	<h4>Enter new category</h4>
-	<input
+    <h4>Enter new category</h4>
+    <input
           type="text"
           v-model="newCategory"
           placeholder="New category"
           :maxlength="18" />
-	<div class="button-group">
+    <div class="button-group">
           <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
           <button
             @click="acceptNewCategory"
             class="accept-category"
             :disabled="!isAcceptEnabled">Accept</button>
-	</div>
+    </div>
       </div>
       
       <div class="selected-categories">
@@ -120,9 +120,9 @@ export default {
       const isDateValid = this.validateDate();
       
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	this.$emit('submitForm', { ...this.expense });
-	this.$emit('closeForm');
-	this.resetForm();
+        this.$emit('submitForm', { ...this.expense });
+        this.$emit('closeForm');
+        this.resetForm();
       }
     },
     toggleDropdown() {
@@ -130,9 +130,17 @@ export default {
     },
     async fetchCategories() {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
         this.loadingCategories = true;
-        const response = await axios.get('/api/categories-backend-url');
-        this.categoryOptions = response.data; // Asuming backend returns an array of categories
+        const response = await axios.get('http://localhost:8000/api/user-categories/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.categoryOptions = response.data.categories;
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -141,7 +149,7 @@ export default {
     },
     async sendNewCategory() {
       try {
-        const response = await axios.post('/api/categories', { name: this.newCategory.trim() });
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
         if (response.status === 201) {
           // Add new category to the user's categories table if the backend respons with success
           this.categoryOptions.push(this.newCategory.trim());
@@ -172,7 +180,7 @@ export default {
         this.expense.categories.push(this.newCategory);
         this.showNewCategory = false;
         this.newCategory = "";
-	this.dropdownOpen = false;
+    this.dropdownOpen = false;
       }
     },
     removeCategory(index) {
