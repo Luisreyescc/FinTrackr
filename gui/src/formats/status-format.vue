@@ -578,7 +578,7 @@ select {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 620px;
+    height: 100%;
     overflow: hidden;
 }
 
