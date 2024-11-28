@@ -9,8 +9,8 @@ from .views import (
     IncomeListCreateView,
     CategoryListCreateView,
     ExpenseListCreateView,
-    ExpenseCategorySummaryView, 
-    IncomeSourceSummaryView, 
+    ExpenseCategorySummaryView,
+    IncomeSourceSummaryView,
     ExpenseDetailView,
     UserCategoriesView,
 )
@@ -23,18 +23,25 @@ urlpatterns = [
     path("users/", user_list, name="user_list"),
     path("profile-details/", ProfileView.as_view(), name="profile-details"),
     path("profile/", UserProfileView.as_view(), name="user-profile"),
-
-    #income views
+    # income views
     path("incomes/", IncomeListCreateView.as_view(), name="income-list-create"),
     path("incomes/<int:income_id>/", IncomeDetailView.as_view(), name="income-detail"),
-    path('incomes/source-summary/', IncomeSourceSummaryView.as_view(), name='income-source-summary'),
-
+    path(
+        "incomes/categories-summary/",
+        IncomeSourceSummaryView.as_view(),
+        name="income-source-summary",
+    ),
     # Category views
     path("categories/", CategoryListCreateView.as_view(), name="category-list-create"),
-
     # Expense views
     path("expenses/", ExpenseListCreateView.as_view(), name="expense-list-create"),
-    path('expenses/category-summary/', ExpenseCategorySummaryView.as_view(), name='expense-category-summary'),
-    path("expenses/<int:expense_id>/", ExpenseDetailView.as_view(), name="expense-detail"),
-    path('user-categories/', UserCategoriesView.as_view(), name='user-categories'),
+    path(
+        "expenses/category-summary/",
+        ExpenseCategorySummaryView.as_view(),
+        name="expense-category-summary",
+    ),
+    path(
+        "expenses/<int:expense_id>/", ExpenseDetailView.as_view(), name="expense-detail"
+    ),
+    path("user-categories/", UserCategoriesView.as_view(), name="user-categories"),
 ]
