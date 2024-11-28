@@ -110,7 +110,7 @@ export default {
       const day = String(date.getDate()).padStart(2, '0');
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${year}-${month}-${day}`;
     }
   },
   methods: {

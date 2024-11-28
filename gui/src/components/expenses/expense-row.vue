@@ -1,96 +1,128 @@
 <template>
-  <div class="expense-row">
-    <div class="expense-icon">
-      <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="#25253C" />
-    </div>
-    <div class="expense-details">
-      <h4>{{ formattedCategories }}</h4>
-      <p class="expense-description">{{ expense.description }}</p>
-      <span class="expense-date">{{ formattedDate }}</span>
-    </div>
-    <div class="expense-amount-section">
-      <span class="expense-amount">{{ formattedAmount }}</span>
-      <div class="expense-actions">
-        <button class="edit-button" @click="startEdit">
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
-        </button>
-        <button class="delete-button" @click="deleteExpense">
+<div class="expense-row">
+  <div class="expense-icon">
+    <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="#25253C" />
+  </div>
+  <div class="expense-details">
+    <h4>{{ formattedCategories }}</h4>
+    <p class="expense-description">{{ expense.description }}</p>
+    <span class="expense-date">{{ formattedDate }}</span>
+  </div>
+  <div class="expense-amount-section">
+    <span class="expense-amount">{{ formattedAmount }}</span>
+    <div class="expense-actions">
+      <button class="edit-button" @click="startEdit">
+        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
+      </button>
+      <button class="delete-button" @click="deleteExpense">
 	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
-	</button>
-      </div>
+      </button>
     </div>
   </div>
+</div>
 
-  <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
-  <div v-if="isEditing" class="edit-popup">
-    <h3 class="edit-title">Edit Expense</h3>
-    <div class="popup-content">
-      <form @submit.prevent="submitEdit">
-        <label>
-          Amount:
-          <input type="text"
-            v-model="editExpense.amount"
-            @input="validateAmount"
-            :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
-            placeholder="Enter amount (e.g., 1000.00)" />
-        </label>
-        <span v-if="amountError" class="error-message">{{ amountError }}</span>
-
-          <label>
-            Description:
-            <input type="text"
-              v-model="editExpense.description"
-              @input="validateTextField('description')"
-              :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editExpense.description }"
-              placeholder="Enter a description for the expense" />
-          </label>
-          <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-	<div class="categories-wrapper">
+<div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
+<div v-if="isEditing" class="edit-popup">
+  <h3 class="edit-title">Edit Expense</h3>
+  <div class="popup-content">
+    <form @submit.prevent="submitEdit">
+      <label>
+        Amount:
+        <input type="text"
+               v-model="editExpense.amount"
+               @input="validateAmount"
+               :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
+               placeholder="Enter amount (e.g., 1000.00)" />
+      </label>
+      <span v-if="amountError" class="error-message">{{ amountError }}</span>
+      
+      <label>
+        Description:
+        <input type="text"
+               v-model="editExpense.description"
+               @input="validateTextField('description')"
+               :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editExpense.description }"
+               placeholder="Enter a description for the expense" />
+      </label>
+      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+      
+      <div class="categories-wrapper">
 	<div class="categories-select" @click="toggleDropdown">
-              Categories
-              <span class="dropdown-icon">
-		<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-		<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-	</span>
+          Categories
+          <span class="dropdown-icon">
+	    <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+	    <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+	  </span>
 	</div>
+	
 	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-              <li
-		v-for="(category, index) in categoryOptions"
-		:key="index"
-		@click="addCategory(category)">{{ category }}</li></ul>
+	  <li v-if="loadingCategories">Loading categories...</li>
+	  <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+	  </li>
+          <li
+            v-for="(category, index) in categoryOptions"
+            :key="index"
+            @click="addCategory(category)">{{ category }}
+	  </li>
+	</ul>
+	
+	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+	<div v-if="showNewCategory" class="new-category-dialog">
+	  <h4>Enter new category</h4>
+	  <input
+            type="text"
+            v-model="newCategory"
+            placeholder="New category"
+            :maxlength="18" />
+	  <div class="button-group">
+            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+            <button
+              @click="acceptNewCategory"
+              class="accept-category"
+              :disabled="!isAcceptEnabled">Accept</button>
+	  </div>
+	</div>
+	
 	<div class="selected-categories">
-    <span v-for="(category, index) in editExpense.categories || []" :key="index" class="tag">
-      {{ category }}
-		<button @click="removeCategory(index)" class="close-button">
-	<font-awesome-icon :icon="['fas', 'xmark']"/>
-		</button>
-              </span>
+          <span v-for="(category, index) in expense.categories" :key="index" class="tag">
+            {{ category }}
+            <button @click="removeCategory(index)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
+            </button>
+          </span>
 	</div>
-	</div>
-	<label>
-          Date:
-              <input
-		v-model="editExpense.date"
-		type="date"
-		@input="validateDate"
-		:class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }" />
-	</label>
-	<span v-if="dateError" class="error-message">{{ dateError }}</span>
-	<div class="button-group">
-            <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button><button type="submit" class="submit-button">Save</button>
-	</div>
-      </form>
-    </div>
+      </div>
+      
+      <label>
+        Date:
+        <input
+	  v-model="editExpense.date"
+	  type="date"
+	  @input="validateDate"
+	  :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }" />
+      </label>
+      <span v-if="dateError" class="error-message">{{ dateError }}</span>
+      <div class="button-group">
+        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+	<button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
+      </div>
+    </form>
   </div>
+</div>
 </template>
 
 <script>
+import '@/css/scrollbar.css';
+import axios from 'axios';
+
 export default {
   name: "ExpenseRow",
   props: {
     expense: {
       type: Object,
       required: true,
+      // get current data from selected expense
       default: () => ({ categories: [] })
     }
   },
@@ -104,8 +136,11 @@ export default {
       amountError: "",
       descriptionError: "",
       dateError: "",
-      categoryOptions: ["Food", "Travel", "Utilities", "Rent", "Entertainment", "Shopping", "Education", "Health"],
+      categoryOptions: [],
       dropdownOpen: false,
+      showNewCategory: false,
+      newCategory: "",
+      loadingCategories: false,
     };
   },
   computed: {
@@ -126,7 +161,7 @@ export default {
       const day = String(date.getDate()).padStart(2, '0');
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${year}-${month}-${day}`;
     },
   },
   methods: {
@@ -159,11 +194,60 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    async fetchCategories() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        this.loadingCategories = true;
+        const response = await axios.get('http://localhost:8000/api/user-categories/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.categoryOptions = response.data.categories;
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        this.loadingCategories = false;
+      }
+    },
+    async sendNewCategory() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
+        if (response.status === 201) {
+          // Add new category to the user's categories table if the backend respons with success
+          this.categoryOptions.push(this.newCategory.trim());
+          this.expense.categories.push(this.newCategory.trim());
+        } else {
+          console.error("Failed to add category:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error adding new category:", error);
+      }
+    },
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
       }
       this.dropdownOpen = false;
+    },
+    showNewCategoryDialog() {
+      this.newCategory = "";
+      this.showNewCategory = true;
+    },
+    cancelNewCategory() {
+      this.showNewCategory = false;
+    },
+    async acceptNewCategory() {
+      if (this.newCategory.trim()) {
+        await this.sendNewCategory();
+        this.expense.categories.push(this.newCategory);
+        this.showNewCategory = false;
+        this.newCategory = "";
+	this.dropdownOpen = false;
+      }
     },
     removeCategory(index) {
       this.editExpense.categories.splice(index, 1);
@@ -200,10 +284,21 @@ export default {
       return true;
     },
     deleteExpense() {
-      console.log("borrando expense");
+      console.log("Removing expense");
       this.$emit("deleteExpense", this.expense.expense_id);
     }
-  }
+  },
+  computed: {
+    isSubmitEnabled() {
+      return this.expense.categories.length > 0;
+    },
+    isAcceptEnabled() {
+      return this.newCategory.trim().length > 0;
+    },
+  },
+  mounted() {
+    this.fetchCategories();
+  },
 };
 </script>
 

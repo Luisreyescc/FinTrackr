@@ -2,92 +2,92 @@
 <div class="form-container">
   <h3 class="form-title">New Expense data</h3>
   <div class="form-content scrollbar">
-  <form @submit.prevent="submitForm">
-    <label>
-      Amount:
-      <input
-    type="text"
-    v-model="expense.amount"
-    @input="validateAmount"
-    :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
-    placeholder="Enter amount (e.g., 1000.00)" />
-    </label>
-    <span v-if="amountError" class="error-message">{{ amountError }}</span>
-    
-    <label>
-      Description:
-      <input
-    type="text"
-    v-model="expense.description"
-    @input="validateTextField('description')"
-    :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-    placeholder="Enter a description for the expense" />
-    </label>
-    <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-    
-    <div class="categories-wrapper">
-      <div class="categories-select" @click="toggleDropdown">
-        Categories
-        <span class="dropdown-icon">
-    <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-    <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-    </span>
+    <form @submit.prevent="submitForm">
+      <label>
+	Amount:
+	<input
+	  type="text"
+	  v-model="expense.amount"
+	  @input="validateAmount"
+	  :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
+	  placeholder="Enter amount (e.g., 1000.00)" />
+      </label>
+      <span v-if="amountError" class="error-message">{{ amountError }}</span>
+      
+      <label>
+	Description:
+	<input
+	  type="text"
+	  v-model="expense.description"
+	  @input="validateTextField('description')"
+	  :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
+	  placeholder="Enter a description for the expense" />
+      </label>
+      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+      
+      <div class="categories-wrapper">
+	<div class="categories-select" @click="toggleDropdown">
+          Categories
+          <span class="dropdown-icon">
+	    <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+	    <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+	  </span>
+	</div>
+	
+	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+	  <li v-if="loadingCategories">Loading categories...</li>
+	  <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+	  </li>
+          <li
+            v-for="(category, index) in categoryOptions"
+            :key="index"
+            @click="addCategory(category)">{{ category }}
+	  </li>
+	</ul>
+	
+	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+	<div v-if="showNewCategory" class="new-category-dialog">
+	  <h4>Enter new category</h4>
+	  <input
+            type="text"
+            v-model="newCategory"
+            placeholder="New category"
+            :maxlength="18" />
+	  <div class="button-group">
+            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+            <button
+              @click="acceptNewCategory"
+              class="accept-category"
+              :disabled="!isAcceptEnabled">Accept</button>
+	  </div>
+	</div>
+	
+	<div class="selected-categories">
+          <span v-for="(category, index) in expense.categories" :key="index" class="tag">
+            {{ category }}
+            <button @click="removeCategory(index)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
+            </button>
+          </span>
+	</div>
       </div>
       
-      <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-    <li v-if="loadingCategories">Loading categories...</li>
-    <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
-          <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
-    </li>
-        <li
-          v-for="(category, index) in categoryOptions"
-          :key="index"
-          @click="addCategory(category)">{{ category }}
-    </li>
-      </ul>
-
-      <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
-      <div v-if="showNewCategory" class="new-category-dialog">
-    <h4>Enter new category</h4>
-    <input
-          type="text"
-          v-model="newCategory"
-          placeholder="New category"
-          :maxlength="18" />
-    <div class="button-group">
-          <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
-          <button
-            @click="acceptNewCategory"
-            class="accept-category"
-            :disabled="!isAcceptEnabled">Accept</button>
-    </div>
-      </div>
+      <label>
+	Date:
+	<input
+          type="date"
+          v-model="expense.date"
+          @input="validateDate"
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && expense.date }" />
+      </label>
+      <span v-if="dateError" class="error-message">{{ dateError }}</span>
       
-      <div class="selected-categories">
-         <span v-for="(category, index) in expense.categories" :key="index" class="tag">
-           {{ category }}
-           <button @click="removeCategory(index)" class="close-button">
-             <font-awesome-icon :icon="['fas', 'xmark']"/>
-           </button>
-         </span>
+      <div class="button-group">
+	<button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+	<button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
       </div>
-    </div>
-    
-    <label>
-      Date:
-      <input
-        type="date"
-        v-model="expense.date"
-        @input="validateDate"
-        :class="{ 'input-error': dateError, 'input-valid': !dateError && expense.date }" />
-    </label>
-    <span v-if="dateError" class="error-message">{{ dateError }}</span>
-    
-    <div class="button-group">
-      <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-      <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
-    </div>
-  </form>
+    </form>
   </div>
 </div>
 </template>
@@ -180,7 +180,7 @@ export default {
         this.expense.categories.push(this.newCategory);
         this.showNewCategory = false;
         this.newCategory = "";
-    this.dropdownOpen = false;
+	this.dropdownOpen = false;
       }
     },
     removeCategory(index) {
