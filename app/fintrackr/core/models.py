@@ -70,7 +70,6 @@ class Incomes(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
-    categories = models.ManyToManyField(Categories, through="IncomeCategories")
 
 
 class IncomeCategories(models.Model):
@@ -84,8 +83,6 @@ class Expenses(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
-    categories = models.ManyToManyField(
-        Categories, through="ExpenseCategories")
 
 
 class ExpenseCategories(models.Model):
