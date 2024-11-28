@@ -1,11 +1,18 @@
 from rest_framework import generics, permissions, status, viewsets
-from django.db.models import Sum 
+from django.db.models import Sum
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Users, Incomes, Categories, Expenses, ExpenseCategories
+from .models import (
+    Users,
+    Incomes,
+    IncomeCategories,
+    Categories,
+    Expenses,
+    ExpenseCategories,
+)
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -69,7 +76,8 @@ class UserProfileView(generics.RetrieveAPIView):
     def get(self, request):
         user = request.user
         return Response({"user_name": user.user_name})
-    
+
+
 class IncomeListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -98,49 +106,56 @@ class IncomeDetailView(APIView):
     def get(self, request, income_id):
         income = self.get_object(income_id, request.user)
         if not income:
-            return Response({"error": "Income not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Income not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = IncomeSerializer(income)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, income_id):
         income = self.get_object(income_id, request.user)
-        if income is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = IncomeSerializer(income, data=request.data)
+        if not income:
+            return Response(
+                {"error": "Income not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = IncomeSerializer(income, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, income_id):
         income = self.get_object(income_id, request.user)
-        if income is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not income:
+            return Response(
+                {"error": "Income not found."}, status=status.HTTP_404_NOT_FOUND
+            )
         income.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "Income deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class IncomeSourceSummaryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Aggregate incomes by source for the authenticated user
-        source_summary = (
-            Incomes.objects
-            .filter(user=request.user)  # Filter by the current user
-            .values('source')  # Group by source
-            .annotate(total_amount=Sum('amount'))  # Sum amounts for each source
-            .order_by('source')  # Optional: order by source
+        categories_summary = (
+            Incomes.objects.filter(user=request.user)
+            .values("category_name")
+            .annotate(total_amount=Sum("income_amount"))
+            .order_by("category_name")
         )
 
-        # Format the response data
         response_data = [
             {
-                "source": income["source"],
-                "total_amount": income["total_amount"]
+                "category": category["category_name"],
+                "total_amount": category["total_amount"],
             }
-            for income in source_summary
+            for category in categories_summary
         ]
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -154,13 +169,13 @@ class ExpenseListCreateView(APIView):
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
 
-
     def post(self, request):
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ExpenseDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -174,7 +189,9 @@ class ExpenseDetailView(APIView):
     def get(self, request, expense_id):
         expense = self.get_object(expense_id, request.user)
         if not expense:
-            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = ExpenseSerializer(expense)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -182,7 +199,9 @@ class ExpenseDetailView(APIView):
     def put(self, request, expense_id):
         expense = self.get_object(expense_id, request.user)
         if not expense:
-            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = ExpenseSerializer(expense, data=request.data, partial=True)
         if serializer.is_valid():
@@ -193,10 +212,15 @@ class ExpenseDetailView(APIView):
     def delete(self, request, expense_id):
         expense = self.get_object(expense_id, request.user)
         if not expense:
-            return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         expense.delete()
-        return Response({"message": "Expense deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "Expense deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class CategoryListCreateView(generics.ListCreateAPIView):
@@ -210,17 +234,16 @@ class ExpenseCategorySummaryView(APIView):
 
     def get(self, request):
         categories_summary = (
-            ExpenseCategories.objects
-            .filter(expense__user=request.user)
-            .values('category__name')
-            .annotate(total_amount=Sum('expense__amount'))
-            .order_by('category__name')
+            ExpenseCategories.objects.filter(expense__user=request.user)
+            .values("category__name")
+            .annotate(total_amount=Sum("expense__amount"))
+            .order_by("category__name")
         )
 
         response_data = [
             {
                 "category": category["category__name"],
-                "total_amount": category["total_amount"]
+                "total_amount": category["total_amount"],
             }
             for category in categories_summary
         ]
@@ -233,9 +256,9 @@ class UserCategoriesView(APIView):
 
     def get(self, request):
         categories = (
-            ExpenseCategories.objects
-            .filter(expense__user=request.user)
-            .values_list('category__name', flat=True)
+            ExpenseCategories.objects.filter(expense__user=request.user)
+            .values_list("category__name", flat=True)
             .distinct()
         )
         return Response({"categories": list(categories)}, status=status.HTTP_200_OK)
+
