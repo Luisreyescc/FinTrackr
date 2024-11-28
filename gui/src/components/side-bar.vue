@@ -26,7 +26,7 @@
       <button @click="selectOption('Account')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-area']" class="icon a"/>Account Status</button>
       <button @click="selectOption('Categories')" class="menu-option">
-	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Categories Pie</button>
+	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Pie Charts</button>
     </div>
     
     <div class="divider_bottom"></div>
