@@ -30,8 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError(
-                {"password": "Passwords do not match."})
+            raise serializers.ValidationError({"password": "Passwords do not match."})
         return attrs
 
     def create(self, validated_data):
@@ -51,11 +50,9 @@ class LoginSerializer(serializers.Serializer):
     )
 
     def validate(self, attrs):
-        user = authenticate(
-            username=attrs["user_name"], password=attrs["password"])
+        user = authenticate(username=attrs["user_name"], password=attrs["password"])
         if not user:
-            raise serializers.ValidationError(
-                {"detail": "Invalid credentials.."})
+            raise serializers.ValidationError({"detail": "Invalid credentials.."})
         attrs["user"] = user
         return attrs
 
@@ -114,9 +111,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class IncomeSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    categories = serializers.ListField(
-        child=serializers.CharField(), write_only=True, source="categories"
-    )
+    category = serializers.ListField(child=serializers.CharField(), write_only=True)
+    categories = serializers.SerializerMethodField()
 
     class Meta:
         model = Incomes
@@ -131,31 +127,23 @@ class IncomeSerializer(serializers.ModelSerializer):
         ]
 
     def get_categories(self, obj):
-        return obj.expensecategories_set.values_list("category__name", flat=True)
+        return obj.incomecategories_set.values_list("category__name", flat=True)
 
     def create(self, validated_data):
-        category_names = validated_data.pop("categories", None)
+        category_names = validated_data.pop("category", [])
 
-        if not category_names:
-            raise serializers.ValidationError(
-                {"categories": "Este campo es requerido."}
-            )
-
-        income = IncomeCategories.objects.create(**validated_data)
+        income = Incomes.objects.create(**validated_data)
 
         for category_name in category_names:
-            category, created = Categories.objects.get_or_create(
-                name=category_name)
+            category, created = Categories.objects.get_or_create(name=category_name)
             IncomeCategories.objects.create(income=income, category=category)
 
         return income
 
 
 class IncomeCategorySerializer(serializers.ModelSerializer):
-    income = serializers.PrimaryKeyRelatedField(
-        queryset=Expenses.objects.all())
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=Categories.objects.all())
+    income = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
 
     class Meta:
         model = IncomeCategories
@@ -163,10 +151,8 @@ class IncomeCategorySerializer(serializers.ModelSerializer):
 
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
-    expense = serializers.PrimaryKeyRelatedField(
-        queryset=Expenses.objects.all())
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=Categories.objects.all())
+    expense = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
 
     class Meta:
         model = ExpenseCategories
@@ -208,10 +194,8 @@ class ExpenseSerializer(serializers.ModelSerializer):
         expense = Expenses.objects.create(**validated_data)
 
         for category_name in category_names:
-            category, created = Categories.objects.get_or_create(
-                name=category_name)
-            ExpenseCategories.objects.create(
-                expense=expense, category=category)
+            category, created = Categories.objects.get_or_create(name=category_name)
+            ExpenseCategories.objects.create(expense=expense, category=category)
 
         return expense
 
@@ -223,10 +207,8 @@ class ExpenseSerializer(serializers.ModelSerializer):
             # Remove old categories and replace with new ones
             ExpenseCategories.objects.filter(expense=instance).delete()
             for category_name in category_names:
-                category, created = Categories.objects.get_or_create(
-                    name=category_name)
-                ExpenseCategories.objects.create(
-                    expense=instance, category=category)
+                category, created = Categories.objects.get_or_create(name=category_name)
+                ExpenseCategories.objects.create(expense=instance, category=category)
 
         # Update other fields
         for attr, value in validated_data.items():
