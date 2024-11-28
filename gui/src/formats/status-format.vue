@@ -66,28 +66,38 @@
     
     <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
-	<h2 class="section-title">Categories Graphic</h2>
-	<FilterGraphics
-          :filterOptions="['Day', 'Fortnight', 'Month', 'Year', 'Custom']"
-          :currentFilter="currentFilter"
-          @filterSelected="applyFilter" />
+        <h2 class="section-title">Pie Charts</h2>
+        <div class="section-filter">
+          <h3>Status date:</h3>
+          <input id="end-date" type="date" class="date-input" />
+          <h3>Filtered by: {{ currentFilter }}</h3>
+          <FilterGraphics
+            :filterOptions="['Day', 'Fortnight', 'Month', 'Year', 'Custom']"
+            :currentFilter="currentFilter"
+            @filterSelected="applyFilter" />
+        </div>
       </div>
-      <div class="graphic-container">
-	<div class="chart-pie">
-          <apexchart
-            v-if="chartData.length > 0"
-            type="donut"
-            :options="categoriesChartOptions"
-            :series="categoriesChartData"
-            :style="{
-            minWidth: '880px',
-            maxWidth: '880px',
-            minHeight: '880px',
-            maxHeight: '880px',
-            width: '880px',
-            height: '880px'
-            }" />
+      <div class="main-content">
+        <div class="pie-container">
+          <div class="chart-sources">
+            <apexchart
+              v-if="chartData.length > 0"
+              type="donut"
+              :options="sourcesChartOptions"
+              :series="sourcesChartData"
+              :style="{ width: '100%', height: '100%' }" />
+          </div>
 	</div>
+        <div class="pie-container">
+          <div class="chart-categories">
+            <apexchart
+              v-if="chartData.length > 0"
+              type="donut"
+              :options="categoriesChartOptions"
+              :series="categoriesChartData"
+              :style="{ width: '100%', height: '100%' }" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -116,7 +126,6 @@ export default {
     return {
       currentFilter: "Month",
       chartData: [],
-      categoriesChartData: [],
       chartOptions: Object.freeze({
         chart: {
           type: 'area',
@@ -133,6 +142,14 @@ export default {
           curve: 'smooth',
         },
       }),
+      sourcesChartData: [],
+      sourcesChartOptions: Object.freeze({
+        chart: {
+          type: 'donut'
+        },
+        labels: [], // Labels for the donut chart
+      }),
+      categoriesChartData: [],
       categoriesChartOptions: Object.freeze({
         chart: {
           type: 'donut'
@@ -243,6 +260,36 @@ export default {
         console.error('Error fetching donut chart data:', error);
       }
     },
+    async fetchSourcesChartData() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+	console.error('No token found');
+	return;
+      }
+      
+      try {
+	const response = await axios.get('http://localhost:8000/api/incomes/source-summary/', {
+          headers: { Authorization: `Bearer ${token}` }
+	});
+	
+	const data = response.data; // API response
+	console.log("Sources Chart Data:", data);
+	
+	const amounts = data.map(item => item.total_amount);
+	const sources = data.map(item => item.source);
+	
+	this.sourcesChartData = amounts; // Populate series
+	this.sourcesChartOptions = {
+          ...this.sourcesChartOptions,
+          labels: sources // Populate labels
+	};
+	
+	console.log("Sources Chart Series:", this.sourcesChartData);
+	console.log("Sources Chart Labels:", this.sourcesChartOptions.labels);
+      } catch (error) {
+	console.error('Error fetching sources chart data:', error);
+      }
+    },
     applyFilter(filter) {
       this.currentFilter = filter;
       console.log("Filter applied:", filter);
@@ -324,6 +371,7 @@ export default {
       this.fetchLineChartData();
     } else if (this.selectedContent === "Categories") {
       this.fetchDonutChartData();
+      this.fetchSourcesChartData();
     }
   },
   watch: {
@@ -332,6 +380,7 @@ export default {
         this.fetchLineChartData();
       } else if (newValue === "Categories") {
         this.fetchDonutChartData();
+	this.fetchSourcesChartData();
       }
     }
   }
@@ -448,19 +497,6 @@ select {
     overflow: hidden;
 }
 
-.chart-pie {
-    min-width: 600px;
-    min-height: 400px;
-    max-width: 100%;
-    max-height: 100%;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
 .stats-content {
     display: grid;
     gap: 20px;
@@ -529,5 +565,30 @@ select {
 
 .decimal-part {
     vertical-align: super;
+}
+
+.pie-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    width: 100%;
+    height: 620px;
+    overflow: hidden;
+}
+
+.chart-sources,
+.chart-categories {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 </style>
