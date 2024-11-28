@@ -59,18 +59,23 @@ class Users(AbstractBaseUser, PermissionsMixin):
         return self.user_id
 
 
+class Categories(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)
+
+
 class Incomes(models.Model):
     income_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
-    source = models.CharField(max_length=255, null=True, blank=True)
+    categories = models.ManyToManyField(Categories, through="IncomeCategories")
 
 
-class Categories(models.Model):
-    category_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, unique=True)
+class IncomeCategories(models.Model):
+    income = models.ForeignKey(Incomes, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
 
 
 class Expenses(models.Model):
@@ -79,6 +84,8 @@ class Expenses(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
+    categories = models.ManyToManyField(
+        Categories, through="ExpenseCategories")
 
 
 class ExpenseCategories(models.Model):
