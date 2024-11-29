@@ -137,7 +137,7 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get('http://localhost:8000/api/user-categories/', {
+        const response = await axios.get('http://localhost:8000/api/expense-categories/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.categoryOptions = response.data.categories;

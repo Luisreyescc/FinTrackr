@@ -1,39 +1,48 @@
 <template>
-<div class="page-container scrollbar">
-  <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar" />
-  <SideBar :isVisible="isSidebarVisible" :currentPage="'Home'" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
-</div>
+  <div class="page-container scrollbar">
+    <HomeForm
+      :selectedContent="selectedContent"
+      @toggleSidebar="toggleSidebar"
+    />
+    <SideBar
+      :isVisible="isSidebarVisible"
+      :currentPage="'Home'"
+      @closeSidebar="toggleSidebar"
+      @selectContent="updateContent"
+    />
+  </div>
 
-<div class="message-container">
-  <MessageAlerts
-    v-for="(msg, index) in messages" 
-    :key="msg.id" 
-    :text="msg.text" 
-    :type="msg.type" 
-    @close="removeMessage(index)" />
-</div>
+  <div class="message-container">
+    <MessageAlerts
+      v-for="(msg, index) in messages"
+      :key="msg.id"
+      :text="msg.text"
+      :type="msg.type"
+      @close="removeMessage(index)"
+    />
+  </div>
 </template>
 
 <script>
-import MessageAlerts from '@/components/messages.vue';
-import HomeForm from '@/formats/home-format.vue';
-import SideBar from '@/components/side-bar.vue';
-import '@/css/scrollbar.css';
+import MessageAlerts from "@/components/messages.vue";
+import HomeForm from "@/formats/home-format.vue";
+import SideBar from "@/components/side-bar.vue";
+import "@/css/scrollbar.css";
 
 import apiClient from "@/apiClient.js";
-  
+
 export default {
-  name: 'HomePage',
+  name: "HomePage",
   components: {
     HomeForm,
     SideBar,
-    MessageAlerts
+    MessageAlerts,
   },
   data() {
     return {
       isSidebarVisible: false,
-      selectedContent: 'Incomes', // We set the Incomes option as the default selection
-      messages: []
+      selectedContent: "Incomes", // We set the Incomes option as the default selection
+      messages: [],
     };
   },
   methods: {
@@ -45,8 +54,8 @@ export default {
       this.messages.splice(index, 1);
     },
     async newIncome(incomeData) {
-      const { amount, source, description, date } = incomeData;
-      if (amount && source && description && date) {
+      const { amount, description, categories, date } = incomeData;
+      if (amount && categories && description && date) {
         try {
           const response = await apiClient.post("/api/incomes", incomeData);
           if (response.status === 201) {
@@ -63,7 +72,10 @@ export default {
             }
             this.addMessage(errors.join("\n"), "error");
           } else {
-            this.addMessage("There was an issue while adding your income. Please try again.", "error");
+            this.addMessage(
+              "There was an issue while adding your income. Please try again.",
+              "error",
+            );
           }
         }
       }
@@ -87,7 +99,10 @@ export default {
             }
             this.addMessage(errors.join("\n"), "error");
           } else {
-            this.addMessage("There was an issue while adding your expense. Please try again.", "error");
+            this.addMessage(
+              "There was an issue while adding your expense. Please try again.",
+              "error",
+            );
           }
         }
       }
@@ -98,21 +113,21 @@ export default {
     updateContent(content) {
       this.selectedContent = content;
       this.isSidebarVisible = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .page-container {
-    display: flex;
-    position: relative;
-    padding-top: 70px;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: flex;
+  position: relative;
+  padding-top: 70px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .content {
-    flex: 1;
-    padding: 20px;
+  flex: 1;
+  padding: 20px;
 }
 </style>

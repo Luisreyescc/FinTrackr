@@ -14,8 +14,8 @@
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
-      <div class="sources-wrapper">
-	<div class="sources-select" @click="toggleDropdown">
+      <div class="categories-wrapper">
+	<div class="categories-select" @click="toggleDropdown">
           Sources
           <span class="dropdown-icon">
             <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
@@ -23,39 +23,39 @@
           </span>
 	</div>
 	
-	<ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
-          <li v-if="loadingSources">Loading sources...</li>
-          <li v-else @click="showNewSourceDialog" style="color: green; font-weight: bold;">
+	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+          <li v-if="loadingCategories">Loading categories...</li>
+          <li v-else @click="showNewCategoriesDialog" style="color: green; font-weight: bold;">
             <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
           </li>
           <li
-            v-for="(source, index) in sourceOptions"
+            v-for="(category, index) in ategoriesOptions"
             :key="index"
-            @click="newSource(source)">{{ source }}
+            @click="newCategory(category)">{{ category }}
           </li>
 	</ul>
 	
-	<div v-if="showNewSource" class="overlay" @click="cancelNewSource"></div>
-	<div v-if="showNewSource" class="new-source-dialog">
+	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+	<div v-if="showNewCategory" class="new-category-dialog">
           <h4>Enter new source</h4>
           <input
             type="text"
-            v-model="newSource"
+            v-model="newCategory"
             placeholder="New source"
             :maxlength="18" />
           <div class="button-group">
-            <button @click="cancelNewSource" class="cancel-source">Cancel</button>
+            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
             <button
-              @click="acceptNewSource"
-              class="accept-source"
+              @click="acceptNewCategory"
+              class="accept-category"
               :disabled="!isAcceptEnabled">Accept</button>
           </div>
 	</div>
 	
-	<div class="selected-sources">
-          <span v-for="(source, index) in income.sources" :key="index" class="tag">
-            {{ source }}
-            <button @click="removeSource(index)" class="close-button">
+	<div class="selected-categories">
+          <span v-for="(category, index) in income.categories" :key="index" class="tag">
+            {{ category }}
+            <button @click="removeCategory(index)" class="close-button">
               <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
@@ -93,22 +93,22 @@
 </template>
 
 <script>
-import '@/css/scrollbar.css';
-import axios from 'axios';
-  
+import "@/css/scrollbar.css";
+import axios from "axios";
+
 export default {
   name: "IncomesForm",
   data() {
     return {
-      income: { amount: '', sources: [], description: '', date: '' },
+      income: { amount: "", categories: [], description: "", date: "" },
       amountError: "",
       descriptionError: "",
       dateError: "",
-      sourceOptions: [],
+      categoryOptions: [],
       dropdownOpen: false,
-      showNewSource: false,
-      newSource: "",
-      loadingSources: false,
+      showNewCategory: false,
+      newCategory: "",
+      loadingCategories: false,
     };
   },
   methods: {
@@ -116,67 +116,78 @@ export default {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
-      const isDescriptionValid = this.validateTextField('description');
+      const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
-      
+
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	this.$emit('submitForm', { ...this.income });
-	this.$emit('closeForm');
-	this.resetForm();
+        this.$emit("submitForm", {
+          ...this.income,
+          category: this.income.categories,
+        });
+        this.$emit("closeForm");
+        this.resetForm();
       }
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    async fetchSources() {
+    async fetchCategories() {
       try {
-        this.loadingSources = true;
-        const response = await axios.get('/api/sources-backend-url');
-        this.sourceOptions = response.data; // Asuming backend returns an array of categories
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        this.loadingCategories = true;
+        const response = await axios.get('http://localhost:8000/api/income-categories/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.categoryOptions = response.data.categories;
       } catch (error) {
-        console.error("Error fetching sources:", error);
+        console.error("Error fetching categories:", error);
       } finally {
-        this.loadingSources = false;
+        this.loadingCategories = false;
       }
     },
-    async sendNewSource() {
+    async sendNewCategory() {
       try {
-        const response = await axios.post('/api/sources', { name: this.newSource.trim() });
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
         if (response.status === 201) {
           // Add new category to the user's categories table if the backend respons with success
-          this.sourceOptions.push(this.newSource.trim());
-          this.income.sources.push(this.newSource.trim());
+          this.categoryOptions.push(this.newCategory.trim());
+          this.expense.categories.push(this.newCategory.trim());
         } else {
-          console.error("Failed to add source:", response.statusText);
+          console.error("Failed to add category:", response.statusText);
         }
       } catch (error) {
-        console.error("Error adding new source:", error);
+        console.error("Error adding new category:", error);
       }
     },
-    addSource(source) {
-      if (!this.income.sources.includes(source)) {
-        this.income.sources.push(source);
+    addCategory(categories) {
+      if (!this.income.categories.includes(categories)) {
+        this.income.categories.push(categories);
       }
       this.dropdownOpen = false;
     },
-    showNewSourceDialog() {
-      this.newSource = "";
-      this.showNewSource = true;
+    showNewCategoryDialog() {
+      this.newCategory = "";
+      this.showNewCategory = true;
     },
-    cancelNewSource() {
-      this.showNewSource = false;
+    cancelNewCategory() {
+      this.showNewCategory = false;
     },
-    async acceptNewSource() {
-      if (this.newSource.trim()) {
-        await this.sendNewSource();
-        this.income.source.push(this.newSource);
-        this.showNewSource = false;
-        this.newSource = "";
-	this.dropdownOpen = false;
+    async acceptNewCategory() {
+      if (this.newCategory.trim()) {
+        await this.sendNewCategory();
+        this.income.categories.push(this.newCategory);
+        this.showNewCategory = false;
+        this.newCategory = "";
+        this.dropdownOpen = false;
       }
     },
-    removeSource(index) {
-      this.income.sources.splice(index, 1);
+    removeCategory(index) {
+      this.income.categories.splice(index, 1);
     },
     clearErrors() {
       this.amountError = "";
@@ -185,10 +196,10 @@ export default {
     },
     cancelForm() {
       this.resetForm();
-      this.$emit('closeForm');
+      this.$emit("closeForm");
     },
     resetForm() {
-      this.income = { amount: '', source: [], description: '', date: '' };
+      this.income = { amount: "", categories: [], description: "", date: "" };
       this.clearErrors();
     },
     validateAmount() {
@@ -208,7 +219,8 @@ export default {
       //function to determine the label error
       this[`${field}Error`] = "";
       if (!this.income[field]) {
-        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] =
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.income[field].length > 180) {
@@ -224,18 +236,18 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
   computed: {
     isSubmitEnabled() {
-      return this.income.sources.length > 0;
+      return this.income.categories.length > 0;
     },
     isAcceptEnabled() {
-      return this.newSource.trim().length > 0;
+      return this.newCategory.trim().length > 0;
     },
   },
   mounted() {
-    this.fetchSources();
+    this.fetchCategories();
   },
 };
 </script>
@@ -264,7 +276,7 @@ export default {
     margin: 0;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #1B1F9C #e0e0e0;
+    scrollbar-color: #1b1f9c #e0e0e0;
 }
 
 label {
@@ -287,7 +299,9 @@ input {
     background-color: #f0f0f0;
     border-radius: 4px 4px 0 0;
     border-bottom: 2px solid #ccc;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition:
+	background-color 0.3s,
+	border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -298,7 +312,7 @@ input {
 }
 
 .input-valid {
-    border-bottom-color: #1B1F9C;
+    border-bottom-color: #1b1f9c;
     background-color: #e0f7fa;
     outline: none;
 }
@@ -350,13 +364,13 @@ input {
     background-color: #237242;
 }
 
-.sources-wrapper {
+.categories-wrapper {
     position: relative;
     margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.sources-select {
+.categories-select {
     padding: 12px 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -370,7 +384,7 @@ input {
     transition: background-color 0.2s;
 }
 
-.sources-select:hover {
+.categories-select:hover {
     background-color: #f8f9fa;
 }
 
@@ -382,7 +396,7 @@ input {
     color: #21255b;
 }
 
-.sources-dropdown {
+.categories-dropdown {
     position: absolute;
     top: 80%;
     left: 0;
@@ -400,21 +414,23 @@ input {
     animation: fadeIn 0.2s ease-out;
 }
 
-.sources-dropdown li {
+.categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+	background-color 0.3s,
+	color 0.3s;
     text-align: left;
 }
 
-.sources-dropdown li:hover {
+.categories-dropdown li:hover {
     background-color: #f0f8ff;
     border-radius: 12px;
-    color: #1010AC;
+    color: #1010ac;
     font-weight: bold;
 }
 
-.selected-sources {
+.selected-categories {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
@@ -427,8 +443,8 @@ input {
     border-radius: 16px;
     padding: 5px 10px;
     font-weight: bold;
-    background-color: #F3F3F9;
-    border: 1px solid #6F6F7A;
+    background-color: #f3f3f9;
+    border: 1px solid #6f6f7a;
 }
 
 .close-button {
@@ -443,7 +459,7 @@ input {
     color: #333;
 }
 
-.new-source-dialog {
+.new-categories-dialog {
     position: fixed;
     background: white;
     border: 1px solid #ccc;
@@ -457,14 +473,14 @@ input {
     transform: translate(-50%, -50%);
 }
 
-.new-source-dialog h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #21255b;
-  font-family: "Wix Madefor Display", sans-serif;
+.new-categories-dialog h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #21255b;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-source-dialog input {
+.new-categories-dialog input {
     width: 90%;
     padding: 14px;
     margin-top: 10px;
@@ -473,17 +489,20 @@ input {
     background-color: #f0f0f0;
     border-radius: 4px 4px 0 0;
     border-bottom: 2px solid #ccc;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition:
+	background-color 0.3s,
+	border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-source-dialog .button-group {
+.new-categories-dialog .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
 }
 
-.cancel-source, .accept-source {
+.cancel-categories,
+.accept-categories {
     color: white;
     border: none;
     padding: 8px 18px;
@@ -494,12 +513,12 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.cancel-source {
-    background-color: #333; 
+.cancel-categories {
+    background-color: #333;
 }
 
-.accept-source {
-    background-color: #4caf50; 
+.accept-categories {
+    background-color: #4caf50;
 }
 
 .cancel-button:hover {
@@ -511,8 +530,8 @@ input {
 }
 
 .submit-button:disabled,
-.accept-source:disabled {
-    background-color: #A2CBB2;
+.accept-categories:disabled {
+    background-color: #a2cbb2;
     cursor: not-allowed;
     opacity: 0.7;
 }

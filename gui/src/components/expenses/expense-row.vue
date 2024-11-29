@@ -331,6 +331,7 @@ export default {
     border: none;
     transition: transform 0.2s, background-color 0.2s;
 }
+
 .edit-button {
     background-color: #25253C;
     color: white;

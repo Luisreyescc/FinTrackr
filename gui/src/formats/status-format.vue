@@ -1,69 +1,69 @@
 <template>
-<div class="status-form">
-  <div class="sidebar">
-    <button @click="toggleSidebar" class="menu-button">
-      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
-    </button>
-  </div>
-  
-  <div class="content-wrapper">
-    <div v-if="selectedContent === 'Account'" class="section">
-      <div class="header">
-        <h2 class="section-title">Account Status</h2>
-	<div class="section-filter">
-          <h3>Status date:</h3>
-          <input id="end-date" type="date" class="date-input" />
-          <h3>Filtered by: {{ currentFilter }}</h3>
-          <FilterGraphics
-            :filterOptions="['Day', 'Fortnight', 'Month', 'Year', Custom]"
-            :currentFilter="currentFilter"
-            @filterSelected="applyFilter" />
-	</div>
-      </div>
-      <div class="main-content">
-	<div class="graphic-container">
-          <div class="chart-area">
-            <apexchart
-              v-if="chartData.length > 0"
-              type="area"
-              :options="chartOptions"
-              :series="chartData"
-              :style="{ width: '100%', height: '100%' }" />
-          </div>
-	</div>
-	<div class="stats-container">
-          <div class="stats-box">
-            <div class="stats-header">
-              <h3>Your network:</h3>
-              <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
-            </div>
-            <p v-html="currency"></p>
-          </div>
-          <div class="stats-box">
-            <div class="stats-header">
-              <h3>Your incomes this  {{ currentFilter}}:</h3>
-              <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
-            </div>
-            <p v-html="incomes"></p>
-          </div>
-          <div class="stats-box">
-            <div class="stats-header">
-              <h3>Your expenses this  {{ currentFilter}}:</h3>
-              <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
-            </div>
-            <p v-html="expenses"></p>
-          </div>
-          <div class="stats-box">
-            <div class="stats-header">
-              <h3>Pending debts this  {{ currentFilter}}:</h3>
-              <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
-            </div>
-            <p v-html="debts"></p>
-          </div>
-	</div>
-      </div>
+  <div class="status-form">
+    <div class="sidebar">
+      <button @click="toggleSidebar" class="menu-button">
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+      </button>
     </div>
     
+    <div class="content-wrapper">
+      <div v-if="selectedContent === 'Account'" class="section">
+        <div class="header">
+          <h2 class="section-title">Account Status</h2>
+          <div class="section-filter">
+            <h3>Status date:</h3>
+            <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
+            <h3>Filtered by: {{ currentFilter }}</h3>
+            <FilterGraphics
+              :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year', 'Custom']"
+              :currentFilter="currentFilter"
+              @filterSelected="applyFilter" />
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="graphic-container">
+            <div class="chart-area">
+              <apexchart
+                v-if="chartData.length > 0"
+                type="area"
+                :options="chartOptions"
+                :series="chartData"
+                :style="{ width: '100%', height: '100%' }" />
+            </div>
+          </div>
+          <div class="stats-container">
+            <div class="stats-box">
+              <div class="stats-header">
+                <h3>Your network:</h3>
+                <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
+              </div>
+              <p v-html="currency"></p>
+            </div>
+            <div class="stats-box">
+              <div class="stats-header">
+                <h3>Your incomes this {{ currentFilter }}:</h3>
+                <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
+              </div>
+              <p v-html="incomes"></p>
+            </div>
+            <div class="stats-box">
+              <div class="stats-header">
+                <h3>Your expenses this {{ currentFilter }}:</h3>
+                <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
+              </div>
+              <p v-html="expenses"></p>
+            </div>
+            <div class="stats-box">
+              <div class="stats-header">
+                <h3>Pending debts this {{ currentFilter }}:</h3>
+                <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
+              </div>
+              <p v-html="debts"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
         <h2 class="section-title">Pie Charts</h2>
@@ -101,7 +101,6 @@
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -111,7 +110,7 @@ import '@/css/scrollbar.css';
 import axios from 'axios';
 
 export default {
- name: 'StatusForm',
+  name: 'StatusForm',
   components: {
     apexchart: ApexCharts,
     FilterGraphics
@@ -124,8 +123,12 @@ export default {
   },
   data() {
     return {
-      currentFilter: "Month",
+      currentFilter: "All",
+      selectedDate: "",
       chartData: [],
+      categoriesChartData: [],
+      totalIncome: 0,
+      totalExpense: 0,
       chartOptions: Object.freeze({
         chart: {
           type: 'area',
@@ -134,10 +137,10 @@ export default {
         xaxis: {
           categories: [],
         },
-	dataLabels: {
+        dataLabels: {
           enabled: false
         },
-	colors: ['#008FFB', '#FAA700'],
+        colors: ['#008FFB', '#FAA700'],
         stroke: {
           curve: 'smooth',
         },
@@ -172,13 +175,18 @@ export default {
         console.error("No token found");
         return;
       }
-      
+
+      const filter = this.currentFilter;
+      const date = this.selectedDate;
+
+      const url = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
+
       // Fetch both Incomes and Expenses for combined chart
       Promise.all([
-        axios.get('http://localhost:8000/api/incomes/', {
+        axios.get(url, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:8000/api/expenses/', {
+        axios.get(url.replace('incomes', 'expenses'), {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ])
@@ -186,11 +194,11 @@ export default {
         console.log("Income Response:", incomeResponse.data);
         console.log("Expense Response:", expenseResponse.data);
 
-        const incomeData = incomeResponse.data.map((item) => ({
+        const incomeData = incomeResponse.data.incomes.map((item) => ({
           x: this.formatDate(item.date),
           y: parseFloat(item.amount),
         }));
-        const expenseData = expenseResponse.data.map((item) => ({
+        const expenseData = expenseResponse.data.expenses.map((item) => ({
           x: this.formatDate(item.date),
           y: parseFloat(item.amount),
         }));
@@ -222,6 +230,10 @@ export default {
           }
         };
 
+        // Update total incomes and expenses
+        this.totalIncome = incomeResponse.data.total_income;
+        this.totalExpense = expenseResponse.data.total_expense;
+
         console.log("Chart Data:", this.chartData);
         console.log("Categories:", this.chartOptions.xaxis.categories);
 
@@ -237,12 +249,17 @@ export default {
         return;
       }
 
+      const filter = this.currentFilter;
+      const date = this.selectedDate;
+
+      const url = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
+
       try {
-        const response = await axios.get('http://localhost:8000/api/expenses/category-summary/', {
+        const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        const data = response.data; // API response
+        const data = response.data.categories_summary; // API response
         console.log("Donut Chart Data:", data);
 
         const amounts = data.map(item => item.total_amount);
@@ -293,18 +310,19 @@ export default {
     applyFilter(filter) {
       this.currentFilter = filter;
       console.log("Filter applied:", filter);
-      // Future logic for filter graphic by date
+      this.fetchLineChartData();
+      this.fetchDonutChartData();
     },
-    formatCurrency(amount, isNegative = false) {
+    formatCurrency(amount) {
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(amount);
+      }).format(Math.abs(amount));
 
       const [integerPart, decimalPart] = formatted.replace('$', '').split('.');
-      const sign = isNegative ? '-' : '';
+      const sign = amount < 0 ? '-' : '';
 
       return `<span><span class="integer-part">${sign}$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup></span>`;
     },
@@ -315,37 +333,24 @@ export default {
       return count.toLocaleString();
     },
     getNetwork() {
-      const networkAmount = 3456789.99; //
-      const amount = this.formatCurrency(networkAmount, false);
+      const networkAmount = this.totalIncome - this.totalExpense;
+      const amount = this.formatCurrency(networkAmount, networkAmount < 0);
 
       return `<span <span style="color: #25253C;">${amount}</span>`;
     },
     getIncomes() {
-      const incomeCount = 15000; //get incomes count  on date by the filter selected
-      const incomeAmount = 917075; //get incomes amount on date by the filter selected
+      const amount = this.formatCurrency(this.totalIncome);
 
-      const count = this.formatCount(incomeCount);
-      const amount = this.formatCurrency(incomeAmount);
-
-      return `<span class="count-part">${count}:</span> <span style="color: #4CAF50;">${amount}</span>`;
+      return `<span style="color: #4CAF50;">${amount}</span>`;
     },
     getExpenses() {
-      const expenseCount = 12000; //get expenses count on date by the filter selected
-      const expenseAmount = 83456789.45; //get expenses amount on date by the filter selected
+      const amount = this.formatCurrency(this.totalExpense, true);
 
-      const count = this.formatCount(expenseCount);
-      const amount = this.formatCurrency(expenseAmount, true);
-
-      return `<span class="count-part">${count}:</span> <span style="color: #21255b;">${amount}</span>`;
+      return `<span style="color: #21255b;">${amount}</span>`;
     },
     getDebts() {
-      const debtCount = 5000; //get debts count on date by the filter selected
-      const debtAmount = 3456789.99; //get debts amount on date by the filter selected
-
-      const count = this.formatCount(debtCount);
-      const amount = this.formatCurrency(debtAmount, true);
-
-      return `<span class="count-part">${count}:</span> <span style="color: darkred;">${amount}</span>`;
+      // Placeholder for debts
+      return `<span style="color: darkred;">$0.00</span>`;
     },
     toggleSidebar() {
       this.$emit('toggleSidebar');
@@ -365,15 +370,6 @@ export default {
       return this.getDebts();
     },
   },
-  mounted() {
-    this.fetchLineChartData();
-    if (this.selectedContent === "Account") {
-      this.fetchLineChartData();
-    } else if (this.selectedContent === "Categories") {
-      this.fetchDonutChartData();
-      this.fetchSourcesChartData();
-    }
-  },
   watch: {
     selectedContent(newValue) {
       if (newValue === "Account") {
@@ -382,6 +378,14 @@ export default {
         this.fetchDonutChartData();
 	this.fetchSourcesChartData();
       }
+    },
+    selectedDate() {
+      this.fetchLineChartData();
+      this.fetchDonutChartData();
+    },
+    currentFilter() {
+      this.fetchLineChartData();
+      this.fetchDonutChartData();
     }
   }
 };
@@ -484,7 +488,7 @@ select {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 670px;
+    height: 790px;
     overflow: hidden;
 }
 
@@ -566,6 +570,7 @@ select {
 .decimal-part {
     vertical-align: super;
 }
+<<<<<<< HEAD
 
 .pie-container {
     flex: 1;

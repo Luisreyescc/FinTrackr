@@ -1,10 +1,10 @@
 <template>
 <div class="income-row">
   <div class="income-icon">
-    <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="#25253C"/>
+    <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" font-size="28" color="#25253C" />
   </div>
-  <div class="income-details" >
-    <h4>{{ income.source }}</h4>
+  <div class="income-details">
+    <h4>{{ formattedCategories }}</h4>
     <p class="income-description">{{ income.description }}</p>
     <span class="income-date">{{ formattedDate }}</span>
   </div>
@@ -15,7 +15,7 @@
         <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
       </button>
       <button class="delete-button" @click="deleteIncome">
-	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
+        <font-awesome-icon :icon="['fas', 'trash-can']" class="icon" />
       </button>
     </div>
   </div>
@@ -36,8 +36,8 @@
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
-      <div class="sources-wrapper">
-	<div class="sources-select" @click="toggleDropdown">
+       <div class="categories-wrapper">
+	<div class="categories-select" @click="toggleDropdown">
           Sources
           <span class="dropdown-icon">
             <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
@@ -45,13 +45,13 @@
           </span>
 	</div>
 	
-	<ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
-          <li v-if="loadingSources">Loading sources...</li></ul>
+	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+          <li v-if="loadingCategories">Loading categories...</li></ul>
 	
-	<div class="selected-sources">
-          <span v-for="(source, index) in income.sources" :key="index" class="tag">
-            {{ source }}
-            <button @click="removeSource(index)" class="close-button">
+	<div class="selected-categories">
+          <span v-for="(category, index) in income.categories" :key="index" class="tag">
+            {{ category }}
+            <button @click="removeCategory(index)" class="close-button">
               <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
@@ -91,7 +91,7 @@
 <script>
 import '@/css/scrollbar.css';
 import axios from 'axios';
-  
+
 export default {
   name: "IncomeRow",
   props: {
@@ -99,7 +99,7 @@ export default {
       type: Object,
       required: true,
       // get current sources from selected income
-      default: () => ({ sources: [] })
+      default: () => ({ categories: [] })
     }
   },
   data() {
@@ -107,35 +107,42 @@ export default {
       isEditing: false,
       editIncome: {
 	...this.income, 
-        sources: this.income.sources || []
+       categories: this.income.categories || []
       },
       amountError: "",
       descriptionError: "",
       dateError: "",
-      sourceOptions: [],
+      categoryOptions: [],
       dropdownOpen: false,
-      loadingSources: false,
+      loadingCategories: false,
     };
   },
   computed: {
     formattedAmount() {
       // This for give the amount format in USD
-      const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
       });
       return `+ ${formatter.format(this.income.amount)}`;
+    },
+    formattedCategories() {
+      return this.income.categories
+        ? this.income.categories.join(", ")
+        : "No categories";
     },
     formattedDate() {
       // Data format year-MONTH-day
       const date = new Date(this.income.date);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = date
+        .toLocaleString("en-US", { month: "short" })
+        .toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.income.sources.length > 0;
+      return this.income.catgories.length > 0;
     },
   },
   methods: {
@@ -168,25 +175,33 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    async fetchSources() {
+    async fetchCategories() {
       try {
-        this.loadingSources = true;
-        const response = await axios.get('/api/sources-backend-url');
-        this.sourceOptions = response.data; // Asuming backend returns an array of categories
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        this.loadingCategories = true;
+        const response = await axios.get('http://localhost:8000/api/income-categories/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.categoryOptions = response.data.categories;
       } catch (error) {
-        console.error("Error fetching sources:", error);
+        console.error("Error fetching categories:", error);
       } finally {
-        this.loadingSources = false;
+        this.loadingCategories = false;
       }
     },
-    addCategory(category) {
-      if (!this.editExpense.categories.includes(category)) {
-        this.editExpense.categories.push(category);
+    addCategory(categories) {
+      if (!this.income.categories.includes(categories)) {
+        this.income.categories.push(categories);
       }
       this.dropdownOpen = false;
     },
-    removeSource(index) {
-      this.editIncome.sources.splice(index, 1);
+    removeCategory(index) {
+      this.editIncome.categories.splice(index, 1);
     },
     validateAmount() {
       const amountPattern = /^\d{1,10}(\.\d{0,2})?$/;
@@ -203,7 +218,8 @@ export default {
     validateTextField(field) {
       this[`${field}Error`] = "";
       if (!this.editIncome[field]) {
-        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] =
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editIncome[field].length > 180) {
@@ -220,7 +236,7 @@ export default {
       return true;
     },
     deleteIncome() {
-      console.log(this.income.income_id);
+      console.log("Removing income");
       this.$emit("deleteIncome", this.income.income_id);
     }
   },
@@ -236,7 +252,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #F9F9F9;
+    background-color: #f9f9f9;
     border-radius: 8px;
     margin-bottom: 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -261,7 +277,8 @@ export default {
     overflow: hidden;
 }
 
-.income-details h4, .income-description {
+.income-details h4,
+.income-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -299,7 +316,7 @@ export default {
 
 .income-amount {
     font-weight: bold;
-    color: #4CAF50;
+    color: #4caf50;
     font-size: 16px;
     flex-shrink: 0;
 }
@@ -310,7 +327,8 @@ export default {
     margin-top: 5px;
 }
 
-.edit-button, .delete-button {
+.edit-button,
+.delete-button {
     border-radius: 10px;
     cursor: pointer;
     width: 32px;
@@ -319,12 +337,14 @@ export default {
     align-items: center;
     justify-content: center;
     border: none;
-    transition: transform 0.2s, background-color 0.2s;
+    transition:
+	transform 0.2s,
+	background-color 0.2s;
 }
 
 .edit-button {
-    background-color: #25253C;
-    color: white; 
+    background-color: #25253c;
+    color: white;
 }
 
 .edit-button:hover {
@@ -406,7 +426,9 @@ input {
     background-color: #f0f0f0;
     border-radius: 4px 4px 0 0;
     border-bottom: 2px solid #ccc;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition:
+	background-color 0.3s,
+	border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -417,7 +439,7 @@ input {
 }
 
 .input-valid {
-    border-bottom-color: #1B1F9C;
+    border-bottom-color: #1b1f9c;
     background-color: #e0f7fa;
     outline: none;
 }
@@ -462,27 +484,27 @@ input {
     background-color: #237242;
 }
 
-.sources-wrapper {
+.categories-wrapper {
     position: relative;
     margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.sources-select {
+.categories-select {
     padding: 12px 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    width: 85px;
+    width: 110px;
     font-weight: bold;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
 }
 
-.sources-select:hover {
+.categories-select:hover {
     background-color: #f8f9fa;
 }
 
@@ -494,7 +516,7 @@ input {
     color: #21255b;
 }
 
-.sources-dropdown {
+.categories-dropdown {
     position: absolute;
     top: 80%;
     left: 0;
@@ -512,21 +534,21 @@ input {
     animation: fadeIn 0.2s ease-out;
 }
 
-.sources-dropdown li {
+.categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     text-align: left;
 }
 
-.sources-dropdown li:hover {
+.categories-dropdown li:hover {
     background-color: #f0f8ff;
     border-radius: 12px;
     color: #1010AC;
     font-weight: bold;
 }
 
-.selected-sources {
+.selected-categories {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
@@ -555,7 +577,7 @@ input {
     color: #333;
 }
 
-.new-source-dialog {
+.new-category-dialog {
     position: fixed;
     background: white;
     border: 1px solid #ccc;
@@ -569,14 +591,14 @@ input {
     transform: translate(-50%, -50%);
 }
 
-.new-source-dialog h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #21255b;
-  font-family: "Wix Madefor Display", sans-serif;
+.new-category-dialog h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #21255b;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-source-dialog input {
+.new-category-dialog input {
     width: 90%;
     padding: 14px;
     margin-top: 10px;
@@ -589,13 +611,13 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-source-dialog .button-group {
+.new-category-dialog .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
 }
 
-.cancel-source, .accept-source {
+.cancel-category, .accept-category {
     color: white;
     border: none;
     padding: 8px 18px;
@@ -606,11 +628,11 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.cancel-source {
+.cancel-category {
     background-color: #333; 
 }
 
-.accept-source {
+.accept-category {
     background-color: #4caf50; 
 }
 
@@ -623,7 +645,7 @@ input {
 }
 
 .submit-button:disabled,
-.accept-source:disabled {
+.accept-category:disabled {
     background-color: #A2CBB2;
     cursor: not-allowed;
     opacity: 0.7;
