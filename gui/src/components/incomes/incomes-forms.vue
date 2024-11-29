@@ -2,92 +2,92 @@
 <div class="form-container" >
   <h3 class="form-title">New Income Data</h3>
   <div class="form-content scrollbar">
-  <form @submit.prevent="submitForm">
-    <label>
-      Amount:
-      <input
-	type="text"
-	v-model="income.amount"
-	@input="validateAmount"
-	:class="{ 'input-error': amountError, 'input-valid': !amountError && income.amount }"
-	placeholder="Enter amount (e.g., 1000.00)" />
-    </label>
-    <span v-if="amountError" class="error-message">{{ amountError }}</span>
-    
-    <div class="sources-wrapper">
-      <div class="sources-select" @click="toggleDropdown">
-	Sources
-	<span class="dropdown-icon">
-	<font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-	<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-	</span>
-      </div>
-
-      <ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
-	<li v-if="loadingSources">Loading sources...</li>
-	<li v-else @click="showNewSourceDialog" style="color: green; font-weight: bold;">
-          <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
-	</li>
-        <li
-          v-for="(source, index) in sourceOptions"
-          :key="index"
-          @click="newSource(source)">{{ source }}
-	</li>
-      </ul>
-
-      <div v-if="showNewSource" class="overlay" @click="cancelNewSource"></div>
-      <div v-if="showNewSource" class="new-source-dialog">
-	<h4>Enter new source</h4>
+    <form @submit.prevent="submitForm">
+      <label>
+	Amount:
 	<input
           type="text"
-          v-model="newSource"
-          placeholder="New source"
-          :maxlength="18" />
-	<div class="button-group">
-          <button @click="cancelNewSource" class="cancel-source">Cancel</button>
-          <button
-            @click="acceptNewSource"
-            class="accept-source"
-            :disabled="!isAcceptEnabled">Accept</button>
+          v-model="income.amount"
+          @input="validateAmount"
+          :class="{ 'input-error': amountError, 'input-valid': !amountError && income.amount }"
+          placeholder="Enter amount (e.g., 1000.00)" />
+      </label>
+      <span v-if="amountError" class="error-message">{{ amountError }}</span>
+      
+      <div class="sources-wrapper">
+	<div class="sources-select" @click="toggleDropdown">
+          Sources
+          <span class="dropdown-icon">
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+            <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+          </span>
+	</div>
+	
+	<ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
+          <li v-if="loadingSources">Loading sources...</li>
+          <li v-else @click="showNewSourceDialog" style="color: green; font-weight: bold;">
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
+          </li>
+          <li
+            v-for="(source, index) in sourceOptions"
+            :key="index"
+            @click="newSource(source)">{{ source }}
+          </li>
+	</ul>
+	
+	<div v-if="showNewSource" class="overlay" @click="cancelNewSource"></div>
+	<div v-if="showNewSource" class="new-source-dialog">
+          <h4>Enter new source</h4>
+          <input
+            type="text"
+            v-model="newSource"
+            placeholder="New source"
+            :maxlength="18" />
+          <div class="button-group">
+            <button @click="cancelNewSource" class="cancel-source">Cancel</button>
+            <button
+              @click="acceptNewSource"
+              class="accept-source"
+              :disabled="!isAcceptEnabled">Accept</button>
+          </div>
+	</div>
+	
+	<div class="selected-sources">
+          <span v-for="(source, index) in income.sources" :key="index" class="tag">
+            {{ source }}
+            <button @click="removeSource(index)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
+            </button>
+          </span>
 	</div>
       </div>
       
-      <div class="selected-sources">
-        <span v-for="(source, index) in income.sources" :key="index" class="tag">
-          {{ source }}
-          <button @click="removeSource(index)" class="close-button">
-            <font-awesome-icon :icon="['fas', 'xmark']"/>
-          </button>
-        </span>
-      </div>
-    </div>
-    
-    <label>
-      Description:
-      <input
-	type="text"
-	v-model="income.description"
-	@input="validateTextField('description')"
-	:class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && income.description }"
-        placeholder="Enter a description for the income" />
-    </label>
-    <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+      <label>
+	Description:
+	<input
+          type="text"
+          v-model="income.description"
+          @input="validateTextField('description')"
+          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && income.description }"
+          placeholder="Enter a description for the income" />
+      </label>
+      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
-    <label>
-      Date:
-      <input
-	type="date"
-        v-model="income.date"
-        @input="validateDate"
-        :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }" />
-    </label>
-    <span v-if="dateError" class="error-message">{{ dateError }}</span>
-    
-    <div class="button-group">
-      <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-      <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+      <label>
+	Date:
+	<input
+          type="date"
+          v-model="income.date"
+          @input="validateDate"
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }" />
+      </label>
+      <span v-if="dateError" class="error-message">{{ dateError }}</span>
+      
+      <div class="button-group">
+	<button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+	<button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
       </div>
-  </form>
+    </form>
   </div>
 </div>
 </template>

@@ -6,22 +6,22 @@
       <label>
 	Amount:
 	<input
-	  type="text"
-	  v-model="expense.amount"
-	  @input="validateAmount"
-	  :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
-	  placeholder="Enter amount (e.g., 1000.00)" />
+          type="text"
+          v-model="expense.amount"
+          @input="validateAmount"
+          :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
+          placeholder="Enter amount (e.g., 1000.00)" />
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
       <label>
 	Description:
 	<input
-	  type="text"
-	  v-model="expense.description"
-	  @input="validateTextField('description')"
-	  :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-	  placeholder="Enter a description for the expense" />
+          type="text"
+          v-model="expense.description"
+          @input="validateTextField('description')"
+          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
+          placeholder="Enter a description for the expense" />
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -29,38 +29,38 @@
 	<div class="categories-select" @click="toggleDropdown">
           Categories
           <span class="dropdown-icon">
-	    <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-	    <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-	  </span>
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+            <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+          </span>
 	</div>
 	
 	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-	  <li v-if="loadingCategories">Loading categories...</li>
-	  <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+          <li v-if="loadingCategories">Loading categories...</li>
+          <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
             <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
-	  </li>
+          </li>
           <li
             v-for="(category, index) in categoryOptions"
             :key="index"
             @click="addCategory(category)">{{ category }}
-	  </li>
+          </li>
 	</ul>
 	
 	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
 	<div v-if="showNewCategory" class="new-category-dialog">
-	  <h4>Enter new category</h4>
-	  <input
+          <h4>Enter new category</h4>
+          <input
             type="text"
             v-model="newCategory"
             placeholder="New category"
             :maxlength="18" />
-	  <div class="button-group">
+          <div class="button-group">
             <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
             <button
               @click="acceptNewCategory"
               class="accept-category"
               :disabled="!isAcceptEnabled">Accept</button>
-	  </div>
+          </div>
 	</div>
 	
 	<div class="selected-categories">
@@ -466,10 +466,10 @@ input {
 }
 
 .new-category-dialog h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #21255b;
-  font-family: "Wix Madefor Display", sans-serif;
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #21255b;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input {
