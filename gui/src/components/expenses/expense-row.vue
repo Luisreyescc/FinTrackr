@@ -56,33 +56,7 @@
 	</div>
 	
 	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-          <li v-if="loadingCategories">Loading categories...</li>
-          <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
-            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
-          </li>
-          <li
-            v-for="(category, index) in categoryOptions"
-            :key="index"
-            @click="addCategory(category)">{{ category }}
-          </li>
-	</ul>
-	
-	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
-	<div v-if="showNewCategory" class="new-category-dialog">
-          <h4>Enter new category</h4>
-          <input
-            type="text"
-            v-model="newCategory"
-            placeholder="New category"
-            :maxlength="18" />
-          <div class="button-group">
-            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
-            <button
-              @click="acceptNewCategory"
-              class="accept-category"
-              :disabled="!isAcceptEnabled">Accept</button>
-          </div>
-	</div>
+          <li v-if="loadingCategories">Loading categories...</li></ul>
 	
 	<div class="selected-categories">
           <span v-for="(category, index) in expense.categories" :key="index" class="tag">
@@ -139,8 +113,6 @@ export default {
       dateError: "",
       categoryOptions: [],
       dropdownOpen: false,
-      showNewCategory: false,
-      newCategory: "",
       loadingCategories: false,
     };
   },
@@ -166,9 +138,6 @@ export default {
     },
     isSubmitEnabled() {
       return this.expense.categories.length > 0;
-    },
-    isAcceptEnabled() {
-      return this.newCategory.trim().length > 0;
     },
   },
   methods: {
@@ -220,41 +189,11 @@ export default {
         this.loadingCategories = false;
       }
     },
-    async sendNewCategory() {
-      try {
-        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.categoryOptions.push(this.newCategory.trim());
-          this.expense.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
-      }
-    },
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
       }
       this.dropdownOpen = false;
-    },
-    showNewCategoryDialog() {
-      this.newCategory = "";
-      this.showNewCategory = true;
-    },
-    cancelNewCategory() {
-      this.showNewCategory = false;
-    },
-    async acceptNewCategory() {
-      if (this.newCategory.trim()) {
-        await this.sendNewCategory();
-        this.expense.categories.push(this.newCategory);
-        this.showNewCategory = false;
-        this.newCategory = "";
-	this.dropdownOpen = false;
-      }
     },
     removeCategory(index) {
       this.editExpense.categories.splice(index, 1);

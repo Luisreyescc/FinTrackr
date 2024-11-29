@@ -46,33 +46,7 @@
 	</div>
 	
 	<ul v-if="dropdownOpen" class="sources-dropdown scrollbar">
-          <li v-if="loadingSources">Loading sources...</li>
-          <li v-else @click="showNewSourceDialog" style="color: green; font-weight: bold;">
-            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
-          </li>
-          <li
-            v-for="(source, index) in sourceOptions"
-            :key="index"
-            @click="newSource(source)">{{ source }}
-          </li>
-	</ul>
-	
-	<div v-if="showNewSource" class="overlay" @click="cancelNewSource"></div>
-	<div v-if="showNewSource" class="new-source-dialog">
-          <h4>Enter new source</h4>
-          <input
-            type="text"
-            v-model="newSource"
-            placeholder="New source"
-            :maxlength="18" />
-          <div class="button-group">
-            <button @click="cancelNewSource" class="cancel-source">Cancel</button>
-            <button
-              @click="acceptNewSource"
-              class="accept-source"
-              :disabled="!isAcceptEnabled">Accept</button>
-          </div>
-	</div>
+          <li v-if="loadingSources">Loading sources...</li></ul>
 	
 	<div class="selected-sources">
           <span v-for="(source, index) in income.sources" :key="index" class="tag">
@@ -140,8 +114,6 @@ export default {
       dateError: "",
       sourceOptions: [],
       dropdownOpen: false,
-      showNewSource: false,
-      newSource: "",
       loadingSources: false,
     };
   },
@@ -164,9 +136,6 @@ export default {
     },
     isSubmitEnabled() {
       return this.income.sources.length > 0;
-    },
-    isAcceptEnabled() {
-      return this.newSource.trim().length > 0;
     },
   },
   methods: {
@@ -210,41 +179,11 @@ export default {
         this.loadingSources = false;
       }
     },
-    async sendNewSource() {
-      try {
-        const response = await axios.post('/api/sources', { name: this.newSource.trim() });
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.sourceOptions.push(this.newSource.trim());
-          this.income.sources.push(this.newSource.trim());
-        } else {
-          console.error("Failed to add source:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new source:", error);
-      }
-    },
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
       }
       this.dropdownOpen = false;
-    },
-    showNewCategoryDialog() {
-      this.newCategory = "";
-      this.showNewCategory = true;
-    },
-    cancelNewCategory() {
-      this.showNewCategory = false;
-    },
-    async acceptNewSource() {
-      if (this.newSource.trim()) {
-        await this.sendNewSource();
-        this.income.source.push(this.newSource);
-        this.showNewSource = false;
-        this.newSource = "";
-	this.dropdownOpen = false;
-      }
     },
     removeSource(index) {
       this.editIncome.sources.splice(index, 1);
