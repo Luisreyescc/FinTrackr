@@ -194,9 +194,9 @@ export default {
         this.loadingCategories = false;
       }
     },
-    addCategory(categories) {
-      if (!this.income.categories.includes(categories)) {
-        this.income.categories.push(categories);
+    addCategory(category) {
+      if (!this.editIncome.categories.includes(category)) {
+        this.editIncome.categories.push(category);
       }
       this.dropdownOpen = false;
     },
@@ -241,7 +241,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchSources();
+    this.fetchCategories();
   },
 };
 </script>

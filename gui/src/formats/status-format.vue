@@ -1,68 +1,68 @@
 <template>
-  <div class="status-form">
-    <div class="sidebar">
-      <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
-      </button>
-    </div>
-    
-    <div class="content-wrapper">
-      <div v-if="selectedContent === 'Account'" class="section">
-        <div class="header">
-          <h2 class="section-title">Account Status</h2>
-          <div class="section-filter">
-            <h3>Status date:</h3>
-            <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
-            <h3>Filtered by: {{ currentFilter }}</h3>
-            <FilterGraphics
-              :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year', 'Custom']"
-              :currentFilter="currentFilter"
-              @filterSelected="applyFilter" />
+<div class="status-form">
+  <div class="sidebar">
+    <button @click="toggleSidebar" class="menu-button">
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+    </button>
+  </div>
+  
+  <div class="content-wrapper">
+    <div v-if="selectedContent === 'Account'" class="section">
+      <div class="header">
+        <h2 class="section-title">Account Status</h2>
+        <div class="section-filter">
+          <h3>Status date:</h3>
+          <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
+          <h3>Filtered by: {{ currentFilter }}</h3>
+          <FilterGraphics
+            :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year', 'Custom']"
+            :currentFilter="currentFilter"
+            @filterSelected="applyFilter" />
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="graphic-container">
+          <div class="chart-area">
+            <apexchart
+              v-if="chartData.length > 0"
+              type="area"
+              :options="chartOptions"
+              :series="chartData"
+              :style="{ width: '100%', height: '100%' }" />
           </div>
         </div>
-        <div class="main-content">
-          <div class="graphic-container">
-            <div class="chart-area">
-              <apexchart
-                v-if="chartData.length > 0"
-                type="area"
-                :options="chartOptions"
-                :series="chartData"
-                :style="{ width: '100%', height: '100%' }" />
+        <div class="stats-container">
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your network:</h3>
+              <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
             </div>
+            <p v-html="currency"></p>
           </div>
-          <div class="stats-container">
-            <div class="stats-box">
-              <div class="stats-header">
-                <h3>Your network:</h3>
-                <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
-              </div>
-              <p v-html="currency"></p>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your incomes this {{ currentFilter }}:</h3>
+              <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
             </div>
-            <div class="stats-box">
-              <div class="stats-header">
-                <h3>Your incomes this {{ currentFilter }}:</h3>
-                <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
-              </div>
-              <p v-html="incomes"></p>
+            <p v-html="incomes"></p>
+          </div>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Your expenses this {{ currentFilter }}:</h3>
+              <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
             </div>
-            <div class="stats-box">
-              <div class="stats-header">
-                <h3>Your expenses this {{ currentFilter }}:</h3>
-                <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
-              </div>
-              <p v-html="expenses"></p>
+            <p v-html="expenses"></p>
+          </div>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Pending debts this {{ currentFilter }}:</h3>
+              <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
             </div>
-            <div class="stats-box">
-              <div class="stats-header">
-                <h3>Pending debts this {{ currentFilter }}:</h3>
-                <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
-              </div>
-              <p v-html="debts"></p>
-            </div>
+            <p v-html="debts"></p>
           </div>
         </div>
       </div>
+    </div>
       
     <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
@@ -101,6 +101,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -126,7 +127,6 @@ export default {
       currentFilter: "All",
       selectedDate: "",
       chartData: [],
-      categoriesChartData: [],
       totalIncome: 0,
       totalExpense: 0,
       chartOptions: Object.freeze({
