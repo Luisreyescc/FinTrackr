@@ -313,11 +313,26 @@ class FilteredIncomeListView(APIView):
             incomes = Incomes.objects.filter(user=request.user, date__range=[start_date, end_date])
 
         total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
-        serializer = IncomeSerializer(incomes, many=True)
-        return Response({
-            'incomes': serializer.data,
-            'total_income': total_income
-        })
+        categories_summary = (
+            IncomeCategories.objects.filter(income__in=incomes)
+            .values("category__name")
+            .annotate(total_amount=Sum("income__amount"))
+            .order_by("category__name")
+        )
+
+        response_data = {
+            'incomes': IncomeSerializer(incomes, many=True).data,
+            'total_income': total_income,
+            'categories_summary': [
+                {
+                    "category": category["category__name"],
+                    "total_amount": category["total_amount"],
+                }
+                for category in categories_summary
+            ]
+        }
+
+        return Response(response_data)
 
 
 class FilteredExpenseListView(APIView):
@@ -354,8 +369,23 @@ class FilteredExpenseListView(APIView):
             expenses = Expenses.objects.filter(user=request.user, date__range=[start_date, end_date])
 
         total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
-        serializer = ExpenseSerializer(expenses, many=True)
-        return Response({
-            'expenses': serializer.data,
-            'total_expense': total_expense
-        })
+        categories_summary = (
+            ExpenseCategories.objects.filter(expense__in=expenses)
+            .values("category__name")
+            .annotate(total_amount=Sum("expense__amount"))
+            .order_by("category__name")
+        )
+
+        response_data = {
+            'expenses': ExpenseSerializer(expenses, many=True).data,
+            'total_expense': total_expense,
+            'categories_summary': [
+                {
+                    "category": category["category__name"],
+                    "total_amount": category["total_amount"],
+                }
+                for category in categories_summary
+            ]
+        }
+
+        return Response(response_data)

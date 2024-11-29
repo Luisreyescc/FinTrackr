@@ -232,12 +232,17 @@ export default {
         return;
       }
 
+      const filter = this.currentFilter;
+      const date = this.selectedDate;
+
+      const url = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
+
       try {
-        const response = await axios.get('http://localhost:8000/api/expenses/category-summary/', {
+        const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        const data = response.data; // API response
+        const data = response.data.categories_summary; // API response
         console.log("Donut Chart Data:", data);
 
         const amounts = data.map(item => item.total_amount);
@@ -259,6 +264,7 @@ export default {
       this.currentFilter = filter;
       console.log("Filter applied:", filter);
       this.fetchLineChartData();
+      this.fetchDonutChartData();
     },
     formatCurrency(amount, isNegative = false) {
       const formatted = new Intl.NumberFormat('en-US', {
@@ -327,9 +333,11 @@ export default {
     },
     selectedDate() {
       this.fetchLineChartData();
+      this.fetchDonutChartData();
     },
     currentFilter() {
       this.fetchLineChartData();
+      this.fetchDonutChartData();
     }
   }
 };
