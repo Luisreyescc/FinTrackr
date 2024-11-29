@@ -143,7 +143,7 @@ export default {
         console.log(this.incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
-	this.addMessage("There was an error fetching your incomes.", "error");
+        this.addMessage("There was an error fetching your incomes.", "error");
       }
     },
     async fetchExpenses() {
@@ -158,26 +158,32 @@ export default {
         console.log(this.expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
-	this.addMessage("There was an error fetching your expenses.", "error");
+        this.addMessage("There was an error fetching your expenses.", "error");
       }
     },
     async handleIncomeSubmission(incomeData) {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        const userId = localStorage.getItem("user_id") ?? 1;
+        const modifiedIncomeData = {
+          ...incomeData,
+          user: userId,
+          category: incomeData.categories,
+        };
+        delete modifiedIncomeData.categories;
 
         const response = await axios.post(
           'http://localhost:8000/api/incomes/',
-          incomeData,
+          modifiedIncomeData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         this.incomes.unshift(response.data);
         this.showForm = false;
         this.fetchIncomes();
-	this.addMessage("New income added succesfully.", "success");
+        this.addMessage("New income added succesfully.", "success");
       } catch (error) {
         console.error('Error submitting income:', error);
-	this.addMessage("There was an error while adding the income.", "error");
+        this.addMessage("There was an error while adding the income.", "error");
       }
     },
     async handleExpenseSubmission(expenseData) {
@@ -200,10 +206,10 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
         this.fetchExpenses();
-	this.addMessage("New expense added succesfully.", "success");
+        this.addMessage("New expense added succesfully.", "success");
       } catch (error) {
         console.error('Error submitting expense:', error.response?.data || error.message);
-	this.addMessage("There was an error while adding the expense.", "error");
+        this.addMessage("There was an error while adding the expense.", "error");
       }
     },
     async handleIncomeUpdate(updatedIncome) {
@@ -225,7 +231,7 @@ export default {
         }
       } catch (error) {
         console.error("Error updating income:", error);
-	this.addMessage("There was an error while saving the income changes.", "error");
+        this.addMessage("There was an error while saving the income changes.", "error");
       }
     },
     async handleIncomeDelete(incomeId) {
@@ -242,7 +248,7 @@ export default {
         }
       } catch (error) {
         console.error("Error deleting income:", error);
-	this.addMessage("There was an error while deleting the income.", "error");
+        this.addMessage("There was an error while deleting the income.", "error");
       }
     },
     async handleExpenseUpdate(updatedExpense) {
@@ -264,10 +270,10 @@ export default {
           this.addMessage("Expense data edited succesfully.", "success");
         }
 
-	this.fetchExpenses();
+        this.fetchExpenses();
       } catch (error) {
         console.error("Error updating expense:", error);
-	this.addMessage("There was an error while saving the expense changes.", "error");
+        this.addMessage("There was an error while saving the expense changes.", "error");
       }
     },
     async handleExpenseDelete(expenseId) {
@@ -284,7 +290,7 @@ export default {
         }
       } catch (error) {
         console.error("Error deleting expense:", error);
-	this.addMessage("There was an error while deleting the expense.", "error");
+        this.addMessage("There was an error while deleting the expense.", "error");
       }
     },
   },

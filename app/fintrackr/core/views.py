@@ -78,6 +78,7 @@ class UserProfileView(generics.RetrieveAPIView):
         return Response({"user_name": user.user_name})
 
 
+# Income views
 class IncomeListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -144,15 +145,15 @@ class IncomeSourceSummaryView(APIView):
 
     def get(self, request):
         categories_summary = (
-            Incomes.objects.filter(user=request.user)
-            .values("category_name")
-            .annotate(total_amount=Sum("income_amount"))
-            .order_by("category_name")
+            IncomeCategories.objects.filter(income__user=request.user)
+            .values("category__name")
+            .annotate(total_amount=Sum("income__amount"))
+            .order_by("category__name")
         )
 
         response_data = [
             {
-                "category": category["category_name"],
+                "category": category["category__name"],
                 "total_amount": category["total_amount"],
             }
             for category in categories_summary
@@ -161,6 +162,19 @@ class IncomeSourceSummaryView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
+class UserIncomeCategoriesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        categories = (
+            IncomeCategories.objects.filter(income__user=request.user)
+            .values_list("category__name", flat=True)
+            .distinct()
+        )
+        return Response({"categories": list(categories)}, status=status.HTTP_200_OK)
+
+
+# Expense views
 class ExpenseListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -251,7 +265,7 @@ class ExpenseCategorySummaryView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class UserCategoriesView(APIView):
+class UserExpenseCategoriesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):

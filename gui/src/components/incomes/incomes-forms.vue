@@ -43,7 +43,7 @@
             <li
               v-for="(categories, index) in categoryOptions"
               :key="index"
-              @click="newCategory(categories)"
+              @click="addCategory(categories)"
             >
               {{ categories }}
             </li>
@@ -179,9 +179,17 @@ export default {
     },
     async fetchCategories() {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
         this.loadingCategories = true;
-        const response = await axios.get("/api/categories");
-        this.categoryOptions = response.data; // Asuming backend returns an array of categories
+        const response = await axios.get('http://localhost:8000/api/income-categories/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.categoryOptions = response.data.categories;
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -190,13 +198,11 @@ export default {
     },
     async sendNewCategory() {
       try {
-        const response = await axios.post("/api/categories", {
-          name: this.newCategory.trim(),
-        });
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
         if (response.status === 201) {
           // Add new category to the user's categories table if the backend respons with success
           this.categoryOptions.push(this.newCategory.trim());
-          this.income.categories.push(this.newCategory.trim());
+          this.expense.categories.push(this.newCategory.trim());
         } else {
           console.error("Failed to add category:", response.statusText);
         }
