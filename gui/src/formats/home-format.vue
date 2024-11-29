@@ -74,6 +74,7 @@
 
 <script>
 import axios from 'axios';
+import moment from 'moment';
 import '@/css/scrollbar.css';
 import MessageAlerts from '@/components/messages.vue';
 
@@ -118,6 +119,9 @@ export default {
     },
   },
   methods: {
+    formatDate(date) {
+      return moment(date).format("MMM DD, YYYY");
+    },
     addMessage(text, type = "neutral") {
       const id = Date.now();
       this.messages.push({ id, text, type });
@@ -139,7 +143,10 @@ export default {
         const response = await axios.get('http://localhost:8000/api/incomes/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.incomes = response.data;
+        this.incomes = response.data.map((income) => ({
+          ...income,
+          date: this.formatDate(income.date),
+        }));
         console.log(this.incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
@@ -154,7 +161,10 @@ export default {
         const response = await axios.get('http://localhost:8000/api/expenses/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.expenses = response.data;
+        this.expenses = response.data.map((expense) => ({
+          ...expense,
+          date: this.formatDate(expense.date),
+        }));
         console.log(this.expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
@@ -254,10 +264,15 @@ export default {
     async handleExpenseUpdate(updatedExpense) {
       try {
         const token = localStorage.getItem("token");
-        console.log(updatedExpense);
+        const modifiedExpenseData = {
+          ...updatedExpense,
+          category: updatedExpense.categories,
+        };
+        delete modifiedExpenseData.categories;
+
         const response = await axios.put(
           `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
-          updatedExpense,
+          modifiedExpenseData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
