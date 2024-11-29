@@ -266,16 +266,16 @@ export default {
       this.fetchLineChartData();
       this.fetchDonutChartData();
     },
-    formatCurrency(amount, isNegative = false) {
+    formatCurrency(amount) {
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(amount);
+      }).format(Math.abs(amount));
 
       const [integerPart, decimalPart] = formatted.replace('$', '').split('.');
-      const sign = isNegative ? '-' : '';
+      const sign = amount < 0 ? '-' : '';
 
       return `<span><span class="integer-part">${sign}$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup></span>`;
     },
@@ -440,7 +440,7 @@ select {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 670px;
+    height: 790px;
     overflow: hidden;
 }
 
