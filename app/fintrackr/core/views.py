@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from datetime import datetime, timedelta
 from .models import (
     Users,
     Incomes,
@@ -276,3 +277,85 @@ class UserExpenseCategoriesView(APIView):
         )
         return Response({"categories": list(categories)}, status=status.HTTP_200_OK)
 
+
+# Filtered views
+class FilteredIncomeListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        filter_type = request.query_params.get('filter', 'All')
+        date_str = request.query_params.get('date', None)
+
+        if filter_type == 'All':
+            incomes = Incomes.objects.filter(user=request.user)
+        else:
+            date = datetime.strptime(date_str, '%Y-%m-%d')
+            if filter_type == 'Day':
+                start_date = date
+                end_date = date + timedelta(days=1)
+            elif filter_type == 'Month':
+                start_date = date.replace(day=1)
+                end_date = (start_date + timedelta(days=32)).replace(day=1)
+            elif filter_type == 'Year':
+                start_date = date.replace(month=1, day=1)
+                end_date = date.replace(year=date.year + 1, month=1, day=1)
+            elif filter_type == 'Fortnight':
+                if date.day <= 15:
+                    start_date = date.replace(day=1)
+                    end_date = date.replace(day=15)
+                else:
+                    start_date = date.replace(day=16)
+                    end_date = (start_date + timedelta(days=15)).replace(day=1)
+            else:
+                start_date = date
+                end_date = date + timedelta(days=1)
+
+            incomes = Incomes.objects.filter(user=request.user, date__range=[start_date, end_date])
+
+        total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
+        serializer = IncomeSerializer(incomes, many=True)
+        return Response({
+            'incomes': serializer.data,
+            'total_income': total_income
+        })
+
+
+class FilteredExpenseListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        filter_type = request.query_params.get('filter', 'All')
+        date_str = request.query_params.get('date', None)
+
+        if filter_type == 'All':
+            expenses = Expenses.objects.filter(user=request.user)
+        else:
+            date = datetime.strptime(date_str, '%Y-%m-%d')
+            if filter_type == 'Day':
+                start_date = date
+                end_date = date + timedelta(days=1)
+            elif filter_type == 'Month':
+                start_date = date.replace(day=1)
+                end_date = (start_date + timedelta(days=32)).replace(day=1)
+            elif filter_type == 'Year':
+                start_date = date.replace(month=1, day=1)
+                end_date = date.replace(year=date.year + 1, month=1, day=1)
+            elif filter_type == 'Fortnight':
+                if date.day <= 15:
+                    start_date = date.replace(day=1)
+                    end_date = date.replace(day=15)
+                else:
+                    start_date = date.replace(day=16)
+                    end_date = (start_date + timedelta(days=15)).replace(day=1)
+            else:
+                start_date = date
+                end_date = date + timedelta(days=1)
+
+            expenses = Expenses.objects.filter(user=request.user, date__range=[start_date, end_date])
+
+        total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response({
+            'expenses': serializer.data,
+            'total_expense': total_expense
+        })

@@ -9,11 +9,13 @@ from .views import (
     IncomeListCreateView,
     IncomeSourceSummaryView,
     UserIncomeCategoriesView,
+    FilteredIncomeListView,
     CategoryListCreateView,
     ExpenseDetailView,
     ExpenseListCreateView,
     ExpenseCategorySummaryView,
     UserExpenseCategoriesView,
+    FilteredExpenseListView,
 )
 
 urlpatterns = [
@@ -29,6 +31,7 @@ urlpatterns = [
     path("incomes/categories-summary/", IncomeSourceSummaryView.as_view(), name="income-source-summary"),
     path("incomes/<int:income_id>/", IncomeDetailView.as_view(), name="income-detail"),
     path("income-categories/", UserIncomeCategoriesView.as_view(), name="user-categories"),
+    path("incomes/filtered/", FilteredIncomeListView.as_view(), name="filtered-income-list"),
     # Category views
     path("categories/", CategoryListCreateView.as_view(), name="category-list-create"),
     # Expense views
@@ -36,4 +39,5 @@ urlpatterns = [
     path("expenses/category-summary/", ExpenseCategorySummaryView.as_view(), name="expense-category-summary",),
     path("expenses/<int:expense_id>/", ExpenseDetailView.as_view(), name="expense-detail"),
     path("expense-categories/", UserExpenseCategoriesView.as_view(), name="user-categories"),
+    path("expenses/filtered/", FilteredExpenseListView.as_view(), name="filtered-expense-list"),
 ]
