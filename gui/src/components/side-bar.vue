@@ -43,52 +43,69 @@
 
   <div v-if="showPdfModal" class="modal-overlay" @click="closePdfModal">
     <div class="modal-content" @click.stop>
-      <h2>PDF Report</h2>
+      <h1>PDF Report Settings</h1>
       <button @click="closePdfModal" class="modal-close-icon">
         <font-awesome-icon :icon="['fas', 'xmark']"/>
       </button>
-      
-      <div class="time-selector">
-        <h3>Set Time</h3>
-        <div class="time-controls">
-          <button @click="incrementTime('hour')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-up']" />
-          </button>
-          <span>{{ formatNumber(time.hour) }}</span>
-          <button @click="decrementTime('hour')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
-          </button>
-          :
-          <button @click="incrementTime('minute')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-up']" />
-          </button>
-          <span>{{ formatNumber(time.minute) }}</span>
-          <button @click="decrementTime('minute')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
-          </button>
-          <button @click="toggleAmPm" class="period-button">
-            {{ time.amPm }}
-          </button>
-        </div>
+
+      <div class="section">
+	<h2>Set Time</h2>
+	<div class="time-selector">
+          <div class="time-unit">
+            <button @click="incrementTime('hour')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon" />
+            </button>
+            <div class="time-value-container">
+              <span class="time-value">{{ formatNumber(time.hour) }}</span>
+            </div>
+            <button @click="decrementTime('hour')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+            </button>
+          </div>
+          <span class="chars">:</span>
+          <div class="time-unit">
+            <button @click="incrementTime('minute')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+            </button>
+            <div class="time-value-container">
+              <span class="time-value">{{ formatNumber(time.minute) }}</span>
+            </div>
+            <button @click="decrementTime('minute')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+            </button>
+          </div>
+          <div class="time-unit">
+            <button @click="toggleAmPm" class="time-button">{{ time.amPm }}</button>
+          </div>
+	</div>
       </div>
-      
-      <div class="period-selector">
-        <h3>Set Period</h3>
-        <div class="period-controls">
-          <button @click="incrementPeriod('type')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-up']" />
-          </button>
-          <span>{{ period.type }}</span>
-          <button @click="decrementPeriod('type')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
-          </button>
-          <button @click="incrementPeriod('day')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-up']" />
-          </button>
-          <span>{{ period.day }}</span>
-          <button @click="decrementPeriod('day')" class="arrow-button">
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
-          </button>
+
+      <div class="section">
+	<h2>Set Period</h2>
+	<div class="period-selector">
+          <div class="time-unit">
+            <button @click="incrementPeriod('type')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+            </button>
+            <div class="time-value-container">
+              <span class="time-value">{{ period.type }}</span>
+            </div>
+            <button @click="decrementPeriod('type')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+            </button>
+          </div>
+          <span class="chars">-</span>
+          <div class="time-unit">
+            <button @click="incrementPeriod('day')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+            </button>
+            <div class="time-value-container">
+              <span class="time-value">{{ period.day }}</span>
+            </div>
+            <button @click="decrementPeriod('day')" class="arrow-button">
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+            </button>
+          </div>
 	</div>
       </div>
       
@@ -120,15 +137,15 @@ export default {
     return {
       showPdfModal: false,
       time: {
-        hour: 8,
+        hour: 3,
         minute: 0,
         amPm: 'AM'
       },
       period: {
-        type: 'Monthly',
+        type: 'Month',
         day: 1
       },
-      periodTypes: ['Monthly', 'Bimonthly', 'Quarterly'],
+      periodTypes: ['Monthly', 'Bimester', 'Trimester'],
     };
   },
   methods: {
@@ -341,22 +358,20 @@ export default {
 
 .modal-content {
     background: white;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 300px;
-    height: 500px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 500px;
     position: relative; 
 }
 
 .modal-close-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 18px;
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 30px;
     color: #333;
     cursor: pointer;
 }
@@ -365,37 +380,99 @@ export default {
     color: #555;
 }
 
-.arrow-button {
-  background: none;
-  border: none;
-  cursor: pointer;
+.section {
+  margin: 20px 10px;
 }
 
-.period-button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.time-controls,
-.period-controls {
+.time-selector, .period-selector {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
 }
 
+.time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arrow-button {
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.arrow-icon {
+    font-size: 28px;
+}
+
+.time-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background:  #25253C;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.period-button:hover {
+    background:  #3B3B5A;
+}
+
+.time-value-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.time-value, .chars {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.time-value-container::before,
+.time-value-container::after {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 4px;
+    background-color: #636389;
+    border-radius: 2px;
+}
+
+.time-value-container::before {
+    top: -4px;
+}
+
+.time-value-container::after {
+    bottom: -4px;
+}
+
 .confirm-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 15px 30px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.confirm-button:hover {
+    background:  #237242;
 }
 </style>

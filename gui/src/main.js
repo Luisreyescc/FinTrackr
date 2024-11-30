@@ -19,7 +19,7 @@ import {
   faCakeCandles,
   faPlus,
   faAngleRight, 
-  faAngleDown ,
+  faAngleDown,
   faCircleDollarToSlot, 
   faMoneyBillTransfer,
   faFilter,
@@ -28,7 +28,8 @@ import {
   faChartArea,
   faPiggyBank,
   faHandHoldingDollar,
-  faEnvelopeOpenText
+  faEnvelopeOpenText,
+  faAngleUp,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -58,7 +59,8 @@ library.add(
   faChartArea,
   faPiggyBank,
   faHandHoldingDollar,
-  faEnvelopeOpenText
+  faEnvelopeOpenText,
+  faAngleUp,
 );
 
 const app = createApp(App)
