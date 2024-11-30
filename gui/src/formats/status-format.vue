@@ -69,7 +69,7 @@
         <h2 class="section-title">Pie Charts</h2>
         <div class="section-filter">
           <h3>Status date:</h3>
-          <input id="end-date" type="date" class="date-input" />
+          <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
           <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterGraphics
             :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
@@ -125,7 +125,7 @@ export default {
   data() {
     return {
       currentFilter: "All",
-      selectedDate: "", //Implement a future funtion that determines current users date as the default date
+      selectedDate: this.getTodayDate(),
       chartData: [],
       totalIncome: 0,
       totalExpense: 0,
@@ -169,6 +169,13 @@ export default {
   methods: {
     formatDate(dateStr) {
       return new Date(dateStr).toISOString().split('T')[0];
+    },
+    getTodayDate(){
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0'); //Month with two digits
+      const day = String(today.getDate()).padStart(2, '0'); // Day with two digits
+      return `${year}-${month}-${day}`;
     },
     fetchLineChartData() {
       const token = localStorage.getItem("token");
