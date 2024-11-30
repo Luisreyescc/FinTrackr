@@ -15,7 +15,7 @@
           <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
           <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterGraphics
-            :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year', 'Custom']"
+            :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
             @filterSelected="applyFilter" />
         </div>
@@ -28,7 +28,7 @@
               type="area"
               :options="chartOptions"
               :series="chartData"
-              :style="{ width: '100%', height: '100%' }" />
+              :style="{ width: '100%', height: '90%' }" />
           </div>
         </div>
         <div class="stats-container">
@@ -72,7 +72,7 @@
           <input id="end-date" type="date" class="date-input" />
           <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterGraphics
-            :filterOptions="['Day', 'Fortnight', 'Month', 'Year', 'Custom']"
+            :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
             @filterSelected="applyFilter" />
         </div>
@@ -101,7 +101,7 @@
       </div>
     </div>
   </div>
-  </div>
+</div>
 </template>
 
 <script>
@@ -125,7 +125,7 @@ export default {
   data() {
     return {
       currentFilter: "All",
-      selectedDate: "",
+      selectedDate: "", //Implement a future funtion that determines current users date as the default date
       chartData: [],
       totalIncome: 0,
       totalExpense: 0,
@@ -142,7 +142,7 @@ export default {
         },
         colors: ['#008FFB', '#FAA700'],
         stroke: {
-          curve: 'smooth',
+          curve: 'straight',
         },
       }),
       sourcesChartData: [],
@@ -164,6 +164,7 @@ export default {
   created() {
     this.fetchLineChartData();
     this.fetchDonutChartData();
+    this.fetchSourcesChartData();
   },
   methods: {
     formatDate(dateStr) {
@@ -283,17 +284,22 @@ export default {
 	console.error('No token found');
 	return;
       }
+
+      const filter = this.currentFilter;
+      const date = this.selectedDate;
+
+      const url = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
       
       try {
-	const response = await axios.get('http://localhost:8000/api/incomes/source-summary/', {
+	const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
 	});
 	
-	const data = response.data; // API response
+	const data = response.data.categories_summary; // API response
 	console.log("Sources Chart Data:", data);
 	
 	const amounts = data.map(item => item.total_amount);
-	const sources = data.map(item => item.source);
+	const sources = data.map(item => item.category);
 	
 	this.sourcesChartData = amounts; // Populate series
 	this.sourcesChartOptions = {
@@ -350,7 +356,8 @@ export default {
     },
     getDebts() {
       // Placeholder for debts
-      return `<span style="color: darkred;">$0.00</span>`;
+      const amount = 0;
+      return `<span style="color: darkred;">${amount}</span>`;
     },
     toggleSidebar() {
       this.$emit('toggleSidebar');
@@ -370,6 +377,15 @@ export default {
       return this.getDebts();
     },
   },
+  mounted() {
+    this.fetchLineChartData();
+    if (this.selectedContent === "Account") {
+      this.fetchLineChartData();
+    } else if (this.selectedContent === "Categories") {
+      this.fetchDonutChartData();
+      this.fetchSourcesChartData();
+    }
+  },
   watch: {
     selectedContent(newValue) {
       if (newValue === "Account") {
@@ -382,10 +398,12 @@ export default {
     selectedDate() {
       this.fetchLineChartData();
       this.fetchDonutChartData();
+      this.fetchSourcesChartData();
     },
     currentFilter() {
       this.fetchLineChartData();
       this.fetchDonutChartData();
+      this.fetchSourcesChartData();
     }
   }
 };
@@ -488,7 +506,7 @@ select {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 790px;
+    height: 670px;
     overflow: hidden;
 }
 
@@ -570,7 +588,6 @@ select {
 .decimal-part {
     vertical-align: super;
 }
-<<<<<<< HEAD
 
 .pie-container {
     flex: 1;
