@@ -59,6 +59,32 @@
         <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm" />
       </div>
     </div>
+
+    <div v-if="selectedContent === 'Debts'" class="main-content">
+      <div class="debts-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <DebtButton @click="toggleForm" />
+        </div>
+        <div class="activity-content scrollbar">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container scrollbar">
+              <DebtRow
+                v-for="(debt, index) in sortedDebts"
+                :key="index"
+                :debt="debt"
+                @updateDebt="handleDebtUpdate"
+                @deleteDebt="handleDebtDelete" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm" />
+      </div>
+    </div>
   </div>
 </div>
 
@@ -84,6 +110,9 @@ import IncomeRow from '@/components/incomes/income-row.vue';
 import ExpensesForm from '@/components/expenses/expenses-forms.vue';
 import ExpenseButton from '@/components/expenses/expenses-header.vue';
 import ExpenseRow from '@/components/expenses/expense-row.vue';
+import DebtsForm from '@/events/debts-forms.vue';
+import DebtsButton from '@/events/debts-header.vue';
+import DebtRow from '@/events/debt-row.vue';
 
 export default {
   name: "HomeForm",
@@ -94,6 +123,9 @@ export default {
     ExpensesForm,
     ExpenseButton,
     ExpenseRow,
+    DebtsForm,
+    DebtsButton,
+    DebtRow,
     MessageAlerts
   },
   props: {
@@ -107,6 +139,7 @@ export default {
       showForm: false,
       incomes: [],
       expenses: [],
+      debts: [],
       messages: []
     };
   },
@@ -115,6 +148,9 @@ export default {
       return this.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
     sortedExpenses() {
+      return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    },
+    sortedDebts() {
       return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
   },
@@ -171,6 +207,24 @@ export default {
         this.addMessage("There was an error fetching your expenses.", "error");
       }
     },
+    async fetchDebts() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return console.error("No token found");
+
+        const response = await axios.get('http://localhost:8000/api/debts/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.debts = response.data.map((debt) => ({
+          ...debt,
+          date: this.formatDate(debt.date),
+        }));
+        console.log(this.debts);
+      } catch (error) {
+        console.error('Error fetching debts:', error);
+        this.addMessage("There was an error fetching your debts.", "error");
+      }
+    },
     async handleIncomeSubmission(incomeData) {
       try {
         const token = localStorage.getItem("token");
@@ -220,6 +274,32 @@ export default {
       } catch (error) {
         console.error('Error submitting expense:', error.response?.data || error.message);
         this.addMessage("There was an error while adding the expense.", "error");
+      }
+    },
+    async handleDebtSubmission(debtData) {
+      try {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("user_id") ?? 1;
+        const modifiedDebtData = {
+          ...debtData,
+          user: userId,
+          category: debtData.categories,
+        };
+        delete modifiedDebtData.categories;
+
+        const response = await axios.post(
+          'http://localhost:8000/api/debts/',
+          modifiedDebtData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        this.debts.push(response.data);
+        this.showForm = false;
+        this.fetchDebts();
+        this.addMessage("New debt added succesfully.", "success");
+      } catch (error) {
+        console.error('Error submitting debt:', error.response?.data || error.message);
+        this.addMessage("There was an error while adding the debt.", "error");
       }
     },
     async handleIncomeUpdate(updatedIncome) {
@@ -308,12 +388,61 @@ export default {
         this.addMessage("There was an error while deleting the expense.", "error");
       }
     },
+    async handleDebtUpdate(updatedDebt) {
+      try {
+        const token = localStorage.getItem("token");
+        const modifiedDebtData = {
+          ...updatedDebt,
+          category: updatedDebt.categories,
+        };
+        delete modifiedDebtData.categories;
+
+        const response = await axios.put(
+          `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
+          modifiedDebtData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.status === 200) {
+          const index = this.debts.findIndex((debt) => debt.id === updatedDebt.debt_id);
+          if (index !== -1) {
+            this.debts[index] = response.data;
+            this.fetchDebts();
+          }
+          this.addMessage("Debt data edited succesfully.", "success");
+        }
+
+        this.fetchDebts();
+      } catch (error) {
+        console.error("Error updating debt:", error);
+        this.addMessage("There was an error while saving the debt changes.", "error");
+      }
+    },
+    async handleDebtDelete(debtId) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`http://localhost:8000/api/debts/${debtId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 204) {
+          this.fetchDebts();
+          this.debts = this.debts.filter((debt) => debt.id !== debtId);
+          this.addMessage("Debt deleted successfully.", "success");
+        }
+      } catch (error) {
+        console.error("Error deleting debt:", error);
+        this.addMessage("There was an error while deleting the debt.", "error");
+      }
+    },
   },
   mounted() {
     if (this.selectedContent === "Incomes") {
       this.fetchIncomes();
     } else if (this.selectedContent === "Expenses") {
       this.fetchExpenses();
+    } else if (this.selectedContent === "Debts") {
+      this.fetchDebts();
     }
   },
   watch: {
@@ -322,6 +451,8 @@ export default {
         this.fetchIncomes();
       } else if (newValue === "Expenses") {
         this.fetchExpenses();
+      } else if (newValue === "Debts") {
+        this.fetchDebts();
       }
     }
   },
