@@ -1,7 +1,7 @@
 <template>
 <div class="expense-row">
   <div class="expense-icon">
-    <font-awesome-icon :icon="['fas', 'money-bill-transfer']" font-size="28" color="#25253C" />
+    <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="row-icon" />
   </div>
   <div class="expense-details">
     <h4>{{ formattedCategories }}</h4>
@@ -256,11 +256,16 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background-color: #e0e0e0;
     margin-right: 14px;
+}
+
+.row-icon {
+    font-size: 38px;
+    color: #25253C;
 }
 
 .expense-details {
@@ -281,7 +286,7 @@ export default {
 }
 
 .expense-details h4 {
-    font-size: 16px;
+    font-size: 22px;
     color: #21255b;
     font-weight: bold;
 }
@@ -289,13 +294,13 @@ export default {
 .expense-description {
     color: #777;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .expense-date {
     color: #aaa;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 18px;
     margin-left: 10px;
     white-space: nowrap;
 }
@@ -304,13 +309,13 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-left: 15px;
+    margin-left: 25px;
 }
 
 .expense-amount {
     font-weight: bold;
     color: #e42121;
-    font-size: 16px;
+    font-size: 20px;
     flex-shrink: 0;
 }
 
@@ -323,8 +328,8 @@ export default {
 .edit-button, .delete-button {
     border-radius: 10px;
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -353,7 +358,7 @@ export default {
 }
 
 .icon {
-    font-size: 16px;
+    font-size: 20px;
     color: white;
 }
 
