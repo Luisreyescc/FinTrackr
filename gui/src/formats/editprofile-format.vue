@@ -51,6 +51,7 @@
 	type="text"
 	id="curp"
 	placeholder="Your Curp"
+	:class="{ 'input-error': curpError }"
 	@input="handleCurpInput"/>
     </div>
     <span v-if="curpError" class="error-message">{{ curpError }}</span>
@@ -62,6 +63,7 @@
 	type="text"
 	id="rfc"
 	placeholder="Your Rfc"
+	:class="{ 'input-error': rfcError }"
 	@input="handleRfcInput">
     </div>
     <span v-if="rfcError" class="error-message">{{ rfcError }}</span>
@@ -94,7 +96,9 @@
         :type="showPassword ? 'text' : 'password'"
         id="password"
         placeholder="Your current password"
-        class="padded-input" />
+        class="padded-input"
+	:class="{ 'input-error': passwordError, 'padded-input': true }"
+	@input="clearError('password')" />
       <button
         type="button"
         class="show-password-btn"
@@ -109,6 +113,7 @@
         <span v-else>Change Password</span>
       </button>
     </div>
+    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
     
     <div v-if="showPasswordFields">
       <div class="password-container">
@@ -181,7 +186,7 @@ export default {
         new_password: "",
         confirm_password: "",
       },
-      showCurrentPassword: false,
+      showPassword: false,
       showNewPassword: false,
       showConfirmPassword: false,
       showPasswordFields: false,
@@ -190,6 +195,7 @@ export default {
       curpError: "",
       rfcError: "",
       phoneError: "",
+      passwordError: "",
       newPasswordError: "",
       confirmPasswordError: ""
     };
@@ -235,6 +241,11 @@ export default {
       this.phoneError = "";
       if (this.formData.phone && !/^\d+$/.test(this.formData.phone))
 	this.phoneError = "Only digits accepted";
+    },
+    validateChanges() {
+      this.passwordError = "";
+      if (!this.formData.password)
+	this.passwordError = "Your current password is required to save changes.";
     },
     validatePasswords() {
       this.newPasswordError = "";
@@ -285,13 +296,14 @@ export default {
       }
     },
     saveProfile() {
+      this.validateChanges();
       this.validateUser();
       this.validateEmail();
 
       this.validatePhone();
       this.validatePasswords();
 
-      if (this.usernameError || this.emailError ||  this.curpError || this.rfcError ||this.phoneError || this.newPasswordError || this.confirmPasswordError)
+      if (this.passwordError || this.usernameError || this.emailError ||  this.curpError || this.rfcError ||this.phoneError || this.newPasswordError || this.confirmPasswordError)
 	return;
       
       const sanitizedData = Object.fromEntries(
@@ -367,11 +379,11 @@ input {
 }
 
 .error-message {
-  color: #D55C5C;
-  font-size: 14px;
-  align-self: center;
-  margin-top: -10px;
-  margin-bottom: 10px;
+    color: #D55C5C;
+    font-size: 14px;
+    align-self: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .username-container,
@@ -600,7 +612,7 @@ input {
 }
 
 .birth-container input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  cursor: pointer;
+    opacity: 0;
+    cursor: pointer;
 }
 </style>
