@@ -13,10 +13,10 @@
           <h2 class="section-title">{{ selectedContent }}</h2>
           <IncomeButton @click="toggleForm" />
           </div>
-        <div class="activity-content scrollbar">
+        <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
           <div class="activity-section">
-            <div class="list-container">
+            <div class="list-container scrollbar">
               <IncomeRow
                 v-for="(income, index) in sortedIncomes"
                 :key="index"
@@ -43,7 +43,7 @@
         <div class="activity-content scrollbar">
           <h3 class="activity-title">Activity</h3>
           <div class="activity-section">
-            <div class="list-container">
+            <div class="list-container scrollbar">
               <ExpenseRow
                 v-for="(expense, index) in sortedExpenses"
                 :key="index"
@@ -374,7 +374,7 @@ export default {
 .main-content {
     display: flex;
     flex-direction: column;
-    max-width: 800px;
+    max-width: 1200px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -391,10 +391,14 @@ export default {
     border-bottom: 1px solid #ddd;
 }
 
+.header h3 {
+    font-size: 32px; 
+}
+
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #333;
+    color: #141428;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -409,10 +413,11 @@ export default {
 }
 
 .activity-title {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
+    color: #141428;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -421,8 +426,6 @@ export default {
     overflow-y: auto;
     padding-right: 10px;
     max-height: calc(70vh - 50px);
-    scrollbar-width: thin;
-    scrollbar-color: #00A0BE #e0e0e0;
 }
 
 .forms-section {
