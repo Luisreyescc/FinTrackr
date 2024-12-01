@@ -81,17 +81,17 @@
         <div class="pie-container">
           <div class="chart-sources">
             <apexchart
-              v-if="chartData.length > 0"
+              v-if="sourcesChartData.length > 0"
               type="donut"
               :options="sourcesChartOptions"
               :series="sourcesChartData"
               :style="{ width: '100%', height: '100%' }" />
           </div>
-	</div>
+  </div>
         <div class="pie-container">
           <div class="chart-categories">
             <apexchart
-              v-if="chartData.length > 0"
+              v-if="categoriesChartData.length > 0"
               type="donut"
               :options="categoriesChartOptions"
               :series="categoriesChartData"
@@ -136,6 +136,10 @@ export default {
         },
         xaxis: {
           categories: [],
+          padding: {
+            left: 100,
+            right: 100
+          }
         },
         dataLabels: {
           enabled: false
@@ -177,7 +181,7 @@ export default {
       const day = String(today.getDate()).padStart(2, '0'); // Day with two digits
       return `${year}-${month}-${day}`;
     },
-    fetchLineChartData() {
+    async fetchLineChartData() {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("No token found");
@@ -187,34 +191,25 @@ export default {
       const filter = this.currentFilter;
       const date = this.selectedDate;
 
-      const url = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
+      const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
+      const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
 
-      // Fetch both Incomes and Expenses for combined chart
-      Promise.all([
-        axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(url.replace('incomes', 'expenses'), {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ])
-      .then(([incomeResponse, expenseResponse]) => {
-        console.log("Income Response:", incomeResponse.data);
-        console.log("Expense Response:", expenseResponse.data);
+      try {
+        const [incomeResponse, expenseResponse] = await Promise.all([
+          axios.get(incomeUrl, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
 
-        const incomeData = incomeResponse.data.incomes.map((item) => ({
-          x: this.formatDate(item.date),
-          y: parseFloat(item.amount),
+        const incomeData = incomeResponse.data.incomes.map(item => ({
+          x: this.formatDate(item.x),
+          y: parseFloat(item.y)
         }));
-        const expenseData = expenseResponse.data.expenses.map((item) => ({
-          x: this.formatDate(item.date),
-          y: parseFloat(item.amount),
+        const expenseData = expenseResponse.data.expenses.map(item => ({
+          x: this.formatDate(item.x),
+          y: parseFloat(item.y)
         }));
 
-        // Generate a complete list of unique dates from both data sets
-        const uniqueDates = [
-          ...new Set([...incomeData, ...expenseData].map(item => item.x))
-        ].sort();
+        const uniqueDates = [...new Set([...incomeData, ...expenseData].map(item => item.x))].sort();
 
         // Populate data for missing dates with y: 0 to ensure continuity
         const fillMissingData = (data, dates) => {
@@ -235,6 +230,10 @@ export default {
           ...this.chartOptions,
           xaxis: {
             categories: uniqueDates,
+            padding: {
+              left: 100,
+              right: 100
+            }
           }
         };
 
@@ -244,11 +243,9 @@ export default {
 
         console.log("Chart Data:", this.chartData);
         console.log("Categories:", this.chartOptions.xaxis.categories);
-
-        // Trigger Vue reactivity for chartOptions
-        this.chartOptions = { ...this.chartOptions };
-      })
-      .catch((error) => console.error('Error fetching all data for the graphics:', error));
+      } catch (error) {
+        console.error('Error fetching line chart data:', error);
+      }
     },
     async fetchDonutChartData() {
       const token = localStorage.getItem('token');
@@ -260,10 +257,10 @@ export default {
       const filter = this.currentFilter;
       const date = this.selectedDate;
 
-      const url = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
+      const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
 
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(expenseUrl, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -288,43 +285,47 @@ export default {
     async fetchSourcesChartData() {
       const token = localStorage.getItem('token');
       if (!token) {
-	console.error('No token found');
-	return;
+        console.error('No token found');
+        return;
       }
 
       const filter = this.currentFilter;
       const date = this.selectedDate;
 
-      const url = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
-      
+      const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
+
       try {
-	const response = await axios.get(url, {
+        const response = await axios.get(incomeUrl, {
           headers: { Authorization: `Bearer ${token}` }
-	});
-	
-	const data = response.data.categories_summary; // API response
-	console.log("Sources Chart Data:", data);
-	
-	const amounts = data.map(item => item.total_amount);
-	const sources = data.map(item => item.category);
-	
-	this.sourcesChartData = amounts; // Populate series
-	this.sourcesChartOptions = {
+        });
+
+        const data = response.data.categories_summary; // API response
+        console.log("Sources Chart Data:", data);
+
+        const amounts = data.map(item => item.total_amount);
+        const sources = data.map(item => item.category);
+
+        this.sourcesChartData = amounts; // Populate series
+        this.sourcesChartOptions = {
           ...this.sourcesChartOptions,
           labels: sources // Populate labels
-	};
-	
-	console.log("Sources Chart Series:", this.sourcesChartData);
-	console.log("Sources Chart Labels:", this.sourcesChartOptions.labels);
+        };
+
+        console.log("Sources Chart Series:", this.sourcesChartData);
+        console.log("Sources Chart Labels:", this.sourcesChartOptions.labels);
       } catch (error) {
-	console.error('Error fetching sources chart data:', error);
+        console.error('Error fetching sources chart data:', error);
       }
     },
     applyFilter(filter) {
       this.currentFilter = filter;
       console.log("Filter applied:", filter);
+      this.chartData = [];
+      this.sourcesChartData = [];
+      this.categoriesChartData = [];
       this.fetchLineChartData();
       this.fetchDonutChartData();
+      this.fetchSourcesChartData();
     },
     formatCurrency(amount) {
       const formatted = new Intl.NumberFormat('en-US', {
@@ -385,29 +386,40 @@ export default {
     },
   },
   mounted() {
-    this.fetchLineChartData();
-    if (this.selectedContent === "Account") {
-      this.fetchLineChartData();
-    } else if (this.selectedContent === "Categories") {
+    if (this.selectedContent === "Categories") {
       this.fetchDonutChartData();
       this.fetchSourcesChartData();
+    } 
+    if (this.selectedContent === "Account") {
+      this.fetchLineChartData();
     }
   },
   watch: {
     selectedContent(newValue) {
+      this.chartData = [];
+      this.sourcesChartData = [];
+      this.categoriesChartData = [];
+
+      if (newValue === "Categories") {
+        this.fetchSourcesChartData();
+        this.fetchDonutChartData();
+      }
       if (newValue === "Account") {
         this.fetchLineChartData();
-      } else if (newValue === "Categories") {
-        this.fetchDonutChartData();
-	this.fetchSourcesChartData();
       }
     },
     selectedDate() {
+      this.chartData = [];
+      this.sourcesChartData = [];
+      this.categoriesChartData = [];
       this.fetchLineChartData();
       this.fetchDonutChartData();
       this.fetchSourcesChartData();
     },
     currentFilter() {
+      this.chartData = [];
+      this.sourcesChartData = [];
+      this.categoriesChartData = [];
       this.fetchLineChartData();
       this.fetchDonutChartData();
       this.fetchSourcesChartData();
@@ -513,7 +525,7 @@ select {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 670px;
+    height: 700px;
     overflow: hidden;
 }
 

@@ -286,6 +286,12 @@ class FilteredIncomeListView(APIView):
         filter_type = request.query_params.get('filter', 'All')
         date_str = request.query_params.get('date', None)
 
+        if filter_type != 'All' and not date_str:
+            return Response(
+                {"error": "Date is required for the selected filter."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if filter_type == 'All':
             incomes = Incomes.objects.filter(user=request.user)
         else:
@@ -320,8 +326,11 @@ class FilteredIncomeListView(APIView):
             .order_by("category__name")
         )
 
+        # Sum incomes by date
+        income_data = incomes.values('date').annotate(total_amount=Sum('amount')).order_by('date')
+
         response_data = {
-            'incomes': IncomeSerializer(incomes, many=True).data,
+            'incomes': [{'x': item['date'], 'y': item['total_amount']} for item in income_data],
             'total_income': total_income,
             'categories_summary': [
                 {
@@ -341,6 +350,12 @@ class FilteredExpenseListView(APIView):
     def get(self, request):
         filter_type = request.query_params.get('filter', 'All')
         date_str = request.query_params.get('date', None)
+
+        if filter_type != 'All' and not date_str:
+            return Response(
+                {"error": "Date is required for the selected filter."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if filter_type == 'All':
             expenses = Expenses.objects.filter(user=request.user)
@@ -376,8 +391,11 @@ class FilteredExpenseListView(APIView):
             .order_by("category__name")
         )
 
+        # Sum expenses by date
+        expense_data = expenses.values('date').annotate(total_amount=Sum('amount')).order_by('date')
+
         response_data = {
-            'expenses': ExpenseSerializer(expenses, many=True).data,
+            'expenses': [{'x': item['date'], 'y': item['total_amount']} for item in expense_data],
             'total_expense': total_expense,
             'categories_summary': [
                 {
