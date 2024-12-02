@@ -72,7 +72,7 @@
           </li>
 	</ul>
 	
-	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+	<div v-if="showNewCategory" @click="cancelNewCategory"></div>
 	<div v-if="showNewCategory" class="new-category-dialog">
           <h4>Enter new category</h4>
           <input

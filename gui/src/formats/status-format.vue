@@ -87,7 +87,7 @@
               :series="sourcesChartData"
               :style="{ width: '100%', height: '100%' }" />
           </div>
-  </div>
+	</div>
         <div class="pie-container">
           <div class="chart-categories">
             <apexchart

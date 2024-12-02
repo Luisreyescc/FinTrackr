@@ -58,7 +58,7 @@
             </li>
           </ul>
 
-          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
@@ -341,6 +341,11 @@ export default {
     margin-right: 14px;
 }
 
+.row-icon {
+    font-size: 38px;
+    color: #25253C;
+}
+
 .income-details {
     flex: 1;
     display: flex;
@@ -349,7 +354,7 @@ export default {
     overflow: hidden;
 }
 
-.income-details h4, income-description {
+.income-details h4, .income-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
