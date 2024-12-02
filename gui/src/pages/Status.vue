@@ -1,7 +1,11 @@
 <template>
 <div class="page-container scrollbar">
   <StatusForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar"/>
-  <SideBar :isVisible="isSidebarVisible" :currentPage="'Status'" @closeSidebar="toggleSidebar" @selectContent="updateContent" />
+  <SideBar
+    :isVisible="isSidebarVisible"
+    :currentPage="'Status'"
+    @closeSidebar="toggleSidebar"
+    @selectContent="updateContent"/>
 </div>
 </template>
 

@@ -30,6 +30,7 @@ import {
   faHandHoldingDollar,
   faEnvelopeOpenText,
   faAngleUp,
+  faClockRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -61,6 +62,7 @@ library.add(
   faHandHoldingDollar,
   faEnvelopeOpenText,
   faAngleUp,
+  faClockRotateLeft
 );
 
 const app = createApp(App)

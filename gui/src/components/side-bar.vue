@@ -13,7 +13,7 @@
     
     <div class="divider_top"></div>
     
-    <div v-if="currentPage === 'Home'" class="menu-options">
+    <div v-if="currentPage === 'Home'" class="menuH-options">
       <button @click="selectOption('Incomes')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-line']" class="icon"/> Incomes</button>
       <button @click="selectOption('Expenses')" class="menu-option">
@@ -22,11 +22,16 @@
 	<font-awesome-icon :icon="['fas', 'credit-card']" class="icon"/> Debts</button>
     </div>
 
-    <div v-if="currentPage === 'Status'" class="menu-options">
+    <div v-if="currentPage === 'Status'" class="menuS-options">
       <button @click="selectOption('Account')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-area']" class="icon a"/>Account Status</button>
       <button @click="selectOption('Categories')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Pie Charts</button>
+    </div>
+
+    <div v-if="currentPage === 'History'" class="menuI-options">
+      <button @click="selectOption('History')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon a"/>Events History</button>
     </div>
     
     <div class="divider_bottom"></div>
@@ -157,10 +162,19 @@ export default {
     opacity: 0.8;
 }
 
-.menu-options, .bottom-options {
+.menuH-options, .menuS-options,
+.menuI-options, .bottom-options {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+}
+
+.menuS-options {
+    margin-bottom: 280px;
+}
+
+.menuI-options {
+    margin-bottom: 370px;
 }
 
 .menu-option, .bottom-option {
