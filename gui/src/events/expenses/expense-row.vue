@@ -28,21 +28,26 @@
     <form @submit.prevent="submitEdit">
       <label>
         Amount:
-        <input type="text"
-               v-model="editExpense.amount"
-               @input="validateAmount"
-               :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
-               placeholder="Enter amount (e.g., 1000.00)" />
+        <input
+          type="text"
+          v-model="editExpense.amount"
+          @input="validateAmount"
+          :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
+          placeholder="Enter amount (e.g., 1000.00)"/>
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
       <label>
         Description:
-        <input type="text"
-               v-model="editExpense.description"
-               @input="validateTextField('description')"
-               :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editExpense.description }"
-               placeholder="Enter a description for the expense" />
+        <input
+          type="text"
+          v-model="editExpense.description"
+          @input="validateTextField('description')"
+          :class="{
+                  'input-error': descriptionError,
+                  'input-valid': !descriptionError
+                  && editExpense.description }"
+          placeholder="Enter a description for the expense"/>
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -50,13 +55,39 @@
 	<div class="categories-select" @click="toggleDropdown">
           Categories
           <span class="dropdown-icon">
-            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
             <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
           </span>
 	</div>
 	
 	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-          <li v-if="loadingCategories">Loading categories...</li></ul>
+          <li v-if="loadingCategories">Loading categories...</li>
+          <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
+          </li>
+          <li
+            v-for="(category, index) in categoryOptions"
+            :key="index"
+            @click="addCategory(category)">{{ category }}
+          </li>
+	</ul>
+	
+	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+	<div v-if="showNewCategory" class="new-category-dialog">
+          <h4>Enter new category</h4>
+          <input
+            type="text"
+            v-model="newCategory"
+            placeholder="New category"
+            :maxlength="18" />
+          <div class="button-group">
+            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+            <button
+              @click="acceptNewCategory"
+              class="accept-category"
+              :disabled="!isAcceptEnabled">Accept</button>
+          </div>
+	</div>
 	
 	<div class="selected-categories">
           <span v-for="(category, index) in expense.categories" :key="index" class="tag">
@@ -74,7 +105,7 @@
           v-model="editExpense.date"
           type="date"
           @input="validateDate"
-          :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }" />
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }"/>
       </label>
       <span v-if="dateError" class="error-message">{{ dateError }}</span>
       
@@ -113,6 +144,8 @@ export default {
       dateError: "",
       categoryOptions: [],
       dropdownOpen: false,
+      showNewCategory: false,
+      newCategory: "",
       loadingCategories: false,
     };
   },
@@ -139,6 +172,9 @@ export default {
     isSubmitEnabled() {
       return this.expense.categories.length > 0;
     },
+    isAcceptEnabled() {
+      return this.newCategory.trim().length > 0;
+    },
   },
   methods: {
     startEdit() {
@@ -149,6 +185,14 @@ export default {
       this.isEditing = false;
       this.editExpense = { ...this.expense };
       this.clearErrors();
+    },
+    clearErrors() {
+      this.amountError = "";
+      this.descriptionError = "";
+      this.dateError = "";
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
     },
     submitEdit() {
       this.clearErrors();
@@ -162,14 +206,6 @@ export default {
         this.isEditing = false;
       }
     },
-    clearErrors() {
-      this.amountError = "";
-      this.descriptionError = "";
-      this.dateError = "";
-    },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
     async fetchCategories() {
       try {
         const token = localStorage.getItem("token");
@@ -179,7 +215,8 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get('http://localhost:8000/api/user-categories/', {
+	//'http://localhost:8000/api/user-categories/'
+        const response = await axios.get('http://localhost:8000/api/expense-categories/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.categoryOptions = response.data.categories;
@@ -189,11 +226,42 @@ export default {
         this.loadingCategories = false;
       }
     },
+    async sendNewCategory() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
+        if (response.status === 201) {
+          // Add new category to the user's categories table if the backend respons with success
+          this.categoryOptions.push(this.newCategory.trim());
+          this.editExpense.categories.push(this.newCategory.trim());
+        } else {
+          console.error("Failed to add category:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error adding new category:", error);
+      }
+    },
+    async acceptNewCategory() {
+      if (this.newCategory.trim()) {
+        await this.sendNewCategory();
+        this.editExpense.categories.push(this.newCategory);
+        this.showNewCategory = false;
+        this.newCategory = "";
+	this.dropdownOpen = false;
+      }
+    },
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
+	this.newCategory = "";
       }
       this.dropdownOpen = false;
+    },
+    showNewCategoryDialog() {
+      this.newCategory = "";
+      this.showNewCategory = true;
+    },
+    cancelNewCategory() {
+      this.showNewCategory = false;
     },
     removeCategory(index) {
       this.editExpense.categories.splice(index, 1);
@@ -314,7 +382,7 @@ export default {
 
 .expense-amount {
     font-weight: bold;
-    color: #e42121;
+    color: #21255B;
     font-size: 20px;
     flex-shrink: 0;
 }

@@ -107,6 +107,33 @@ export default {
         }
       }
     },
+    async newDebt(debtData) {
+      const { amount, description, categories, date } = debtData;
+      if (amount && description && categories && date) {
+        try {
+          const response = await apiClient.post("/api/debts", debtData);
+          if (response.status === 201) {
+            this.addMessage("New debt added succesfully.", "success");
+          } else {
+            this.addMessage("Failed adding the debt.", "error");
+          }
+        } catch (error) {
+          console.error("New debt error:", error);
+          if (error.response && error.response.data) {
+            const errors = [];
+            for (const key in error.response.data) {
+              errors.push(`${key}: ${error.response.data[key]}`);
+            }
+            this.addMessage(errors.join("\n"), "error");
+          } else {
+            this.addMessage(
+              "There was an issue while adding your debt. Please try again.",
+              "error",
+            );
+          }
+        }
+      }
+    },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },
@@ -120,14 +147,14 @@ export default {
 
 <style scoped>
 .page-container {
-  display: flex;
-  position: relative;
-  padding-top: 70px;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    position: relative;
+    padding-top: 70px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .content {
-  flex: 1;
-  padding: 20px;
+    flex: 1;
+    padding: 20px;
 }
 </style>

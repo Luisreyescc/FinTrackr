@@ -1,6 +1,6 @@
 <template>
 <div class="form-container">
-  <h3 class="form-title">New Expense data</h3>
+  <h3 class="form-title">New debt data</h3>
   <div class="form-content scrollbar">
     <form @submit.prevent="submitForm">
       <label>
@@ -21,7 +21,7 @@
           v-model="expense.description"
           @input="validateTextField('description')"
           :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-          placeholder="Enter a description for the expense" />
+          placeholder="Enter a description for the debt" />
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -64,7 +64,7 @@
 	</div>
 	
 	<div class="selected-categories">
-          <span v-for="(category, index) in expense.categories" :key="index" class="tag">
+          <span v-for="(category, index) in debt.categories" :key="index" class="tag">
             {{ category }}
             <button @click="removeCategory(index)" class="close-button">
               <font-awesome-icon :icon="['fas', 'xmark']"/>
@@ -77,9 +77,9 @@
 	Date:
 	<input
           type="date"
-          v-model="expense.date"
+          v-model="debt.date"
           @input="validateDate"
-          :class="{ 'input-error': dateError, 'input-valid': !dateError && expense.date }" />
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && debt.date }" />
       </label>
       <span v-if="dateError" class="error-message">{{ dateError }}</span>
       
@@ -97,10 +97,10 @@ import '@/css/scrollbar.css';
 import axios from 'axios';
  
 export default {
-  name: "ExpensesForm",
+  name: "DebtsForm",
   data() {
     return {
-      expense: { amount: '', description: '', categories: [], date: '' },
+      debt: { amount: '', description: '', categories: [], date: '' },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -120,7 +120,7 @@ export default {
       const isDateValid = this.validateDate();
       
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit('submitForm', { ...this.expense });
+        this.$emit('submitForm', { ...this.debt });
         this.$emit('closeForm');
         this.resetForm();
       }
@@ -153,7 +153,7 @@ export default {
         if (response.status === 201) {
           // Add new category to the user's categories table if the backend respons with success
           this.categoryOptions.push(this.newCategory.trim());
-          this.expense.categories.push(this.newCategory.trim());
+          this.debt.categories.push(this.newCategory.trim());
         } else {
           console.error("Failed to add category:", response.statusText);
         }
@@ -162,8 +162,8 @@ export default {
       }
     },
     addCategory(category) {
-      if (!this.expense.categories.includes(category)) {
-        this.expense.categories.push(category);
+      if (!this.debt.categories.includes(category)) {
+        this.debt.categories.push(category);
       }
       this.dropdownOpen = false;
     },
@@ -177,14 +177,14 @@ export default {
     async acceptNewCategory() {
       if (this.newCategory.trim()) {
         await this.sendNewCategory();
-        this.expense.categories.push(this.newCategory);
+        this.debt.categories.push(this.newCategory);
         this.showNewCategory = false;
         this.newCategory = "";
 	this.dropdownOpen = false;
       }
     },
     removeCategory(index) {
-      this.expense.categories.splice(index, 1);
+      this.debt.categories.splice(index, 1);
     },
     clearErrors() {
       this.amountError = "";
@@ -197,18 +197,18 @@ export default {
       this.$emit('closeForm');
     },
     resetForm() {
-      this.expense = { amount: '', description: '', categories: [], date: '' };
+      this.debt = { amount: '', description: '', categories: [], date: '' };
       this.dropdownOpen = false;
       this.clearErrors();
     },
     validateAmount() {
       this.amountError = "";
       const amountPattern = /^\d{1,10}(\.\d{0,2})?$/;
-      if (!this.expense.amount) {
+      if (!this.debt.amount) {
         this.amountError = "Amount is required";
         return false;
       }
-      if (!amountPattern.test(this.expense.amount)) {
+      if (!amountPattern.test(this.debt.amount)) {
         this.amountError = "Invalid amount format";
         return false;
       }
@@ -217,11 +217,11 @@ export default {
     validateTextField(field) {
       //function to determine the label error
       this[`${field}Error`] = "";
-      if (!this.expense[field]) {
+      if (!this.debt[field]) {
         this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.expense[field].length > 180) {
+      if (this.debt[field].length > 180) {
         this[`${field}Error`] = "Exceeded the maximum character limit of 180";
         return false;
       }
@@ -229,7 +229,7 @@ export default {
     },
     validateDate() {
       this.dateError = "";
-      if (!this.expense.date) {
+      if (!this.debt.date) {
         this.dateError = "Date is required";
         return false;
       }
@@ -238,7 +238,7 @@ export default {
   },
   computed: {
     isSubmitEnabled() {
-      return this.expense.categories.length > 0;
+      return this.debt.categories.length > 0;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;

@@ -10,7 +10,7 @@
           v-model="expense.amount"
           @input="validateAmount"
           :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
-          placeholder="Enter amount (e.g., 1000.00)" />
+          placeholder="Enter amount (e.g., 1000.00)"/>
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
@@ -21,7 +21,7 @@
           v-model="expense.description"
           @input="validateTextField('description')"
           :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-          placeholder="Enter a description for the expense" />
+          placeholder="Enter a description for the expense"/>
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -29,15 +29,15 @@
 	<div class="categories-select" @click="toggleDropdown">
           Categories
           <span class="dropdown-icon">
-            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-            <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+            <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
           </span>
 	</div>
 	
 	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
           <li v-if="loadingCategories">Loading categories...</li>
           <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold;">
-            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
           </li>
           <li
             v-for="(category, index) in categoryOptions"
@@ -53,7 +53,7 @@
             type="text"
             v-model="newCategory"
             placeholder="New category"
-            :maxlength="18" />
+            :maxlength="18"/>
           <div class="button-group">
             <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
             <button

@@ -1,11 +1,7 @@
 <template>
 <div class="debt-row">
   <div class="debt-checkbox">
-    <input 
-      type="checkbox" 
-      :checked="isChecked" 
-      @change="toggleDebtChecked" 
-      class="checkbox"/>
+    <input type="checkbox" :checked="isChecked" @change="toggleDebtChecked" class="checkbox"/>
   </div>
   <div class="debt-details">
     <h4>{{ formattedCategories }}</h4>
@@ -98,7 +94,7 @@ import axios from 'axios';
 export default {
   name: "DebtRow",
   props: {
-    expense: {
+    debt: {
       type: Object,
       required: true,
       default: () => ({ categories: [], isChecked: false })
@@ -107,16 +103,18 @@ export default {
   data() {
     return {
       isEditing: false,
-      isChecked: this.expense.isChecked,
+      isChecked: this.debt.isChecked,
       editDebt: {
         ...this.debt, 
-        categories: this.expense.categories || [] 
+        categories: this.debt.categories || [] 
       },
       amountError: "",
       descriptionError: "",
       dateError: "",
       categoryOptions: [],
       dropdownOpen: false,
+      showNewCategory: false,
+      newCategory: "",
       loadingCategories: false,
     };
   },
@@ -127,32 +125,43 @@ export default {
         style: 'currency',
         currency: 'USD'
       });
-      return `- ${formatter.format(this.expense.amount)}`;
+      return `${formatter.format(this.expense.amount)}`;
     },
     formattedCategories() {
-      return this.expense.categories ? this.expense.categories.join(", ") : "No categories";
+      return this.debt.categories ? this.debt.categories.join(", ") : "No categories";
     },
     formattedDate() {
       // Data format day-MONTH-year
-      const date = new Date(this.expense.date);
+      const date = new Date(this.debt.date);
       const day = String(date.getDate()).padStart(2, '0');
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.expense.categories.length > 0;
+      return this.debt.categories.length > 0;
+    },
+    isAcceptEnabled() {
+      return this.newCategory.trim().length > 0;
     },
   },
   methods: {
     startEdit() {
       this.isEditing = true;
-      this.editExpense = { ...this.expense };
+      this.editDebt = { ...this.debt };
     },
     cancelEdit() {
       this.isEditing = false;
-      this.editExpense = { ...this.expense };
+      this.editDebt = { ...this.debt };
       this.clearErrors();
+    },
+    clearErrors() {
+      this.amountError = "";
+      this.descriptionError = "";
+      this.dateError = "";
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
     },
     submitEdit() {
       this.clearErrors();
@@ -162,17 +171,9 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateExpense", this.editExpense);
+        this.$emit("updateDebt", this.editDebt);
         this.isEditing = false;
       }
-    },
-    clearErrors() {
-      this.amountError = "";
-      this.descriptionError = "";
-      this.dateError = "";
-    },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
     },
     async fetchCategories() {
       try {
@@ -191,6 +192,29 @@ export default {
         console.error("Error fetching categories:", error);
       } finally {
         this.loadingCategories = false;
+      }
+    },
+    async sendNewCategory() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
+        if (response.status === 201) {
+          // Add new category to the user's categories table if the backend respons with success
+          this.categoryOptions.push(this.newCategory.trim());
+          this.editDebt.categories.push(this.newCategory.trim());
+        } else {
+          console.error("Failed to add category:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error adding new category:", error);
+      }
+    },
+    async acceptNewCategory() {
+      if (this.newCategory.trim()) {
+        await this.sendNewCategory();
+        this.editDebt.categories.push(this.newCategory);
+        this.showNewCategory = false;
+        this.newCategory = "";
+	this.dropdownOpen = false;
       }
     },
     async toggleDebtChecked(event) {
@@ -214,8 +238,16 @@ export default {
     addCategory(category) {
       if (!this.editDebt.categories.includes(category)) {
         this.editDebt.categories.push(category);
+	this.newCategory = "";
       }
       this.dropdownOpen = false;
+    },
+    showNewCategoryDialog() {
+      this.newCategory = "";
+      this.showNewCategory = true;
+    },
+    cancelNewCategory() {
+      this.showNewCategory = false;
     },
     removeCategory(index) {
       this.editDebt.categories.splice(index, 1);
@@ -226,7 +258,7 @@ export default {
         this.amountError = "Amount is required";
         return false;
       }
-      if (!amountPattern.test(this.editExpense.amount)) {
+      if (!amountPattern.test(this.editDebt.amount)) {
         this.amountError = "Invalid amount format";
         return false;
       }
@@ -287,7 +319,7 @@ export default {
   background-color: #1b1f9c;
 }
 
-.debts-details {
+.debt-details {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -295,7 +327,7 @@ export default {
     overflow: hidden;
 }
 
-.debts-details h4, .debts-description {
+.debt-details h4, .debt-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -304,19 +336,19 @@ export default {
     margin-left: 10px;
 }
 
-.debts-details h4 {
+.debt-details h4 {
     font-size: 22px;
     color: #21255b;
     font-weight: bold;
 }
 
-.debts-description {
+.debt-description {
     color: #777;
     font-weight: bold;
     font-size: 20px;
 }
 
-.debts-date {
+.debt-date {
     color: #aaa;
     font-weight: bold;
     font-size: 18px;
@@ -324,14 +356,14 @@ export default {
     white-space: nowrap;
 }
 
-.debts-amount-section {
+.debt-amount-section {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
 }
 
-.debts-amount {
+.debt-amount {
     font-weight: bold;
     color: darkred;
     font-size: 20px;

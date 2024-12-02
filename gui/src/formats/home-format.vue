@@ -2,7 +2,7 @@
 <div class="home-form">
   <div class="sidebar">
     <button @click="toggleSidebar" class="menu-button">
-      <font-awesome-icon :icon="['fas', 'bars']" font-size="32" />
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
     </button>
   </div>
   
@@ -11,7 +11,7 @@
       <div class="incomes-container">
         <div class="header">
           <h2 class="section-title">{{ selectedContent }}</h2>
-          <IncomeButton @click="toggleForm" />
+          <IncomeButton @click="toggleForm"/>
           </div>
         <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
@@ -22,15 +22,14 @@
                 :key="index"
                 :income="income"
                 @updateIncome="handleIncomeUpdate"
-                @deleteIncome="handleIncomeDelete"
-                />
+                @deleteIncome="handleIncomeDelete"/>
             </div>
             </div>
         </div>
       </div>
       <div v-if="showForm" class="overlay" @click="toggleForm"></div>
       <div class="forms-section" v-if="showForm">
-        <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm" />
+        <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm"/>
       </div>
     </div>
     
@@ -38,7 +37,7 @@
       <div class="expenses-container">
         <div class="header">
           <h2 class="section-title">{{ selectedContent }}</h2>
-          <ExpenseButton @click="toggleForm" />
+          <ExpenseButton @click="toggleForm"/>
         </div>
         <div class="activity-content scrollbar">
           <h3 class="activity-title">Activity</h3>
@@ -49,14 +48,14 @@
                 :key="index"
                 :expense="expense"
                 @updateExpense="handleExpenseUpdate"
-                @deleteExpense="handleExpenseDelete" />
+                @deleteExpense="handleExpenseDelete"/>
             </div>
           </div>
         </div>
       </div>
       <div v-if="showForm" class="overlay" @click="toggleForm"></div>
       <div class="forms-section" v-if="showForm">
-        <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm" />
+        <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm"/>
       </div>
     </div>
 
@@ -64,7 +63,7 @@
       <div class="debts-container">
         <div class="header">
           <h2 class="section-title">{{ selectedContent }}</h2>
-          <DebtButton @click="toggleForm" />
+          <DebtButton @click="toggleForm"/>
         </div>
         <div class="activity-content scrollbar">
           <h3 class="activity-title">Activity</h3>
@@ -75,14 +74,14 @@
                 :key="index"
                 :debt="debt"
                 @updateDebt="handleDebtUpdate"
-                @deleteDebt="handleDebtDelete" />
+                @deleteDebt="handleDebtDelete"/>
             </div>
           </div>
         </div>
       </div>
       <div v-if="showForm" class="overlay" @click="toggleForm"></div>
       <div class="forms-section" v-if="showForm">
-        <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm" />
+        <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm"/>
       </div>
     </div>
   </div>
@@ -94,7 +93,7 @@
     :key="msg.id" 
     :text="msg.text" 
     :type="msg.type" 
-    @close="removeMessage(index)" />
+    @close="removeMessage(index)"/>
 </div>
 </template>
 
@@ -151,7 +150,7 @@ export default {
       return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
     sortedDebts() {
-      return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.debts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
   },
   methods: {
@@ -305,6 +304,12 @@ export default {
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
+	const modifiedIncomeData = {
+          ...updatedIncome,
+          category: updatedIncome.categories,
+        };
+        delete modifiedIncomeData.categories;
+	
         const response = await axios.put(
           `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
           updatedIncome,
@@ -319,6 +324,8 @@ export default {
           }
           this.addMessage("Income data edited successfully.", "success");
         }
+	
+	this.fetchIncomes();
       } catch (error) {
         console.error("Error updating income:", error);
         this.addMessage("There was an error while saving the income changes.", "error");
