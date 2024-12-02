@@ -104,15 +104,15 @@ import moment from 'moment';
 import '@/css/scrollbar.css';
 import MessageAlerts from '@/components/messages.vue';
 
-import IncomesForm from '@/components/incomes/incomes-forms.vue';
-import IncomeButton from '@/components/incomes/incomes-header.vue';
-import IncomeRow from '@/components/incomes/income-row.vue';
-import ExpensesForm from '@/components/expenses/expenses-forms.vue';
-import ExpenseButton from '@/components/expenses/expenses-header.vue';
-import ExpenseRow from '@/components/expenses/expense-row.vue';
-import DebtsForm from '@/events/debts-forms.vue';
-import DebtsButton from '@/events/debts-header.vue';
-import DebtRow from '@/events/debt-row.vue';
+import IncomesForm from '@/events/incomes/incomes-forms.vue';
+import IncomeButton from '@/events/incomes/incomes-header.vue';
+import IncomeRow from '@/events/incomes/income-row.vue';
+import ExpensesForm from '@/events/expenses/expenses-forms.vue';
+import ExpenseButton from '@/events/expenses/expenses-header.vue';
+import ExpenseRow from '@/events/expenses/expense-row.vue';
+import DebtsForm from '@/events/debts/debts-forms.vue';
+import DebtButton from '@/events/debts/debts-header.vue';
+import DebtRow from '@/events/debts/debt-row.vue';
 
 export default {
   name: "HomeForm",
@@ -124,7 +124,7 @@ export default {
     ExpenseButton,
     ExpenseRow,
     DebtsForm,
-    DebtsButton,
+    DebtButton,
     DebtRow,
     MessageAlerts
   },
