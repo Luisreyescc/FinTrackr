@@ -18,7 +18,7 @@
           <div class="activity-section">
             <div class="list-container scrollbar">
               <EventRow
-                v-for="(event, index) in sortedEvent"
+                v-for="(event, index) in filteredEvents"
                 :key="index"
                 :event="event"/>
             </div>
@@ -49,7 +49,7 @@ import HistoryHeader from '@/events/history-header.vue';
 import EventRow from '@/events/row-event.vue';
 
 export default {
-  name: "HomeForm",
+  name: "HistoryForm",
   components: {
     HistoryHeader,
     EventRow,
@@ -64,17 +64,80 @@ export default {
   data() {
     return {
       event: [],
-      messages: []
+      messages: [],
+      searchQuery: "",
     };
   },
   computed: {
     sortedEvent() {
-      return this.event.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.event.slice().sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA > dateB) return -1;
+        if (dateA < dateB) return 1;
+        // If dates are equal, sort by type
+        const typeOrder = { 'Income': 1, 'Expense': 2, 'Debt': 3 };
+        return typeOrder[a.type] - typeOrder[b.type];
+      });
     },
+    filteredEvents() {
+      let events = this.sortedEvent;
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [null, query];
+
+        if (filterValue) {
+          if (filterType === 'amount ==') {
+            const amount = parseFloat(filterValue);
+            events = events.filter(event => Math.abs(event.amount) === amount);
+          } else if (filterType === 'amount >=') {
+            const amount = parseFloat(filterValue);
+            events = events.filter(event => event.amount >= amount);
+          } else if (filterType === 'amount <=') {
+            const amount = parseFloat(filterValue);
+            events = events.filter(event => event.amount <= amount);
+          } else if (filterType === 'date') {
+            const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+            events = events.filter(event => {
+              return dateFormats.some(format => {
+                const eventDate = moment(event.date, "YYYY-MMM-DD");
+                const filterDate = moment(filterValue, format);
+                if (filterValue.length === 4) {
+                  return eventDate.isSame(filterDate, 'year');
+                } else if (filterValue.length === 7 || filterValue.length === 8) {
+                  return eventDate.isSame(filterDate, 'month');
+                } else {
+                  return eventDate.isSame(filterDate, 'day');
+                }
+              });
+            });
+          } else if (filterType === 'category') {
+            events = events.filter(event => event.categories.some(category => category.toLowerCase().startsWith(filterValue.toLowerCase())));
+          } else if (filterType === 'description') {
+            events = events.filter(event => event.description.toLowerCase().includes(filterValue.toLowerCase()));
+          } else {
+            // Global search
+            const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+            const amount = parseFloat(filterValue);
+            events = events.filter(event => {
+              return (
+                event.description.toLowerCase().includes(filterValue) ||
+                event.categories.some(category => category.toLowerCase().includes(filterValue)) ||
+                dateFormats.some(format => moment(event.date, "YYYY-MMM-DD").isSame(moment(filterValue, format), 'day')) ||
+                (!isNaN(amount) && Math.abs(event.amount) === amount)
+              );
+            });
+          }
+        }
+      }
+
+      return events;
+    }
   },
   methods: {
     formatDate(date) {
-      return moment(date).format("MMM DD, YYYY");
+      return moment(date).format("YYYY-MMM-DD");
     },
     addMessage(text, type = "neutral") {
       const id = Date.now();
@@ -94,11 +157,11 @@ export default {
         const response = await axios.get('http://localhost:8000/api/incomes/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const incomes =
-              response.data.map((income) => ({
-		...income,
-		date: this.formatDate(income.date),
-              }));
+        const incomes = response.data.map((income) => ({
+          ...income,
+          date: this.formatDate(income.date),
+          type: 'Income' // Add type field
+        }));
         this.event.push(...incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
@@ -113,12 +176,11 @@ export default {
         const response = await axios.get('http://localhost:8000/api/expenses/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const expenses =
-              response.data.map((expense) => ({
-		...expense,
-		date: this.formatDate(expense.date),
-              }));
-	
+        const expenses = response.data.map((expense) => ({
+          ...expense,
+          date: this.formatDate(expense.date),
+          type: 'Expense' // Add type field
+        }));
         this.event.push(...expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
@@ -133,24 +195,26 @@ export default {
         const response = await axios.get('http://localhost:8000/api/debts/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const debts =
-              response.data.map((debt) => ({
-		...debt,
-		date: this.formatDate(debt.date),
-              }));
-	this.event.push(...debts);
+        const debts = response.data.map((debt) => ({
+          ...debt,
+          date: this.formatDate(debt.date),
+          type: 'Debt' // Add type field
+        }));
+        this.event.push(...debts);
       } catch (error) {
         console.error('Error fetching debts:', error);
         this.addMessage("There was an error fetching your debts.", "error");
       }
     },
     handleResetClick() {
+      this.searchQuery = "";
       this.addMessage("Reset button clicked!", "neutral");
       console.log("Clock button clicked");
     },
     handleSearch(query) {
+      this.searchQuery = query;
       console.log("Search query:", query);
-      this.addMessage("Searching: ", "neutral");
+      this.addMessage("Searching: " + query, "neutral");
     },
   },
   mounted() {
@@ -164,7 +228,7 @@ export default {
     selectedContent(newValue) {
       if (newValue === "History") {
         this.fetchIncomes();
-	this.fetchExpenses();
+        this.fetchExpenses();
         this.fetchDebts();
       }
     }

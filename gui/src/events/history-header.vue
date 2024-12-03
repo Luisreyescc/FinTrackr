@@ -1,57 +1,56 @@
 <template>
-<div class="history-header">
-  <div class="search-container">
-    <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
-    <div class="tags-input">
-      <span v-for="(tag, index) in selectedFilters" :key="index" class="tag">
-        {{ tag }}
-        <button class="tag-remove" @click="removeFilter(index)">
-          <font-awesome-icon :icon="['fas', 'times']" />
-        </button>
-      </span>
+  <div class="history-header">
+      <div class="search-container">
+      <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
       <input
-	type="text"
-	class="search-bar"
-	placeholder="Search..."
-	@input="$emit('search', $event.target.value)"/>
-    </div>
+          type="text"
+          class="search-bar"
+          placeholder="Search..."
+          v-model="searchQuery"
+          @input="onSearch"/>
+      </div>
+  
+      <FilterDropdown
+      :filterOptions="['Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
+      :currentFilter="currentFilter"
+      @filterSelected="applyFilter" />
+  
+      <button @click="resetFilters" class="reset-button" >
+      <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon" />
+      </button>
   </div>
+  </template>
   
-  <FilterDropdown
-    :filterOptions="['All', 'Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
-    :currentFilter="currentFilter"
-    @filterSelected="applyFilter" />
+  <script>
+  import FilterDropdown from "@/components/filter-dropdown.vue";
   
-  <button @click="$emit('resetClicked')" class="reset-button" >
-    <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon" />
-  </button>
-</div>
-</template>
-
-<script>
-import FilterDropdown from "@/components/filter-dropdown.vue";
-  
-export default {
-  name: "HistoryHeader",
-  components: {
-    FilterDropdown
-  },
-  data() {
-    return {
-      currentFilter: "All",
-      selectedFilters: []
-    };
-  },
-  methods: {
-    applyFilter(filter) {
-      this.selectedFilters.push(filter);
-    },
-    removeFilter(index) {
-      this.selectedFilters.splice(index, 1);
-    }
-  },
-};
-</script>
+  export default {
+      name: "HistoryHeader",
+      components: {
+      FilterDropdown
+      },
+      data() {
+      return {
+          currentFilter: "All",
+          searchQuery: ""
+      };
+      },
+      methods: {
+      applyFilter(filter) {
+          this.searchQuery = filter;
+          this.$emit('search', this.searchQuery);
+      },
+      onSearch(event) {
+          this.searchQuery = event.target.value;
+          this.$emit('search', this.searchQuery);
+      },
+      resetFilters() {
+          this.searchQuery = "";
+          this.$emit('resetClicked');
+      }
+      },
+  };
+  </script>
 
 <style scoped>
 .history-header {
@@ -121,29 +120,5 @@ export default {
 .reset-button:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     transform: scale(1.1);
-}
-
-.tag {
-  display: flex;
-  align-items: center;
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 12px;
-  background: #f5f5fc;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-/* Botón para eliminar etiquetas */
-.tag-remove {
-  background: none;
-  border: none;
-  margin-left: 8px;
-  color: #555;
-  cursor: pointer;
-}
-
-.tag-remove:hover {
-  color: #ff5a5a;
 }
 </style>

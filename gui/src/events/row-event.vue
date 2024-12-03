@@ -7,6 +7,7 @@
       <h4>{{ formattedCategories }}</h4>
       <p class="event-description">{{ event.description }}</p>
       <span class="event-date">{{ formattedDate }}</span>
+      <span :class="typeClass">{{ event.type }}</span>
     </div>
     <div class="event-amount-section">
       <span :class="amountClass">{{ formattedAmount }}</span>
@@ -22,38 +23,42 @@ export default {
       type: Object,
       required: true,
     },
-    type: {
-      type: String,
-      required: true,
-    },
   },
   computed: {
     rowClass() {
-      if (this.type === 'income')
-	return 'income-row';
-      if (this.type === 'expense')
-	return 'expense-row';
+      if (this.event.type === 'Income')
+        return 'income-row';
+      if (this.event.type === 'Expense')
+        return 'expense-row';
 
       return 'debt-row';
     },
     icon() {
-      if (this.type === 'income')
-	return ['fas', 'circle-dollar-to-slot'];
-      if (this.type === 'expense')
-	return ['fas', 'money-bill-transfer'];
+      if (this.event.type === 'Income')
+        return ['fas', 'circle-dollar-to-slot'];
+      if (this.event.type === 'Expense')
+        return ['fas', 'money-bill-transfer'];
 
       return ['fas', 'hand-holding-dollar'];
     },
     amountClass() {
-      if (this.type === 'income')
-	return 'income-amount';
-      if (this.type === 'expense')
-	return 'expense-amount';
+      if (this.event.type === 'Income')
+        return 'income-amount';
+      if (this.event.type === 'Expense')
+        return 'expense-amount';
 
       return 'debt-amount';
     },
+    typeClass() {
+      if (this.event.type === 'Income')
+        return 'income-type';
+      if (this.event.type === 'Expense')
+        return 'expense-type';
+
+      return 'debt-type';
+    },
     formattedAmount() {
-      const sign = this.type === 'income' ? '+' : this.type === 'expense' ? '-' : '';
+      const sign = this.event.type === 'Income' ? '+' : this.event.type === 'Expense' ? '-' : '';
       const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -151,10 +156,28 @@ export default {
 }
 
 .expense-amount {
-    color: #21255B;
+    color: #f44336;
 }
 
 .debt-amount {
-    color: darkred;
+    color: #e98c00;
+}
+
+.income-type {
+    color: #4caf50;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.expense-type {
+    color: #f44336;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.debt-type {
+    color: #e98c00;
+    font-weight: bold;
+    margin-top: 5px;
 }
 </style>
