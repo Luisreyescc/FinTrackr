@@ -1,18 +1,15 @@
 <template>
-  <div class="edit-profile-page">
-    <div class="message-container">
-      <MessageAlerts
-        v-for="(msg, index) in messages"
-        :key="msg.id"
-        :text="msg.text"
-        :type="msg.type"
-        @close="removeMessage(index)"/>
-    </div>
-    <EditProfileForm
-      :initialData="userData"
-      @saveProfile="editProfile"
-      @goToHome="goToHome"/>
+<div class="edit-profile-page">
+  <EditProfileForm :initialData="userData" @saveProfile="editProfile" @goToHome="goToHome"/>
+  <div class="message-container">
+    <MessageAlerts
+      v-for="(msg, index) in messages"
+      :key="msg.id"
+      :text="msg.text"
+      :type="msg.type"
+      @close="removeMessage(index)"/>
   </div>
+</div>
 </template>
 
 <script>
@@ -24,7 +21,7 @@ export default {
   name: "EditProfile",
   components: {
     EditProfileForm,
-    MessageAlerts,
+    MessageAlerts
   },
   data() {
     return {
@@ -37,9 +34,9 @@ export default {
         curp: "",
         rfc: "",
         birth_date: "",
-        password: "",
+        password: ""
       },
-      messages: [],
+      messages: []
     };
   },
   methods: {
@@ -122,7 +119,7 @@ export default {
     },
     goToHome() {
       this.$router.push("/");
-    },
+    }
   },
   mounted() {
     console.log("Mounted hook is working");

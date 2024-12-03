@@ -1,161 +1,161 @@
 <template>
-  <div class="edit-form scrollbar">
-    <div class="header">
-      <h2 class="form-title">Edit Profile</h2>
-      <img src="@/assets/profile_black.svg" alt="Profile Icon" class="profile-icon" />
-    </div>
-
-    <div class="username-container">
-      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
-      <input
-        v-model="formData.user_name"
-        type="text"
-        id="user_name"
-        placeholder="Username"
-        :class="{ 'input-error': usernameError, 'padded-input': true }"
-        @input="validateUser" />
-    </div>
-    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-
-    <div class="row">
-      <div class="column">
-	<div class="name-container">
-	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']" />
-        <input v-model="formData.name" type="text" id="name" placeholder="Your name" />
-	</div>
-      </div>
-      <div class="column">
-	<div class="last-name-container">
-	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']" />
-        <input v-model="formData.last_name" type="text" id="last_name" placeholder="Your last name" />
-	</div>
+<div class="edit-form scrollbar">
+  <div class="header">
+    <h2 class="form-title">Edit Profile</h2>
+    <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon"/>
+  </div>
+  
+  <div class="username-container">
+    <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
+    <input
+      v-model="formData.user_name"
+      type="text"
+      id="user_name"
+      placeholder="Username"
+      :class="{ 'input-error': usernameError, 'padded-input': true }"
+      @input="validateUser"/>
+  </div>
+  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+  
+  <div class="row">
+    <div class="column">
+      <div class="name-container">
+	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']"/>
+        <input v-model="formData.name" type="text" id="name" placeholder="Your name"/>
       </div>
     </div>
-
-    <div class="email-container">
-      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
-      <input
-        v-model="formData.email"
-        type="email"
-        id="email"
-        placeholder="Your email"
-        :class="{ 'input-error': emailError, 'padded-input': true }"
-        @input="validateEmail" />
-    </div>
-    <span v-if="emailError" class="error-message">{{ emailError }}</span>
-
-    <div class="curp-container">
-      <font-awesome-icon class="curp-icon" :icon="['fas', 'passport']" />
-      <input
-	v-model="formData.curp"
-	type="text"
-	id="curp"
-	placeholder="Your Curp"
-	:class="{ 'input-error': curpError }"
-	@input="handleCurpInput"/>
-    </div>
-    <span v-if="curpError" class="error-message">{{ curpError }}</span>
-    
-    <div class="rfc-container">
-      <font-awesome-icon class="rfc-icon" :icon="['fas', 'passport']" />
-      <input
-	v-model="formData.rfc"
-	type="text"
-	id="rfc"
-	placeholder="Your Rfc"
-	:class="{ 'input-error': rfcError }"
-	@input="handleRfcInput">
-    </div>
-    <span v-if="rfcError" class="error-message">{{ rfcError }}</span>
-    
-    <div class="row">
-      <div class="column">
-        <div class="phone-container">
-          <font-awesome-icon class="phone-icon" :icon="['fas', 'plus']" />
-          <input
-            v-model="formData.phone"
-            type="tel"
-            id="phone"
-            placeholder="Your phone number"
-            :class="{ 'input-error': phoneError, 'padded-input': true }"
-            @input="validatePhone" />
-        </div>
-	<span v-if="phoneError" class="error-message">{{ phoneError }}</span>
-      </div>
-      <div class="column">
-	<div class="birth-container">
-	<font-awesome-icon class="birth-icon" :icon="['fas', 'cake-candles']" />
-          <input v-model="formData.birth_date" type="date" id="birth_date" />
-	</div>
+    <div class="column">
+      <div class="last-name-container">
+	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']"/>
+        <input v-model="formData.last_name" type="text" id="last_name" placeholder="Your last name"/>
       </div>
     </div>
-    
+  </div>
+  
+  <div class="email-container">
+    <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
+    <input
+      v-model="formData.email"
+      type="email"
+      id="email"
+      placeholder="Your email"
+      :class="{ 'input-error': emailError, 'padded-input': true }"
+      @input="validateEmail"/>
+  </div>
+  <span v-if="emailError" class="error-message">{{ emailError }}</span>
+  
+  <div class="curp-container">
+    <font-awesome-icon class="curp-icon" :icon="['fas', 'passport']"/>
+    <input
+      v-model="formData.curp"
+      type="text"
+      id="curp"
+      placeholder="Your Curp"
+      :class="{ 'input-error': curpError }"
+      @input="handleCurpInput"/>
+  </div>
+  <span v-if="curpError" class="error-message">{{ curpError }}</span>
+  
+  <div class="rfc-container">
+    <font-awesome-icon class="rfc-icon" :icon="['fas', 'passport']"/>
+    <input
+      v-model="formData.rfc"
+      type="text"
+      id="rfc"
+      placeholder="Your Rfc"
+      :class="{ 'input-error': rfcError }"
+      @input="handleRfcInput">
+  </div>
+  <span v-if="rfcError" class="error-message">{{ rfcError }}</span>
+  
+  <div class="row">
+    <div class="column">
+      <div class="phone-container">
+        <font-awesome-icon class="phone-icon" :icon="['fas', 'plus']"/>
+        <input
+          v-model="formData.phone"
+          type="tel"
+          id="phone"
+          placeholder="Your phone number"
+          :class="{ 'input-error': phoneError, 'padded-input': true }"
+          @input="validatePhone"/>
+      </div>
+      <span v-if="phoneError" class="error-message">{{ phoneError }}</span>
+    </div>
+    <div class="column">
+      <div class="birth-container">
+	<font-awesome-icon class="birth-icon" :icon="['fas', 'cake-candles']"/>
+        <input v-model="formData.birth_date" type="date" id="birth_date"/>
+      </div>
+    </div>
+  </div>
+  
+  <div class="password-container">
+    <input
+      v-model="formData.password"
+      :type="showPassword ? 'text' : 'password'"
+      id="password"
+      placeholder="Your current password"
+      class="padded-input"
+      :class="{ 'input-error': passwordError, 'padded-input': true }"
+      @input="clearError('password')"/>
+    <button
+      type="button"
+      class="show-password-btn"
+      @click="togglePasswordVisibility">
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+    </button>
+    <button
+      type="button"
+      :class="['change-password-btn', { 'close-btn': showPasswordFields }]"
+      @click="togglePasswordFields">
+      <span v-if="showPasswordFields"><font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/></span>
+      <span v-else>Change Password</span>
+    </button>
+  </div>
+  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+  
+  <div v-if="showPasswordFields">
     <div class="password-container">
       <input
-        v-model="formData.password"
-        :type="showPassword ? 'text' : 'password'"
-        id="password"
-        placeholder="Your current password"
-        class="padded-input"
-	:class="{ 'input-error': passwordError, 'padded-input': true }"
-	@input="clearError('password')" />
+        v-model="formData.newPassword"
+        :type="showNewPassword ? 'text' : 'password'"
+        id="new_password"
+        placeholder="New password"
+        :class="{ 'input-error': newPasswordError }"
+	@input="clearError('newPassword')"/>
       <button
         type="button"
         class="show-password-btn"
-        @click="togglePasswordVisibility" >
-        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+        @click="toggleNewPasswordVisibility" >
+        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showNewPassword }"></span>
       </button>
+    </div>
+    <span v-if="newPasswordError" class="error-message">{{ newPasswordError }}</span>
+    
+    <div class="password-container">
+      <input
+        v-model="formData.confirmPassword"
+        :type="showConfirmPassword ? 'text' : 'password'"
+        id="confirm_password"
+        placeholder="Confirm new password"
+        :class="{ 'input-error': confirmPasswordError }"
+	@input="clearError('confirmPassword')"/>
       <button
         type="button"
-        :class="['change-password-btn', { 'close-btn': showPasswordFields }]"
-        @click="togglePasswordFields" >
-        <span v-if="showPasswordFields"><font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/></span>
-        <span v-else>Change Password</span>
+        class="show-password-btn"
+        @click="toggleConfirmPasswordVisibility">
+        <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
       </button>
     </div>
-    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-    
-    <div v-if="showPasswordFields">
-      <div class="password-container">
-        <input
-          v-model="formData.newPassword"
-          :type="showNewPassword ? 'text' : 'password'"
-          id="new_password"
-          placeholder="New password"
-          :class="{ 'input-error': newPasswordError }"
-	@input="clearError('newPassword')" />
-        <button
-          type="button"
-          class="show-password-btn"
-          @click="toggleNewPasswordVisibility" >
-          <span :class="{ 'gg-eye': true, 'gg-eye-alt': showNewPassword }" ></span>
-        </button>
-      </div>
-      <span v-if="newPasswordError" class="error-message">{{ newPasswordError }}</span>
-
-      <div class="password-container">
-        <input
-          v-model="formData.confirmPassword"
-          :type="showConfirmPassword ? 'text' : 'password'"
-          id="confirm_password"
-          placeholder="Confirm new password"
-          :class="{ 'input-error': confirmPasswordError }"
-	@input="clearError('confirmPassword')" />
-        <button
-          type="button"
-          class="show-password-btn"
-          @click="toggleConfirmPasswordVisibility" >
-          <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }" ></span>
-        </button>
-      </div>
-      <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-    </div>
-
-    <div class="button-group">
-      <button class="cancel-btn" @click="$emit('goToHome')">Cancel</button>
-      <button class="save-btn" @click="saveProfile">Save Changes</button>
-    </div>
+    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
   </div>
+  
+  <div class="button-group">
+    <button class="cancel-btn" @click="$emit('goToHome')">Cancel</button>
+    <button class="save-btn" @click="saveProfile">Save Changes</button>
+  </div>
+</div>
 </template>
 
 <script>
@@ -168,7 +168,7 @@ export default {
   props: {
     initialData: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
   },
   data() {
@@ -184,7 +184,7 @@ export default {
         birth_date: this.initialData.birth_date || "",
         password: "",
         new_password: "",
-        confirm_password: "",
+        confirm_password: ""
       },
       showPassword: false,
       showNewPassword: false,
@@ -215,11 +215,11 @@ export default {
           birth_date: newVal.birth_date || "",
           password: "",
           new_password: "",
-          confirm_password: "",
+          confirm_password: ""
         };
       },
       deep: true,
-      immediate: true,
+      immediate: true
     },
   },
   methods: {
@@ -256,7 +256,10 @@ export default {
 	this.newPasswordError = "New password is required.";
 	if (!this.formData.confirmPassword)
 	this.confirmPasswordError = "Confirm password is required.";
-	if (this.formData.newPassword && this.formData.confirmPassword && this.formData.newPassword !== this.formData.confirmPassword) {
+	if (this.formData.newPassword
+            && this.formData.confirmPassword
+            && this.formData.newPassword
+            !== this.formData.confirmPassword) {
 	this.newPasswordError = "Passwords don't match.";
 	this.confirmPasswordError = "Passwords don't match.";
 	}
@@ -299,24 +302,23 @@ export default {
       this.validateChanges();
       this.validateUser();
       this.validateEmail();
-
       this.validatePhone();
       this.validatePasswords();
 
-      if (this.passwordError || this.usernameError || this.emailError ||  this.curpError || this.rfcError ||this.phoneError || this.newPasswordError || this.confirmPasswordError)
+      if (this.passwordError || this.usernameError
+          || this.emailError ||  this.curpError
+          || this.rfcError ||this.phoneError
+          || this.newPasswordError || this.confirmPasswordError)
 	return;
       
       const sanitizedData = Object.fromEntries(
-        Object.entries(this.formData).map(([key, value]) => [
-          key,
-          value || null,
-        ]),
+        Object.entries(this.formData).map(([key, value]) => [key, value || null ]),
       );
       this.$emit("saveProfile", sanitizedData);
     },
     goToHome() {
       this.$emit("goToHome");
-    },
+    }
   },
 };
 </script>
@@ -334,10 +336,10 @@ export default {
     overflow-x: hidden;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    width: 500px;
-    background: rgba(255, 255, 255, 0.1);
+    width: 700px;
+    background: #25262B;
     backdrop-filter: blur(15px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -349,18 +351,18 @@ export default {
 .form-title {
     font-size: 32px;
     font-weight: bold;
-    color: #333;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {
     width: 90px;
     height: 90px;
-    margin-left: 200px;
+    margin-left: 400px;
     border-radius: 50%;
-    border: 2px solid #333;
+    border: 2px solid white;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(5px);
 }
 
 input {
@@ -370,7 +372,7 @@ input {
     background-color: transparent;
     border: none;
     outline: none;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -394,7 +396,7 @@ input {
     position: relative;
     margin-right: 20px;
     width: 150%;
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -406,7 +408,7 @@ input {
     align-items: center;
     position: relative;
     width: 130%;
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -417,7 +419,7 @@ input {
     position: relative;
     justify-content: space-between;
     width: 100%;
-    color: #333;
+    color: white;
     font-size: 18px;
     margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
@@ -425,7 +427,7 @@ input {
 
 .username-container input,
 .email-container input {
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -436,13 +438,13 @@ input {
 .rfc-container input,
 .phone-container input {
     padding-left: 40px;
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .birth-container input {
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -451,53 +453,53 @@ input {
     flex: 1;
     padding-left: 40px;
     padding-right: 40px;
-    color: #333;
+    color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .username-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .name-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .last-name-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .curp-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .rfc-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .email-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .phone-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .birth-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
 .password-container input::placeholder {
-    color: #333;
+    color: white;
     font-size: 18px;
 }
 
@@ -522,8 +524,8 @@ input {
 .rfc-icon,
 .phone-icon {
     margin-right: -25px;
-    font-size: 18px;
-    color: #333;
+    font-size: 22px;
+    color: white;
 }
 
 .padded-input {
@@ -542,9 +544,9 @@ input {
 
 .birth-icon {
     margin-right: -25px;
-    transform: translateX(850%);
-    font-size: 18px;
-    color: #333;
+    transform: translateX(1040%);
+    font-size: 22px;
+    color: white;
 }
 
 .save-btn,
@@ -576,7 +578,7 @@ input {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #333;
+    color: white;
     cursor: pointer;
     font-size: 20px;
 }

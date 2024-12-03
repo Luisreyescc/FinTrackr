@@ -7,7 +7,6 @@
       @closeSidebar="toggleSidebar"
       @selectContent="updateContent"/>
   </div>
-
   <div class="message-container">
     <MessageAlerts
       v-for="(msg, index) in messages"
