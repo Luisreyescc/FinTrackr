@@ -12,7 +12,7 @@
         <div class="header">
           <h2 class="section-title">{{ selectedContent }}</h2>
           <IncomeButton @click="toggleForm"/>
-          </div>
+        </div>
         <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
           <div class="activity-section">

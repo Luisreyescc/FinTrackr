@@ -1,7 +1,7 @@
 <template>
   <div :class="rowClass">
     <div class="event-icon">
-      <font-awesome-icon :icon="icon" :style="{ fontSize: '28px', color: '#25253C' }" />
+      <font-awesome-icon :icon="icon" class="row-icon"/>
     </div>
     <div class="event-details">
       <h4>{{ formattedCategories }}</h4>
@@ -75,7 +75,7 @@ export default {
 </script>
 
 <style scoped>
-.income-row, .expense-row {
+.income-row, .expense-row, .debt-row{
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -90,11 +90,16 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background-color: #e0e0e0;
     margin-right: 14px;
+}
+
+.row-icon {
+    font-size: 38px;
+    color: #25253C;
 }
 
 .event-details {
@@ -105,8 +110,17 @@ export default {
     overflow: hidden;
 }
 
+.event-details h4, .event-description {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 440px;
+    margin-left: 10px;
+}
+
 .event-details h4 {
-    font-size: 16px;
+    font-size: 22px;
     color: #21255b;
     font-weight: bold;
 }
@@ -119,13 +133,17 @@ export default {
 
 .event-date {
     color: #aaa;
-    font-size: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 .event-amount-section {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    margin-left: 25px;
 }
 
 .income-amount {
@@ -133,50 +151,10 @@ export default {
 }
 
 .expense-amount {
-    color: #e42121;
+    color: #21255B;
 }
 
-.event-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.edit-button,
-.delete-button {
-    border-radius: 10px;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    transition: transform 0.2s, background-color 0.2s;
-}
-
-.edit-button {
-    background-color: #25253c;
-    color: white;
-}
-
-.edit-button:hover {
-    transform: scale(1.1);
-    background-color: #555;
-}
-
-.delete-button {
-    background-color: red;
-    color: white;
-}
-
-.delete-button:hover {
-    transform: scale(1.1);
-    background-color: darkred;
-}
-
-.icon {
-    font-size: 16px;
-    color: white;
+.debt-amount {
+    color: darkred;
 }
 </style>

@@ -11,7 +11,7 @@
       <div class="events-container">
         <div class="header">
           <h2 class="section-title">Your History</h2>
-          <HistoryHeader @click="toggleForm"/>
+          <HistoryHeader @resetClicked="handleResetClick" @search="handleSearch"/>
         </div>
         <div class="activity-content">
           <h3 class="activity-title">Activity</h3>
@@ -63,14 +63,13 @@ export default {
   },
   data() {
     return {
-      showForm: false,
       event: [],
       messages: []
     };
   },
   computed: {
     sortedEvent() {
-      return this.events.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.event.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
   },
   methods: {
@@ -95,11 +94,12 @@ export default {
         const response = await axios.get('http://localhost:8000/api/incomes/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.incomes = response.data.map((income) => ({
-          ...income,
-          date: this.formatDate(income.date),
-        }));
-        console.log(this.incomes);
+        const incomes =
+              response.data.map((income) => ({
+		...income,
+		date: this.formatDate(income.date),
+              }));
+        this.event.push(...incomes);
       } catch (error) {
         console.error('Error fetching incomes:', error);
         this.addMessage("There was an error fetching your incomes.", "error");
@@ -113,11 +113,13 @@ export default {
         const response = await axios.get('http://localhost:8000/api/expenses/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.expenses = response.data.map((expense) => ({
-          ...expense,
-          date: this.formatDate(expense.date),
-        }));
-        console.log(this.expenses);
+        const expenses =
+              response.data.map((expense) => ({
+		...expense,
+		date: this.formatDate(expense.date),
+              }));
+	
+        this.event.push(...expenses);
       } catch (error) {
         console.error('Error fetching expenses:', error);
         this.addMessage("There was an error fetching your expenses.", "error");
@@ -131,15 +133,24 @@ export default {
         const response = await axios.get('http://localhost:8000/api/debts/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.debts = response.data.map((debt) => ({
-          ...debt,
-          date: this.formatDate(debt.date),
-        }));
-        console.log(this.debts);
+        const debts =
+              response.data.map((debt) => ({
+		...debt,
+		date: this.formatDate(debt.date),
+              }));
+	this.event.push(...debts);
       } catch (error) {
         console.error('Error fetching debts:', error);
         this.addMessage("There was an error fetching your debts.", "error");
       }
+    },
+    handleResetClick() {
+      this.addMessage("Reset button clicked!", "neutral");
+      console.log("Clock button clicked");
+    },
+    handleSearch(query) {
+      console.log("Search query:", query);
+      this.addMessage("Searching: ", "neutral");
     },
   },
   mounted() {
@@ -162,7 +173,7 @@ export default {
 </script>
 
 <style scoped>
-.home-form {
+.history-form {
     display: flex;
     width: 100%;
     overflow: hidden;
