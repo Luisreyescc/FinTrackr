@@ -150,35 +150,14 @@ export default {
   },
   computed: {
     filteredIncomes() {
-    return this.sortedIncomes.filter(income => {
-      const searchQuery = this.searchQuery.toLowerCase();
-      return (
-        income.amount?.toString().toLowerCase().includes(searchQuery) ||
-        income.description?.toLowerCase().includes(searchQuery) ||
-        income.date?.toLowerCase().includes(searchQuery)
-      );
-    });
-  },
-  filteredExpenses() {
-    return this.sortedExpenses.filter(expense => {
-      const searchQuery = this.searchQuery.toLowerCase();
-      return (
-        expense.amount?.toString().toLowerCase().includes(searchQuery) ||
-        expense.description?.toLowerCase().includes(searchQuery) ||
-        expense.date?.toLowerCase().includes(searchQuery)
-      );
-    });
-  },
-  filteredDebts() {
-    return this.sortedDebts.filter(debt => {
-      const searchQuery = this.searchQuery.toLowerCase();
-      return (
-        debt.amount?.toString().toLowerCase().includes(searchQuery) ||
-        debt.description?.toLowerCase().includes(searchQuery) ||
-        debt.date?.toLowerCase().includes(searchQuery)
-      );
-    });
-  },
+      return this.sortedIncomes.filter(income => this.filterEvents(income));
+    },
+    filteredExpenses() {
+      return this.sortedExpenses.filter(expense => this.filterEvents(expense));
+    },
+    filteredDebts() {
+      return this.sortedDebts.filter(debt => this.filterEvents(debt));
+    },
     sortedIncomes() {
       return this.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
@@ -193,8 +172,32 @@ export default {
     handleSearch(query) {
       this.searchQuery = query;
     },
+    filterEvents(event) {
+      const searchQuery = this.searchQuery.toLowerCase();
+      const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+      const amount = parseFloat(searchQuery);
+
+      return (
+        event.amount?.toString().toLowerCase().includes(searchQuery) ||
+        event.description?.toLowerCase().includes(searchQuery) ||
+        event.categories?.some(category => category.toLowerCase().includes(searchQuery)) ||
+        event.date?.toLowerCase().includes(searchQuery) ||
+        dateFormats.some(format => {
+          const eventDate = moment(event.date, "YYYY-MMM-DD");
+          const filterDate = moment(searchQuery, format);
+          if (searchQuery.length === 4) {
+            return eventDate.isSame(filterDate, 'year');
+          } else if (searchQuery.length === 7 || searchQuery.length === 8) {
+            return eventDate.isSame(filterDate, 'month');
+          } else {
+            return eventDate.isSame(filterDate, 'day');
+          }
+        }) ||
+        (!isNaN(amount) && Math.abs(event.amount) === amount)
+      );
+    },
     formatDate(date) {
-      return moment(date).format("MMM DD, YYYY");
+      return moment(date).format("YYYY-MMM-DD");
     },
     addMessage(text, type = "neutral") {
       const id = Date.now();
