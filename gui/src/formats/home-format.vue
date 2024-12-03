@@ -144,19 +144,13 @@ export default {
   },
   computed: {
     sortedIncomes() {
-      return this.incomes
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
     sortedExpenses() {
-      return this.expenses
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
     sortedDebts() {
-      return this.debts
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      return this.debts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     }
   },
   methods: {
@@ -179,11 +173,11 @@ export default {
     async fetchIncomes() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get("http://localhost:8000/api/incomes/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+          headers: { Authorization: `Bearer ${token}` } });
         this.incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
@@ -197,7 +191,8 @@ export default {
     async fetchExpenses() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get(
           "http://localhost:8000/api/expenses/",
@@ -218,7 +213,8 @@ export default {
     async fetchDebts() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get("http://localhost:8000/api/debts/", {
           headers: { Authorization: `Bearer ${token}` },
@@ -379,7 +375,6 @@ export default {
         );
       }
     },
-
     async handleExpenseUpdate(updatedExpense) {
       try {
         const token = localStorage.getItem("token");
@@ -441,7 +436,6 @@ export default {
         );
       }
     },
-
     async handleDebtUpdate(updatedDebt) {
       try {
         const token = localStorage.getItem("token");
@@ -499,23 +493,21 @@ export default {
     },
   },
   mounted() {
-    if (this.selectedContent === "Incomes") {
+    if (this.selectedContent === "Incomes")
       this.fetchIncomes();
-    } else if (this.selectedContent === "Expenses") {
+    else if (this.selectedContent === "Expenses")
       this.fetchExpenses();
-    } else if (this.selectedContent === "Debts") {
+    else if (this.selectedContent === "Debts")
       this.fetchDebts();
-    }
   },
   watch: {
     selectedContent(newValue) {
-      if (newValue === "Incomes") {
+      if (newValue === "Incomes")
         this.fetchIncomes();
-      } else if (newValue === "Expenses") {
+      else if (newValue === "Expenses")
         this.fetchExpenses();
-      } else if (newValue === "Debts") {
+      else if (newValue === "Debts")
         this.fetchDebts();
-      }
     }
   },
 };
@@ -569,8 +561,10 @@ export default {
     max-width: 1200px;
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    background: #25262B;
 }
 
 .header {
@@ -579,7 +573,8 @@ export default {
     justify-content: space-between;
     font-family: "Wix Madefor Display", sans-serif;
     padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
+    background: #25262B;
+    border-radius: 12px;
 }
 
 .header h3 {
@@ -589,7 +584,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #141428;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -599,7 +594,8 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     padding: 20px;
-    border-top: 1px solid #eee;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    background: #25262B;
     position: relative;
 }
 
@@ -608,7 +604,7 @@ export default {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
-    color: #141428;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -616,6 +612,8 @@ export default {
     flex: 1;
     overflow-y: auto;
     padding-right: 10px;
+    background: #25262B;
+    border-radius: 12px;
     max-height: calc(70vh - 50px);
 }
 
@@ -630,8 +628,8 @@ export default {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    border-radius: 9px;
+    background: #25262B;
+    border-radius: 12px;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
     z-index: 1001;

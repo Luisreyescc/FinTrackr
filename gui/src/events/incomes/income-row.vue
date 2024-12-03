@@ -321,26 +321,26 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: #2E2F36;
     border-radius: 8px;
     margin-bottom: 10px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.1);
 }
 
 .income-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    background-color: #e0e0e0;
+    background-color: white;
     margin-right: 14px;
 }
 
 .row-icon {
-    font-size: 38px;
-    color: #25253C;
+    font-size: 40px;
+    color: #2E2F36;
 }
 
 .income-details {
@@ -362,7 +362,7 @@ export default {
 
 .income-details h4 {
     font-size: 22px;
-    color: #21255b;
+    color: white;
     font-weight: bold;
 }
 
@@ -413,7 +413,7 @@ export default {
 }
 
 .edit-button {
-    background-color: #25253c;
+    background-color: #25262B;
     color: white;
 }
 
@@ -423,7 +423,7 @@ export default {
 }
 
 .delete-button {
-    background-color: red;
+    background-color: #D55C5C;
     color: white;
 }
 
@@ -501,7 +501,7 @@ input {
 }
 
 .input-error {
-    border-bottom-color: #e42121;
+    border-bottom-color: #D55C5C;
     background-color: #ffebee;
     outline: none;
 }
@@ -513,7 +513,7 @@ input {
 }
 
 .error-message {
-    color: red;
+    color: #D55C5C;
     font-size: 12px;
 }
 
