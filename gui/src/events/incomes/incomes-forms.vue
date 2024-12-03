@@ -29,9 +29,9 @@
               <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
             </li>
             <li
-              v-for="(category, index) in categoriesOptions"
+              v-for="(category, index) in categoryOptions"
               :key="index"
-              @click="newCategory(category)">{{ category }}
+              @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
@@ -82,7 +82,7 @@
             :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }"/>
         </label>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
-	
+    
         <div class="button-group">
           <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
@@ -120,8 +120,7 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	//this.$emit("submitForm", { ...this.income, category: this.income.categories });
-	this.$emit('submitForm', { ...this.income });
+        this.$emit('submitForm', { ...this.income });
         this.$emit("closeForm");
         this.resetForm();
       }
@@ -138,32 +137,19 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get("http://localhost:8000/api/income-categories/", {
+        const response = await axios.get(
+          "http://localhost:8000/api/income-categories/",
+          {
             headers: { Authorization: `Bearer ${token}` },
-          },
+          }
         );
-        this.categoryOptions = response.data.categories;
+        this.categoryOptions = response.data.categories || [];
+        // Remove duplicates
+        this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
         this.loadingCategories = false;
-      }
-    },
-    async sendNewCategory() {
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/categories/",
-          { name: this.newCategory.trim() },
-        );
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.categoryOptions.push(this.newCategory.trim());
-          this.expense.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
       }
     },
     addCategory(category) {
@@ -179,11 +165,15 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    async acceptNewCategory() {
+    acceptNewCategory() {
       if (this.newCategory.trim()) {
-        await this.sendNewCategory();
-        this.categoryOptions.push(this.newCategory.trim());
-        this.income.categories.push(this.newCategory.trim());
+        const newCategory = this.newCategory.trim();
+        if (!this.categoryOptions.includes(newCategory)) {
+          this.categoryOptions.push(newCategory);
+        }
+        if (!this.income.categories.includes(newCategory)) {
+          this.income.categories.push(newCategory);
+        }
         this.newCategory = "";
         this.showNewCategory = false;
         this.dropdownOpen = false;
@@ -456,7 +446,7 @@ input {
     color: #333;
 }
 
-.new-categories-dialog {
+.new-category-dialog {
     position: fixed;
     background: white;
     border: 1px solid #ccc;
@@ -470,14 +460,14 @@ input {
     transform: translate(-50%, -50%);
 }
 
-.new-categories-dialog h4 {
+.new-category-dialog h4 {
     margin: 0 0 10px;
     font-size: 18px;
     color: #21255b;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-categories-dialog input {
+.new-category-dialog input {
     width: 90%;
     padding: 14px;
     margin-top: 10px;
@@ -490,14 +480,14 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.new-categories-dialog .button-group {
+.new-category-dialog .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
 }
 
-.cancel-categories,
-.accept-categories {
+.cancel-category,
+.accept-category {
     color: white;
     border: none;
     padding: 8px 18px;
@@ -508,11 +498,11 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-.cancel-categories {
+.cancel-category {
     background-color: #333;
 }
 
-.accept-categories {
+.accept-category {
     background-color: #4caf50;
 }
 

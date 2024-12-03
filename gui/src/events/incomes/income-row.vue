@@ -48,7 +48,7 @@
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold" >
+            <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold">
               <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
             </li>
             <li
@@ -69,14 +69,14 @@
             <div class="button-group">
               <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
               <button
-		@click="acceptNewCategory"
-		class="accept-category"
-		:disabled="!isAcceptEnabled">Accept</button>
+                @click="acceptNewCategory"
+                class="accept-category"
+                :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
 
           <div class="selected-categories">
-            <span v-for="(category, index) in income.categories" :key="index" class="tag">
+            <span v-for="(category, index) in editIncome.categories" :key="index" class="tag">
               {{ category }}
               <button @click="removeCategory(index)" class="close-button">
                 <font-awesome-icon :icon="['fas', 'xmark']" />
@@ -93,8 +93,7 @@
             @input="validateTextField('description')"
             :class="{
               'input-error': descriptionError,
-              'input-valid': !descriptionError
-              && editIncome.description }"
+              'input-valid': !descriptionError && editIncome.description }"
             placeholder="Enter a description for the income"/>
         </label>
         <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
@@ -138,9 +137,6 @@ export default {
         ...this.income,
         categories: this.income.categories || []
       },
-      
-      localIncome: { ...this.income }, //
-      
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -148,7 +144,8 @@ export default {
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false,    };
+      loadingCategories: false,
+    };
   },
   computed: {
     formattedAmount() {
@@ -171,7 +168,7 @@ export default {
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.income.categories && this.income.categories.length > 0;
+      return this.editIncome.categories && this.editIncome.categories.length > 0;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -183,6 +180,7 @@ export default {
       this.editIncome = {
         ...this.income,
         categories: [...this.income.categories],
+        date: this.formatDateForInput(this.income.date) // Format the date for input
       };
     },
     cancelEdit() {
@@ -198,41 +196,19 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    submitEdit() { //async submitEdit() {}
+    submitEdit() {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
 
-      /* if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.editIncome.date = new Date(this.editIncome.date).toISOString().split("T")[0];
-
-	const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          return;
-        }
-        try {
-          const response = await axios.put(
-            `http://localhost:8000/api/incomes/${this.editIncome.income_id}/`,
-            this.editIncome,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-          Object.assign(this.localIncome, response.data);
-          this.$emit("updateIncome", { ...this.localIncome });
-          this.isEditing = false;
-        } catch (error) {
-          console.error(
-            "Error al actualizar el ingreso:",
-            error.response?.data || error.message,
-          );
-        }
-	} */
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateIncome", this.editIncomes);
+        console.log("Edit Income Data before emit:", this.editIncome);
+        this.$emit("updateIncome", {
+          ...this.editIncome,
+          categories: [...this.editIncome.categories], // Ensure categories is an array of strings
+        });
         this.isEditing = false;
       }
     },
@@ -252,6 +228,8 @@ export default {
           },
         );
         this.categoryOptions = response.data.categories || [];
+        // Remove duplicates
+        this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -261,13 +239,11 @@ export default {
     addCategory(category) {
       if (!this.editIncome.categories.includes(category)) {
         this.editIncome.categories.push(category);
-        this.newCategory = "";
       }
       this.dropdownOpen = false;
     },
     removeCategory(index) {
-      this.localIncome.categories.splice(index, 1);
-      this.$emit("updateIncome", { ...this.localIncome });
+      this.editIncome.categories.splice(index, 1);
     },
     showNewCategoryDialog() {
       this.newCategory = "";
@@ -275,6 +251,20 @@ export default {
     },
     cancelNewCategory() {
       this.showNewCategory = false;
+    },
+    acceptNewCategory() {
+      if (this.newCategory.trim()) {
+        const newCategory = this.newCategory.trim();
+        if (!this.categoryOptions.includes(newCategory)) {
+          this.categoryOptions.push(newCategory);
+        }
+        if (!this.editIncome.categories.includes(newCategory)) {
+          this.editIncome.categories.push(newCategory);
+        }
+        this.newCategory = "";
+        this.showNewCategory = false;
+        this.dropdownOpen = false;
+      }
     },
     validateAmount() {
       const amountPattern = /^\d{1,10}(\.\d{0,2})?$/;
@@ -311,6 +301,13 @@ export default {
       console.log("Removing income");
       this.$emit("deleteIncome", this.income.income_id);
     },
+    formatDateForInput(date) {
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${year}-${month}-${day}`;
+    }
   },
   mounted() {
     this.fetchCategories();

@@ -288,8 +288,7 @@ export default {
 
         const response = await axios.post(
           'http://localhost:8000/api/debts/',
-          modifiedDebtData,
-          { headers: { Authorization: `Bearer ${token}` } }
+          modifiedDebtData ,{ headers: { Authorization: `Bearer ${token}` } }
         );
 
         this.debts.push(response.data);
@@ -304,28 +303,28 @@ export default {
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
-	const modifiedIncomeData = {
+        const modifiedIncomeData = {
           ...updatedIncome,
-          category: updatedIncome.categories,
+          category: [...updatedIncome.categories], // Ensure categories is an array of strings
         };
         delete modifiedIncomeData.categories;
-	
+
         const response = await axios.put(
           `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
-          updatedIncome,
+          modifiedIncomeData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (response.status === 200) {
-          const index = this.incomes.findIndex((income) => income.id === updatedIncome.id);
+          const index = this.incomes.findIndex((income) => income.income_id === updatedIncome.income_id);
           if (index !== -1) {
             this.incomes[index] = response.data;
             this.fetchIncomes();
           }
           this.addMessage("Income data edited successfully.", "success");
         }
-	
-	this.fetchIncomes();
+
+        this.fetchIncomes();
       } catch (error) {
         console.error("Error updating income:", error);
         this.addMessage("There was an error while saving the income changes.", "error");
@@ -340,7 +339,7 @@ export default {
         if (response.status === 204) {
           console.log("Succes");
           this.fetchIncomes();
-          this.incomes = this.incomes.filter((income) => income.id !== incomeId);
+          this.incomes = this.incomes.filter((income) => income.income_id !== incomeId);
           this.addMessage("Income deleted successfully.", "success");
         }
       } catch (error) {
@@ -364,7 +363,7 @@ export default {
         );
 
         if (response.status === 200) {
-          const index = this.expenses.findIndex((expense) => expense.id === updatedExpense.expense_id);
+          const index = this.expenses.findIndex((expense) => expense.expense_id === updatedExpense.expense_id);
           if (index !== -1) {
             this.expenses[index] = response.data;
             this.fetchExpenses();
@@ -387,7 +386,7 @@ export default {
 
         if (response.status === 204) {
           this.fetchExpenses();
-          this.expenses = this.expenses.filter((expense) => expense.id !== expenseId);
+          this.expenses = this.expenses.filter((expense) => expense.expense_id !== expenseId);
           this.addMessage("Expense deleted successfully.", "success");
         }
       } catch (error) {
@@ -411,7 +410,7 @@ export default {
         );
 
         if (response.status === 200) {
-          const index = this.debts.findIndex((debt) => debt.id === updatedDebt.debt_id);
+          const index = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
           if (index !== -1) {
             this.debts[index] = response.data;
             this.fetchDebts();
@@ -434,7 +433,7 @@ export default {
 
         if (response.status === 204) {
           this.fetchDebts();
-          this.debts = this.debts.filter((debt) => debt.id !== debtId);
+          this.debts = this.debts.filter((debt) => debt.debt_id !== debtId);
           this.addMessage("Debt deleted successfully.", "success");
         }
       } catch (error) {
