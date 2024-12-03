@@ -564,17 +564,17 @@ export default {
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-    background: #25262B;
+    background: white;
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: "Wix Madefor Display", sans-serif;
     padding: 10px 20px;
-    background: #25262B;
+    background: white;
     border-radius: 12px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .header h3 {
@@ -584,7 +584,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: white;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -594,8 +594,8 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     padding: 20px;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
-    background: #25262B;
+    border-top: 1px solid #25262B;
+    background: white;
     position: relative;
 }
 
@@ -604,7 +604,7 @@ export default {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
-    color: white;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -612,7 +612,6 @@ export default {
     flex: 1;
     overflow-y: auto;
     padding-right: 10px;
-    background: #25262B;
     border-radius: 12px;
     max-height: calc(70vh - 50px);
 }

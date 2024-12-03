@@ -12,12 +12,12 @@
         <h2 class="section-title">Account Status</h2>
         <div class="section-filter">
           <h3>Status date:</h3>
-          <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
+          <input id="end-date" type="date" class="date-input" v-model="selectedDate"/>
           <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterDropdown
             :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
-            @filterSelected="applyFilter" />
+            @filterSelected="applyFilter"/>
         </div>
       </div>
       <div class="main-content">
@@ -28,35 +28,35 @@
               type="area"
               :options="chartOptions"
               :series="chartData"
-              :style="{ width: '100%', height: '90%' }" />
+              :style="{ width: '100%', height: '90%' }"/>
           </div>
         </div>
         <div class="stats-container">
           <div class="stats-box">
             <div class="stats-header">
               <h3>Your network:</h3>
-              <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon" />
+              <font-awesome-icon :icon="['fas', 'piggy-bank']" class="icon"/>
             </div>
             <p v-html="currency"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
               <h3>Your incomes this {{ currentFilter }}:</h3>
-              <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon" />
+              <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="icon"/>
             </div>
             <p v-html="incomes"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
               <h3>Your expenses this {{ currentFilter }}:</h3>
-              <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon" />
+              <font-awesome-icon :icon="['fas', 'money-bill-transfer']" class="icon"/>
             </div>
             <p v-html="expenses"></p>
           </div>
           <div class="stats-box">
             <div class="stats-header">
               <h3>Pending debts this {{ currentFilter }}:</h3>
-              <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon" />
+              <font-awesome-icon :icon="['fas', 'hand-holding-dollar']" class="icon"/>
             </div>
             <p v-html="debts"></p>
           </div>
@@ -69,12 +69,12 @@
         <h2 class="section-title">Pie Charts</h2>
         <div class="section-filter">
           <h3>Status date:</h3>
-          <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
+          <input id="end-date" type="date" class="date-input" v-model="selectedDate"/>
           <h3>Filtered by: {{ currentFilter }}</h3>
           <FilterDropdown
             :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
-            @filterSelected="applyFilter" />
+            @filterSelected="applyFilter"/>
         </div>
       </div>
       <div class="main-content">
@@ -85,7 +85,7 @@
               type="donut"
               :options="sourcesChartOptions"
               :series="sourcesChartData"
-              :style="{ width: '100%', height: '100%' }" />
+              :style="{ width: '100%', height: '100%' }"/>
           </div>
 	</div>
         <div class="pie-container">
@@ -95,7 +95,7 @@
               type="donut"
               :options="categoriesChartOptions"
               :series="categoriesChartData"
-              :style="{ width: '100%', height: '100%' }" />
+              :style="{ width: '100%', height: '100%' }"/>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ export default {
   props: {
     selectedContent: {
       type: String,
-      default: 'Account',
+      default: 'Account'
     },
   },
   data() {
@@ -360,12 +360,12 @@ export default {
     getExpenses() {
       const amount = this.formatCurrency(this.totalExpense, true);
 
-      return `<span style="color: #21255b;">${amount}</span>`;
+      return `<span style="color: darkred;">${amount}</span>`;
     },
     getDebts() {
       // Placeholder for debts
       const amount = 0;
-      return `<span style="color: darkred;">${amount}</span>`;
+      return `<span style="color: #25262B;">${amount}</span>`;
     },
     toggleSidebar() {
       this.$emit('toggleSidebar');
@@ -466,7 +466,7 @@ export default {
 .content-wrapper {
     flex: 1;
     padding: 20px;
-    margin-left: 50px;
+    margin-left: 70px;
 }
 
 .section {
@@ -489,7 +489,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #25253C;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -497,6 +497,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 15px;
+    color: #25262B;
     font-size: 18px;
 }
 
@@ -519,13 +520,11 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    height: 700px;
     overflow: hidden;
 }
 
@@ -543,6 +542,7 @@ select {
     gap: 20px;
     padding: 20px;
     justify-content: center;
+    min-width: 50%;
 }
 
 .stats-box {
@@ -573,13 +573,14 @@ select {
 .stats-header h3 {
     font-size: 24px;
     font-weight: bold;
-    color: #25253C;
+    color: #25262B;
     flex-direction: column;
     margin: 0;
 }
 
 .icon {
-    font-size: 36px;
+    font-size: 40px;
+    color: #25262B;
 }
 
 .stats-box p {

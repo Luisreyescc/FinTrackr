@@ -400,16 +400,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background-color: #e0e0e0;
   margin-right: 14px;
 }
 
 .row-icon {
-  font-size: 38px;
-  color: #25253c;
+  font-size: 40px;
+  color: #25262B;
 }
 
 .expense-details {
@@ -432,7 +432,7 @@ export default {
 
 .expense-details h4 {
   font-size: 22px;
-  color: #21255b;
+  color: #25262B;
   font-weight: bold;
 }
 
@@ -459,7 +459,7 @@ export default {
 
 .expense-amount {
   font-weight: bold;
-  color: #21255b;
+  color: darkred;
   font-size: 20px;
   flex-shrink: 0;
 }
@@ -480,9 +480,7 @@ export default {
   align-items: center;
   justify-content: center;
   border: none;
-  transition:
-    transform 0.2s,
-    background-color 0.2s;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 .edit-button {

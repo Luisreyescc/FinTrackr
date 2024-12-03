@@ -58,14 +58,14 @@ export default {
   props: {
     selectedContent: {
       type: String,
-      default: 'History',
+      default: 'History'
     },
   },
   data() {
     return {
       event: [],
       messages: [],
-      searchQuery: "",
+      searchQuery: ""
     };
   },
   computed: {
@@ -73,8 +73,10 @@ export default {
       return this.event.slice().sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
-        if (dateA > dateB) return -1;
-        if (dateA < dateB) return 1;
+        if (dateA > dateB)
+          return -1;
+        if (dateA < dateB)
+          return 1;
         // If dates are equal, sort by type
         const typeOrder = { 'Income': 1, 'Expense': 2, 'Debt': 3 };
         return typeOrder[a.type] - typeOrder[b.type];
@@ -152,7 +154,8 @@ export default {
     async fetchIncomes() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get('http://localhost:8000/api/incomes/', {
           headers: { Authorization: `Bearer ${token}` },
@@ -171,7 +174,8 @@ export default {
     async fetchExpenses() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get('http://localhost:8000/api/expenses/', {
           headers: { Authorization: `Bearer ${token}` },
@@ -190,7 +194,8 @@ export default {
     async fetchDebts() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return console.error("No token found");
+        if (!token)
+          return console.error("No token found");
 
         const response = await axios.get('http://localhost:8000/api/debts/', {
           headers: { Authorization: `Bearer ${token}` },
@@ -208,8 +213,6 @@ export default {
     },
     handleResetClick() {
       this.searchQuery = "";
-      this.addMessage("Reset button clicked!", "neutral");
-      console.log("Clock button clicked");
     },
     handleSearch(query) {
       this.searchQuery = query;
@@ -240,7 +243,6 @@ export default {
 .history-form {
     display: flex;
     width: 100%;
-    overflow: hidden;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -285,18 +287,20 @@ export default {
     max-width: 1200px;
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    overflow: hidden;
+     border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    background: white;
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: "Wix Madefor Display", sans-serif;
     padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
+    background: white;
+    border-radius: 12px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .header h3 {
@@ -306,7 +310,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #141428;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -316,7 +320,7 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     padding: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #25262B;
     position: relative;
 }
 
@@ -325,7 +329,7 @@ export default {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
-    color: #141428;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -347,7 +351,7 @@ export default {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: #25262B;
     border-radius: 9px;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;

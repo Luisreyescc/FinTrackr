@@ -21,16 +21,16 @@ export default {
     props: {
     filterOptions: {
       type: Array,
-      required: true,
+      required: true
     },
     currentFilter: {
       type: String,
-      default: "",
+      default: ""
     },
   },
   data() {
     return {
-      dropdownOpen: false,
+      dropdownOpen: false
     };
   },
   methods: {
@@ -43,7 +43,7 @@ export default {
     },
     selectFilter(option) {
       this.$emit("filterSelected", option);
-    },
+    }
   },
 };
 </script>
@@ -61,8 +61,8 @@ export default {
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    background: #ffffff;
-    border: 1px solid #ddd;
+    background: #25262B;
+    border: 1px solid #25262B;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
@@ -74,7 +74,7 @@ export default {
 }
 
 .icon {
-    color: #aaa;
+    color: white;
     font-size: 24px;
 }
 
@@ -82,9 +82,9 @@ export default {
     position: absolute;
     top: 50px;
     right: 0;
-    border: 1px solid #ddd;
+    border: 1px solid #3F4049;
     border-radius: 12px;
-    background-color: white;
+    background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     padding: 0;
     list-style: none;
@@ -94,17 +94,19 @@ export default {
 }
 
 .filters-dropdown li {
-    padding: 10px 20px;
+    padding: 20px 30px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     text-align: left;
+    color: white;
+    font-weight: bold;
     overflow: visible;
 }
 
 .filters-dropdown li:hover {
-    background-color: #f0f8ff;
+    background-color: white;
     border-radius: 12px;
-    color: #1010AC;
+    color: #25262B;
     font-weight: bold;
 }
 </style>

@@ -365,7 +365,7 @@ export default {
 
 .debt-amount {
     font-weight: bold;
-    color: darkred;
+    color: #25262B;
     font-size: 20px;
     flex-shrink: 0;
 }

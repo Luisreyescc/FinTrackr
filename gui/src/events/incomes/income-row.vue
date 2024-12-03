@@ -321,7 +321,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #2E2F36;
+    background-color: #f9f9f9;
     border-radius: 8px;
     margin-bottom: 10px;
     box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.1);
@@ -334,13 +334,13 @@ export default {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background-color: white;
+    background-color: #e0e0e0;
     margin-right: 14px;
 }
 
 .row-icon {
     font-size: 40px;
-    color: #2E2F36;
+    color: #25262B;
 }
 
 .income-details {
@@ -362,7 +362,7 @@ export default {
 
 .income-details h4 {
     font-size: 22px;
-    color: white;
+    color: #25262B;
     font-weight: bold;
 }
 

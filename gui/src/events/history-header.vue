@@ -1,56 +1,56 @@
 <template>
-  <div class="history-header">
-      <div class="search-container">
-      <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
-      <input
-          type="text"
-          class="search-bar"
-          placeholder="Search..."
-          v-model="searchQuery"
-          @input="onSearch"/>
-      </div>
+ <div class="history-header">
+   <div class="search-container">
+     <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+     <input
+       type="text"
+       class="search-bar"
+       placeholder="Search..."
+       v-model="searchQuery"
+       @input="onSearch"/>
+   </div>
+   
+   <FilterDropdown
+     :filterOptions="['Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
+     :currentFilter="currentFilter"
+     @filterSelected="applyFilter"/>
+   
+   <button @click="resetFilters" class="reset-button" >
+     <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon"/>
+   </button>
+ </div>
+</template>
+
+<script>
+import FilterDropdown from "@/components/filter-dropdown.vue";
   
-      <FilterDropdown
-      :filterOptions="['Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
-      :currentFilter="currentFilter"
-      @filterSelected="applyFilter" />
-  
-      <button @click="resetFilters" class="reset-button" >
-      <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon" />
-      </button>
-  </div>
-  </template>
-  
-  <script>
-  import FilterDropdown from "@/components/filter-dropdown.vue";
-  
-  export default {
-      name: "HistoryHeader",
-      components: {
-      FilterDropdown
-      },
-      data() {
-      return {
-          currentFilter: "All",
-          searchQuery: ""
-      };
-      },
-      methods: {
-      applyFilter(filter) {
-          this.searchQuery = filter;
-          this.$emit('search', this.searchQuery);
-      },
-      onSearch(event) {
-          this.searchQuery = event.target.value;
-          this.$emit('search', this.searchQuery);
-      },
-      resetFilters() {
-          this.searchQuery = "";
-          this.$emit('resetClicked');
-      }
-      },
-  };
-  </script>
+export default {
+  name: "HistoryHeader",
+  components: {
+    FilterDropdown
+  },
+  data() {
+    return {
+      currentFilter: "All",
+      searchQuery: ""
+   };
+  },
+  methods: {
+    applyFilter(filter) {
+      this.searchQuery = filter;
+      this.$emit('search', this.searchQuery);
+    },
+    onSearch(event) {
+      this.searchQuery = event.target.value;
+      this.$emit('search', this.searchQuery);
+    },
+    resetFilters() {
+      this.searchQuery = "";
+      this.$emit('resetClicked');
+    }
+  },
+};
+</script>
 
 <style scoped>
 .history-header {
@@ -77,7 +77,7 @@
 .search-icon {
     position: absolute;
     left: 20px;
-    color: #aaa;
+    color: #25262B;
     font-size: 20px;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .search-bar::placeholder {
-    color: #aaa;
+    color: #25262B;
     font-size: 20px;
 }
 
@@ -105,15 +105,15 @@
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    background: #ffffff;
-    border: 1px solid #ddd;
+    background: #25262B;
+    border: 1px solid #25262B;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
 }
 
 .icon {
-    color: #aaa;
+    color: white;
     font-size: 24px;
 }
 

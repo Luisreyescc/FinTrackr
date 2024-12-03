@@ -95,15 +95,15 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background-color: #e0e0e0;
     margin-right: 14px;
 }
 
 .row-icon {
-    font-size: 38px;
+    font-size: 40px;
     color: #25253C;
 }
 
@@ -126,14 +126,14 @@ export default {
 
 .event-details h4 {
     font-size: 22px;
-    color: #21255b;
+    color: #25262B;
     font-weight: bold;
 }
 
 .event-description {
     color: #777;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .event-date {
@@ -148,6 +148,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    font-weight: bold;
+    font-size: 20px;
     margin-left: 25px;
 }
 
