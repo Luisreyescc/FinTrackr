@@ -2,7 +2,7 @@
   <div class="home-form">
     <div class="sidebar">
       <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
       </button>
     </div>
     
