@@ -8,7 +8,10 @@
           <router-link to="/home" class="nav-item">Home<span></span></router-link>
           <router-link to="/status" class="nav-item">Status<span></span></router-link>
           <router-link to="/history" class="nav-item">History<span></span></router-link>
-          <router-link v-if="isLoggedIn" to="/edit-profile" class="nav-item user-item">Hello, {{ userName }} <span></span></router-link>
+          <router-link
+            v-if="isLoggedIn"
+            to="/edit-profile"
+            class="nav-item user-item">Hello, {{ userName }} <span></span></router-link>
 	</nav>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
 <div class="recovery-password-page">
-  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon" />
+  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon"/>
 
   <div class="message-container">
     <MessageAlerts
@@ -8,7 +8,7 @@
       :key="msg.id" 
       :text="msg.text" 
       :type="msg.type" 
-      @close="removeMessage(index)" />
+      @close="removeMessage(index)"/>
   </div>
   
   <RecoveryForm
@@ -16,7 +16,7 @@
     @sendCode="handleSendCode"
     @validateCode="handleValidateCode"
     @changePassword="handleChangePassword"
-    @goToLogin="goToLogin" />
+    @goToLogin="goToLogin"/>
 </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
     return {
       messages: [],
       currentStep: 1,
-      username: "",
+      username: ""
     };
   },
   methods: {
@@ -98,7 +98,7 @@ export default {
     },
     goToLogin() {
       this.$router.push("/");
-    },
+    }
   }
 };
 </script>
@@ -121,7 +121,6 @@ export default {
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    /*background: #3B3B5A;*/
     background: rgba(59, 59, 90, 0.1);
     backdrop-filter: blur(15px);
 }

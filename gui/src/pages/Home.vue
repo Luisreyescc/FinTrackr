@@ -1,8 +1,6 @@
 <template>
   <div class="page-container scrollbar">
-    <HomeForm
-      :selectedContent="selectedContent"
-      @toggleSidebar="toggleSidebar"/>
+    <HomeForm :selectedContent="selectedContent" @toggleSidebar="toggleSidebar"/>
     <SideBar
       :isVisible="isSidebarVisible"
       :currentPage="'Home'"
@@ -33,13 +31,13 @@ export default {
   components: {
     HomeForm,
     SideBar,
-    MessageAlerts,
+    MessageAlerts
   },
   data() {
     return {
       isSidebarVisible: false,
       selectedContent: "Incomes", // We set the Incomes option as the default selection
-      messages: [],
+      messages: []
     };
   },
   methods: {
@@ -137,7 +135,7 @@ export default {
     updateContent(content) {
       this.selectedContent = content;
       this.isSidebarVisible = false;
-    },
+    }
   },
 };
 </script>

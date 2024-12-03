@@ -205,7 +205,7 @@ export default {
     margin-right: 15px;
 }
 .menu-option:hover, .bottom-option:hover {
-    background-color: #3B3B5A;
+    background-color: #36373D;
     transform: translateX(10px);
 }
 

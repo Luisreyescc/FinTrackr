@@ -2,7 +2,7 @@
   <div class="home-form">
     <div class="sidebar">
       <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="38" />
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
       </button>
     </div>
 
@@ -11,7 +11,7 @@
         <div class="incomes-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
-            <IncomeButton @click="toggleForm" />
+            <IncomeButton @click="toggleForm"/>
           </div>
           <div class="activity-content">
             <h3 class="activity-title">Activity</h3>
@@ -29,9 +29,7 @@
         </div>
         <div v-if="showForm" class="overlay" @click="toggleForm"></div>
         <div class="forms-section" v-if="showForm">
-          <IncomesForm
-            @submitForm="handleIncomeSubmission"
-            @closeForm="toggleForm"/>
+          <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm"/>
         </div>
       </div>
 
@@ -39,7 +37,7 @@
         <div class="expenses-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
-            <ExpenseButton @click="toggleForm" />
+            <ExpenseButton @click="toggleForm"/>
           </div>
           <div class="activity-content scrollbar">
             <h3 class="activity-title">Activity</h3>
@@ -57,9 +55,7 @@
         </div>
         <div v-if="showForm" class="overlay" @click="toggleForm"></div>
         <div class="forms-section" v-if="showForm">
-          <ExpensesForm
-            @submitForm="handleExpenseSubmission"
-            @closeForm="toggleForm"/>
+          <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm"/>
         </div>
       </div>
 
@@ -85,9 +81,7 @@
         </div>
         <div v-if="showForm" class="overlay" @click="toggleForm"></div>
         <div class="forms-section" v-if="showForm">
-          <DebtsForm
-            @submitForm="handleDebtSubmission"
-            @closeForm="toggleForm"/>
+          <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm"/>
         </div>
       </div>
     </div>
@@ -131,12 +125,12 @@ export default {
     DebtsForm,
     DebtButton,
     DebtRow,
-    MessageAlerts,
+    MessageAlerts
   },
   props: {
     selectedContent: {
       type: String,
-      default: "Incomes",
+      default: "Incomes"
     },
   },
   data() {
@@ -145,7 +139,7 @@ export default {
       incomes: [],
       expenses: [],
       debts: [],
-      messages: [],
+      messages: []
     };
   },
   computed: {
@@ -163,7 +157,7 @@ export default {
       return this.debts
         .slice()
         .sort((a, b) => new Date(b.date) - new Date(a.date));
-    },
+    }
   },
   methods: {
     formatDate(date) {
@@ -522,7 +516,7 @@ export default {
       } else if (newValue === "Debts") {
         this.fetchDebts();
       }
-    },
+    }
   },
 };
 </script>
@@ -531,7 +525,6 @@ export default {
 .home-form {
     display: flex;
     width: 100%;
-    overflow: hidden;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -578,7 +571,6 @@ export default {
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    overflow: hidden;
 }
 
 .header {
