@@ -2,15 +2,16 @@
   <div class="home-form">
     <div class="sidebar">
       <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
       </button>
     </div>
-
+    
     <div class="content-wrapper">
       <div v-if="selectedContent === 'Incomes'" class="main-content">
         <div class="incomes-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
+            <SearchBar @search="handleSearch" />
             <IncomeButton @click="toggleForm"/>
           </div>
           <div class="activity-content">
@@ -18,7 +19,7 @@
             <div class="activity-section">
               <div class="list-container scrollbar">
                 <IncomeRow
-                  v-for="(income, index) in sortedIncomes"
+                  v-for="(income, index) in filteredIncomes"
                   :key="index"
                   :income="income"
                   @updateIncome="handleIncomeUpdate"
@@ -32,11 +33,12 @@
           <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm"/>
         </div>
       </div>
-
+      
       <div v-if="selectedContent === 'Expenses'" class="main-content">
         <div class="expenses-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
+            <SearchBar @search="handleSearch" />
             <ExpenseButton @click="toggleForm"/>
           </div>
           <div class="activity-content scrollbar">
@@ -44,7 +46,7 @@
             <div class="activity-section">
               <div class="list-container scrollbar">
                 <ExpenseRow
-                  v-for="(expense, index) in sortedExpenses"
+                  v-for="(expense, index) in filteredExpenses"
                   :key="index"
                   :expense="expense"
                   @updateExpense="handleExpenseUpdate"
@@ -63,14 +65,15 @@
         <div class="debts-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
-            <DebtButton @click="toggleForm" />
+            <SearchBar @search="handleSearch" />
+            <DebtButton @click="toggleForm"/>
           </div>
           <div class="activity-content scrollbar">
             <h3 class="activity-title">Activity</h3>
             <div class="activity-section">
               <div class="list-container scrollbar">
                 <DebtRow
-                  v-for="(debt, index) in sortedDebts"
+                  v-for="(debt, index) in filteredDebts"
                   :key="index"
                   :debt="debt"
                   @updateDebt="handleDebtUpdate"
@@ -85,15 +88,15 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="message-container">
-    <MessageAlerts
-      v-for="(msg, index) in messages"
-      :key="msg.id"
-      :text="msg.text"
-      :type="msg.type"
-      @close="removeMessage(index)"/>
+    <div class="message-container">
+      <MessageAlerts
+        v-for="(msg, index) in messages"
+        :key="msg.id"
+        :text="msg.text"
+        :type="msg.type"
+        @close="removeMessage(index)"/>
+    </div>
   </div>
 </template>
 
@@ -103,15 +106,16 @@ import moment from "moment";
 import "@/css/scrollbar.css";
 import MessageAlerts from "@/components/messages.vue";
 
-import IncomesForm from "@/events/incomes/incomes-forms.vue";
-import IncomeButton from "@/events/incomes/incomes-header.vue";
-import IncomeRow from "@/events/incomes/income-row.vue";
-import ExpensesForm from "@/events/expenses/expenses-forms.vue";
-import ExpenseButton from "@/events/expenses/expenses-header.vue";
-import ExpenseRow from "@/events/expenses/expense-row.vue";
-import DebtsForm from "@/events/debts/debts-forms.vue";
-import DebtButton from "@/events/debts/debts-header.vue";
-import DebtRow from "@/events/debts/debt-row.vue";
+import IncomesForm from '@/events/incomes/incomes-forms.vue';
+import IncomeButton from '@/events/incomes/incomes-header.vue';
+import IncomeRow from '@/events/incomes/income-row.vue';
+import ExpensesForm from '@/events/expenses/expenses-forms.vue';
+import ExpenseButton from '@/events/expenses/expenses-header.vue';
+import ExpenseRow from '@/events/expenses/expense-row.vue';
+import DebtsForm from '@/events/debts/debts-forms.vue';
+import DebtButton from '@/events/debts/debts-header.vue';
+import DebtRow from '@/events/debts/debt-row.vue';
+import SearchBar from '@/components/search-bar.vue';
 
 export default {
   name: "HomeForm",
@@ -125,7 +129,8 @@ export default {
     DebtsForm,
     DebtButton,
     DebtRow,
-    MessageAlerts
+    MessageAlerts,
+    SearchBar
   },
   props: {
     selectedContent: {
@@ -139,10 +144,41 @@ export default {
       incomes: [],
       expenses: [],
       debts: [],
-      messages: []
+      messages: [],
+      searchQuery: ""
     };
   },
   computed: {
+    filteredIncomes() {
+    return this.sortedIncomes.filter(income => {
+      const searchQuery = this.searchQuery.toLowerCase();
+      return (
+        income.amount?.toString().toLowerCase().includes(searchQuery) ||
+        income.description?.toLowerCase().includes(searchQuery) ||
+        income.date?.toLowerCase().includes(searchQuery)
+      );
+    });
+  },
+  filteredExpenses() {
+    return this.sortedExpenses.filter(expense => {
+      const searchQuery = this.searchQuery.toLowerCase();
+      return (
+        expense.amount?.toString().toLowerCase().includes(searchQuery) ||
+        expense.description?.toLowerCase().includes(searchQuery) ||
+        expense.date?.toLowerCase().includes(searchQuery)
+      );
+    });
+  },
+  filteredDebts() {
+    return this.sortedDebts.filter(debt => {
+      const searchQuery = this.searchQuery.toLowerCase();
+      return (
+        debt.amount?.toString().toLowerCase().includes(searchQuery) ||
+        debt.description?.toLowerCase().includes(searchQuery) ||
+        debt.date?.toLowerCase().includes(searchQuery)
+      );
+    });
+  },
     sortedIncomes() {
       return this.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     },
@@ -154,6 +190,9 @@ export default {
     }
   },
   methods: {
+    handleSearch(query) {
+      this.searchQuery = query;
+    },
     formatDate(date) {
       return moment(date).format("MMM DD, YYYY");
     },
