@@ -2,14 +2,12 @@
   <div class="page-container scrollbar">
     <HomeForm
       :selectedContent="selectedContent"
-      @toggleSidebar="toggleSidebar"
-    />
+      @toggleSidebar="toggleSidebar"/>
     <SideBar
       :isVisible="isSidebarVisible"
       :currentPage="'Home'"
       @closeSidebar="toggleSidebar"
-      @selectContent="updateContent"
-    />
+      @selectContent="updateContent"/>
   </div>
 
   <div class="message-container">
@@ -18,8 +16,7 @@
       :key="msg.id"
       :text="msg.text"
       :type="msg.type"
-      @close="removeMessage(index)"
-    />
+      @close="removeMessage(index)"/>
   </div>
 </template>
 
@@ -149,7 +146,9 @@ export default {
 .page-container {
     display: flex;
     position: relative;
-    padding-top: 70px;
+    padding-top: 100px;
+    min-height: 100vh;
+    background: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 

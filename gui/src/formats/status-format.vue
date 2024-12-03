@@ -2,7 +2,7 @@
 <div class="status-form">
   <div class="sidebar">
     <button @click="toggleSidebar" class="menu-button">
-      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
     </button>
   </div>
   
@@ -449,13 +449,13 @@ export default {
 }
 
 .menu-button {
-    padding: 15px;
+    padding: 20px;
     background: none;
     border: none;
     cursor: pointer;
-    margin-top: -15px;
-    margin-left: 5px;
-    color: #25253C;
+    margin-top: -25px;
+    margin-left: 35px;
+    color: white;
     transition: transform 0.2s ease-in-out;
 }
 

@@ -2,7 +2,7 @@
 <div class="history-form">
   <div class="sidebar">
     <button @click="toggleSidebar" class="menu-button">
-      <font-awesome-icon :icon="['fas', 'bars']" font-size="32"/>
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
     </button>
   </div>
   
@@ -192,13 +192,13 @@ export default {
 }
 
 .menu-button {
-    padding: 15px;
-    margin-top: -15px;
-    margin-left: 5px;
+    padding: 20px;
+    margin-top: -25px;
+    margin-left: 35px;
     background: none;
     border: none;
     cursor: pointer;
-    color: #25253C;
+    color: white;
     transition: transform 0.2s ease-in-out;
 }
 

@@ -6,14 +6,12 @@
         :key="msg.id"
         :text="msg.text"
         :type="msg.type"
-        @close="removeMessage(index)"
-      />
+        @close="removeMessage(index)"/>
     </div>
     <EditProfileForm
       :initialData="userData"
       @saveProfile="editProfile"
-      @goToHome="goToHome"
-    />
+      @goToHome="goToHome"/>
   </div>
 </template>
 
@@ -135,12 +133,12 @@ export default {
 
 <style scoped>
 .edit-profile-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: white;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #25262B;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 </style>

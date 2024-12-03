@@ -43,8 +43,9 @@ export default {
     display: flex;
     position: relative;
     justify-content: space-between;
-    padding-top: 70px;
-    overflow: auto;
+    padding-top: 100px;
+    min-height: 100vh;
+    background: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 

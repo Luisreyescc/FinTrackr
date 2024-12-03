@@ -58,7 +58,7 @@ export default {
   name: "SideBar",
   components: {
     FontAwesomeIcon,
-    PdfSettings,
+    PdfSettings
   },
   props: {
     isVisible: {
@@ -91,7 +91,7 @@ export default {
     },
     closePdfModal() {
       this.showPdfModal = false;
-    },
+    }
   }
 };
 </script>
@@ -111,7 +111,7 @@ export default {
 .side-bar {
     width: 350px;
     height: 100%;
-    background-color: #25253C;
+    background-color: #25262B;
     color: white;
     position: fixed;
     top: 0;

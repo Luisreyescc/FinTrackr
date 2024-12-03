@@ -2,7 +2,7 @@
   <div class="home-form">
     <div class="sidebar">
       <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="32" />
+        <font-awesome-icon :icon="['fas', 'bars']" font-size="38" />
       </button>
     </div>
 
@@ -529,143 +529,143 @@ export default {
 
 <style scoped>
 .home-form {
-  display: flex;
-  width: 100%;
-  overflow: hidden;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .sidebar {
-  width: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  z-index: 1000;
-  padding-top: 20px;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .menu-button {
-  padding: 15px;
-  margin-top: -15px;
-  margin-left: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #25253c;
-  transition: transform 0.2s ease-in-out;
+    padding: 20px;
+    margin-top: -25px;
+    margin-left: 35px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s ease-in-out;
 }
 
 .menu-button:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .content-wrapper {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  margin-left: 70px;
-  position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-left: 70px;
+    position: relative;
 }
 
 .main-content {
-  display: flex;
-  flex-direction: column;
-  max-width: 1200px;
-  width: 100%;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow: hidden;
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: "Wix Madefor Display", sans-serif;
-  padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Wix Madefor Display", sans-serif;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
 }
 
 .header h3 {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .section-title {
-  font-size: 32px;
-  font-weight: bold;
-  color: #141428;
-  font-family: "Wix Madefor Display", sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: #141428;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .activity-content {
-  display: flex;
-  flex-direction: column;
-  max-height: 100vh;
-  overflow: hidden;
-  padding: 20px;
-  border-top: 1px solid #eee;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    position: relative;
 }
 
 .activity-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: left;
-  color: #141428;
-  font-family: "Wix Madefor Display", sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+    color: #141428;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .list-container {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 10px;
-  max-height: calc(70vh - 50px);
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    max-height: calc(70vh - 50px);
 }
 
 .forms-section {
-  position: fixed;
-  right: 0;
-  top: 100px;
-  bottom: 40px;
-  width: 450px;
-  max-width: 100%;
-  padding: 20px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border-radius: 9px;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-  z-index: 1001;
+    position: fixed;
+    right: 0;
+    top: 100px;
+    bottom: 40px;
+    width: 450px;
+    max-width: 100%;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 9px;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 1001;
 }
 
 .forms-section-enter-active,
 .forms-section-leave-active {
-  transition: transform 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .forms-section-enter {
-  transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .forms-section-leave-to {
-  transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(59, 59, 90, 0.5);
-  backdrop-filter: blur(3px);
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(59, 59, 90, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 </style>
