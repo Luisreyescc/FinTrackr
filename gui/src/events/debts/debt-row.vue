@@ -32,7 +32,7 @@
                v-model="editExpense.amount"
                @input="validateAmount"
                :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
-               placeholder="Enter amount (e.g., 1000.00)" />
+               placeholder="Enter amount (e.g., 1000.00)"/>
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
@@ -42,7 +42,7 @@
                v-model="editDebt.description"
                @input="validateTextField('description')"
                :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editDebt.description }"
-               placeholder="Enter a description for the debt" />
+               placeholder="Enter a description for the debt"/>
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -50,8 +50,8 @@
 	<div class="categories-select" @click="toggleDropdown">
           Categories
           <span class="dropdown-icon">
-            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']" />
-            <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+            <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
           </span>
 	</div>
 	
@@ -115,7 +115,7 @@ export default {
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false,
+      loadingCategories: false
     };
   },
   computed: {
@@ -307,16 +307,16 @@ export default {
 }
 
 .checkbox {
-  width: 20px;
-  height: 20px;
-  accent-color: #1b1f9c;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: #25262B;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .checkbox:checked {
-  background-color: #1b1f9c;
+    background-color: #25262B;
 }
 
 .debt-details {
@@ -338,7 +338,7 @@ export default {
 
 .debt-details h4 {
     font-size: 22px;
-    color: #21255b;
+    color: #25262B;
     font-weight: bold;
 }
 
@@ -399,7 +399,7 @@ export default {
 }
 
 .delete-button {
-    background-color: red;
+    background-color: #D55C5C;
     color: white;
 }
 

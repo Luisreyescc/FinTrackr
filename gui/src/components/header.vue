@@ -1,8 +1,7 @@
 <template>
   <header class="header">
     <div class="header-content">
-      <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo" />
-
+      <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo"/>
       <div class="nav-profile-wrapper">
         <nav v-if="isLoggedIn" class="nav-menu">
           <router-link to="/home" class="nav-item">Home<span></span></router-link>

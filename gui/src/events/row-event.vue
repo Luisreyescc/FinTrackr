@@ -21,7 +21,7 @@ export default {
   props: {
     event: {
       type: Object,
-      required: true,
+      required: true
     },
   },
   computed: {
@@ -74,7 +74,7 @@ export default {
       const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
-    },
+    }
   },
 };
 </script>

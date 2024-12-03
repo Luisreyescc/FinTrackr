@@ -11,7 +11,7 @@
         <div class="incomes-container">
           <div class="header">
             <h2 class="section-title">{{ selectedContent }}</h2>
-            <SearchBar @search="handleSearch" />
+            <SearchBar @search="handleSearch"/>
             <IncomeButton @click="toggleForm"/>
           </div>
           <div class="activity-content">

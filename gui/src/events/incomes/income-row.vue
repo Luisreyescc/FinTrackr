@@ -413,7 +413,7 @@ export default {
 }
 
 .edit-button {
-    background-color: #25262B;
+    background-color: #25253C;
     color: white;
 }
 

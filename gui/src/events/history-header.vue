@@ -61,7 +61,6 @@ export default {
     background-color: none;
 }
 
-
 .search-container {
     flex: 1;
     position: relative;

@@ -21,7 +21,7 @@ export default {
     },
     type: {
       type: String,
-      default: "neutral",
+      default: "neutral"
     }
   },
   data() {
@@ -76,13 +76,13 @@ export default {
 
 .fade-up-enter-active,
 .fade-up-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .fade-up-enter, 
 .fade-up-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+    opacity: 0;
+    transform: translateY(10px);
 }
 
 .message-hidden {

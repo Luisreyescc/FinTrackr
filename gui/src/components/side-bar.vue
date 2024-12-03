@@ -46,7 +46,7 @@
     </div>
   </div>
   
-  <PdfSettings v-if="showPdfModal" :isVisible="showPdfModal" @closeModal="closePdfModal" />
+  <PdfSettings v-if="showPdfModal" :isVisible="showPdfModal" @closeModal="closePdfModal"/>
 </div>
 </template>
 

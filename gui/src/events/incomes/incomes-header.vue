@@ -1,15 +1,13 @@
 <template>
 <button @click="$emit('toggle-form')" class="add-income-button">
-  <span class="button-icon">
-    <font-awesome-icon :icon="['fas', 'plus']" />
-  </span>
+  <span class="button-icon"><font-awesome-icon :icon="['fas', 'plus']"/></span>
   <span class="button-text">New Income</span>
 </button>
 </template>
 
 <script>
 export default {
-  name: "IncomeButton",
+  name: "IncomeButton"
 };
 </script>
 

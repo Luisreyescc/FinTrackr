@@ -1,14 +1,13 @@
 <template>
 <button @click="$emit('toggle-form')" class="add-debt-button">
-  <div class="icon-container">
-    <font-awesome-icon :icon="['fas', 'plus']" font-size="18"/></div>
-  <span class="button-text">ADD NEW DEBT</span>
+  <span class="button-icon"><font-awesome-icon :icon="['fas', 'plus']"/></span>
+  <span class="button-text">New Debt</span>
 </button>
 </template>
 
 <script>
 export default {
-  name: "DebtButton",
+  name: "DebtButton"
 };
 </script>
 
@@ -16,40 +15,31 @@ export default {
 .add-debt-button {
     display: flex;
     align-items: center;
-    background-color: #8700D5;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    overflow: hidden;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: white;
+    color: #25262B;
+    border: 3px solid #25262B;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.2s;
+    font-size: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     font-family: "Wix Madefor Display", sans-serif;
-    padding: 0;
-    height: 40px;
 }
 
-.icon-container {
+.button-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #333;
-    padding: 0 10px;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    height: 100%;
+    margin-right: 15px;
+    font-size: 18px;
+    color: #25262B;
 }
 
 .button-text {
-    padding: 0 15px;
-    background-color: #8700D5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-.add-debt-button:hover .button-text {
-    background-color: #A945E2;
+    font-size: 14px;
+    color: #25262B;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 </style>

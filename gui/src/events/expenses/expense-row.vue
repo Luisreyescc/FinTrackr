@@ -484,7 +484,7 @@ export default {
 }
 
 .edit-button {
-  background-color: #25253c;
+  background-color: #25253C;
   color: white;
 }
 
@@ -494,7 +494,7 @@ export default {
 }
 
 .delete-button {
-  background-color: red;
+  background-color: #D55C5C;
   color: white;
 }
 
