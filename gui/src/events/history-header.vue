@@ -1,20 +1,27 @@
 <template>
 <div class="history-header">
   <div class="search-container">
-   <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon" />
-   <input
-     type="text"
-     class="search-bar"
-     placeholder="Search..."
-     @input="$emit('search', $event.target.value)"/>
+    <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+    <div class="tags-input">
+      <span v-for="(tag, index) in selectedFilters" :key="index" class="tag">
+        {{ tag }}
+        <button class="tag-remove" @click="removeFilter(index)">
+          <font-awesome-icon :icon="['fas', 'times']" />
+        </button>
+      </span>
+      <input
+	type="text"
+	class="search-bar"
+	placeholder="Search..."
+	@input="$emit('search', $event.target.value)"/>
+    </div>
   </div>
-  <div class="filter-button-container" @click.stop="toggleDropdown">
-    <button class="filter-button">
-      <font-awesome-icon :icon="['fas', 'filter']" class="icon"/>
-    </button>
-    <ul v-if="dropdownOpen" class="filters-dropdown">
-    </ul>
-  </div>
+  
+  <FilterDropdown
+    :filterOptions="['All', 'Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
+    :currentFilter="currentFilter"
+    @filterSelected="applyFilter" />
+  
   <button @click="$emit('resetClicked')" class="reset-button" >
     <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon" />
   </button>
@@ -22,8 +29,27 @@
 </template>
 
 <script>
+import FilterDropdown from "@/components/filter-dropdown.vue";
+  
 export default {
   name: "HistoryHeader",
+  components: {
+    FilterDropdown
+  },
+  data() {
+    return {
+      currentFilter: "All",
+      selectedFilters: []
+    };
+  },
+  methods: {
+    applyFilter(filter) {
+      this.selectedFilters.push(filter);
+    },
+    removeFilter(index) {
+      this.selectedFilters.splice(index, 1);
+    }
+  },
 };
 </script>
 
@@ -36,53 +62,41 @@ export default {
     background-color: none;
 }
 
-.filter-button-container {
-    position: relative;
-    padding: 12px;
-}
 
-.filter-button {
+.search-container {
+    flex: 1;
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
     background: #ffffff;
-    border: 1px solid #ddd;
+    border-radius: 50px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    min-width: 100px;
+    max-width: 600px;
 }
 
-.filters-dropdown {
+.search-icon {
     position: absolute;
-    top: 50px;
-    right: 0;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 0;
-    list-style: none;
-    z-index: 1000;
-    min-widht: 120px;
-    animation: fadeIn 0.2s ease-out;
+    left: 20px;
+    color: #aaa;
+    font-size: 20px;
 }
 
-.filters-dropdown li {
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    text-align: left;
-    overflow: visible;
+.search-bar {
+    width: 100%;
+    padding: 21px 200px 21px 50px;
+    border: none;
+    border-radius: 50px;
+    font-size: 20px;
+    color: #333;
+    background: transparent;
+    outline: none;
+    box-shadow: none;
 }
 
-.filters-dropdown li:hover {
-    background-color: #f0f8ff;
-    border-radius: 12px;
-    color: #1010AC;
-    font-weight: bold;
+.search-bar::placeholder {
+    color: #aaa;
+    font-size: 20px;
 }
 
 .reset-button {
@@ -104,42 +118,32 @@ export default {
     font-size: 24px;
 }
 
-.filter-button:hover, .reset-button:hover {
+.reset-button:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     transform: scale(1.1);
 }
-.search-container {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: #ffffff;
-    border-radius: 50px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+.tag {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 12px;
+  background: #f5f5fc;
+  color: #333;
+  border: 1px solid #ddd;
 }
 
-.search-icon {
-    position: absolute;
-    left: 20px;
-    color: #aaa;
-    font-size: 20px;
+/* Botón para eliminar etiquetas */
+.tag-remove {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  color: #555;
+  cursor: pointer;
 }
 
-.search-bar {
-    width: 100%;
-    padding: 21px 26px 21px 50px;
-    border: none;
-    border-radius: 50px;
-    font-size: 20px;
-    color: #333;
-    background: transparent;
-    outline: none;
-    box-shadow: none;
-}
-
-.search-bar::placeholder {
-    color: #aaa;
-    font-size: 20px;
-    right: 15px;
+.tag-remove:hover {
+  color: #ff5a5a;
 }
 </style>

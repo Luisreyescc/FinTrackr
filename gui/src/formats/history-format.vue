@@ -254,6 +254,7 @@ export default {
     padding: 20px;
     border-top: 1px solid #eee;
     position: relative;
+    height: 800px;
 }
 
 .activity-title {

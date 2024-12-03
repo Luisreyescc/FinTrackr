@@ -1,7 +1,7 @@
 <template>
   <div class="filter-button-container" @click.stop="toggleDropdown">
     <button class="filter-button">
-      <font-awesome-icon :icon="['fas', 'filter']" />
+      <font-awesome-icon :icon="['fas', 'filter']" class="icon"/>
     </button>
     <ul v-if="dropdownOpen" class="filters-dropdown">
       <li
@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: "FilterGraphics",
+  name: "FilterDropdown",
     props: {
     filterOptions: {
       type: Array,
@@ -37,9 +37,12 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    handleOptionClick(option) {
+      this.selectFilter(option);
+      this.dropdownOpen = false;
+    },
     selectFilter(option) {
       this.$emit("filterSelected", option);
-      this.dropdownOpen = false;
     },
   },
 };
@@ -52,25 +55,27 @@ export default {
 }
 
 .filter-button {
-    background: white;
-    border: 2px solid #ddd;
-    border-radius: 50%;
-    cursor: pointer;
-    color: #333;
-    font-size: 20px;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    background: #ffffff;
+    border: 1px solid #ddd;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
 }
 
 .filter-button:hover {
-    border-color: #21255b;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     transform: scale(1.1);
+}
+
+.icon {
+    color: #aaa;
+    font-size: 24px;
 }
 
 .filters-dropdown {
@@ -84,7 +89,7 @@ export default {
     padding: 0;
     list-style: none;
     z-index: 1000;
-    min-widht: 120px;
+    min-width: 135px;
     animation: fadeIn 0.2s ease-out;
 }
 

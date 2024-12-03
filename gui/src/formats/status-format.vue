@@ -14,7 +14,7 @@
           <h3>Status date:</h3>
           <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
           <h3>Filtered by: {{ currentFilter }}</h3>
-          <FilterGraphics
+          <FilterDropdown
             :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
             @filterSelected="applyFilter" />
@@ -71,7 +71,7 @@
           <h3>Status date:</h3>
           <input id="end-date" type="date" class="date-input" v-model="selectedDate" />
           <h3>Filtered by: {{ currentFilter }}</h3>
-          <FilterGraphics
+          <FilterDropdown
             :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
             :currentFilter="currentFilter"
             @filterSelected="applyFilter" />
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import FilterGraphics from "@/components/filter-graphics.vue";
+import FilterDropdown from "@/components/filter-dropdown.vue";
 import ApexCharts from 'vue3-apexcharts';
 import '@/css/scrollbar.css';
 import axios from 'axios';
@@ -114,7 +114,7 @@ export default {
   name: 'StatusForm',
   components: {
     apexchart: ApexCharts,
-    FilterGraphics
+    FilterDropdown
   },
   props: {
     selectedContent: {
