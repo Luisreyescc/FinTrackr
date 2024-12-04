@@ -555,7 +555,7 @@ input {
     color: white;
     border: none;
     padding: 13px 30px;
-    border-radius: 2px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -564,11 +564,15 @@ input {
 }
 
 .save-btn {
-    background-color: #4caf50;
+    background-color: white;
+    border: 2px solid white;
+    color: #25262B;
 }
 
 .cancel-btn {
-    background-color: #333;
+    background-color:  #25262B;
+    border: 2px solid  white;
+    color: white;
 }
 
 .show-password-btn {
@@ -587,7 +591,10 @@ input {
     margin-left: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
-    background-color: #BF9F00;
+    background-color: #25262B;
+    border: 2px solid #BF9F00;
+    color: #BF9F00;
+    border-radius: 20px;
     padding: 12px 20px;
     font-size: 16px;
     font-weight: bold;
@@ -601,7 +608,8 @@ input {
 
 .change-password-btn.close-btn {
     background-color: #e53935;
-    border-radius: 6px;
+    border: 2px solid #e53935;
+    border-radius: 3px;
     color: white;
     padding: 3px 8px;
     font-size: 22px;

@@ -12,7 +12,7 @@
     <span class="debt-amount">{{ formattedAmount }}</span>
     <div class="debt-actions">
       <button class="edit-button" @click="startEdit">
-        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
+        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/>
       </button>
       <button class="delete-button" @click="deleteDebt">
 	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
@@ -28,21 +28,23 @@
     <form @submit.prevent="submitEdit">
       <label>
         Amount:
-        <input type="text"
-               v-model="editExpense.amount"
-               @input="validateAmount"
-               :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
-               placeholder="Enter amount (e.g., 1000.00)"/>
+        <input
+          type="text"
+          v-model="editExpense.amount"
+          @input="validateAmount"
+          :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
+          placeholder="Enter amount (e.g., 1000.00)"/>
       </label>
       <span v-if="amountError" class="error-message">{{ amountError }}</span>
       
       <label>
         Description:
-        <input type="text"
-               v-model="editDebt.description"
-               @input="validateTextField('description')"
-               :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editDebt.description }"
-               placeholder="Enter a description for the debt"/>
+        <input
+          type="text"
+          v-model="editDebt.description"
+          @input="validateTextField('description')"
+          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editDebt.description }"
+          placeholder="Enter a description for the debt"/>
       </label>
       <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
       
@@ -74,7 +76,7 @@
           v-model="editDebt.date"
           type="date"
           @input="validateDate"
-          :class="{ 'input-error': dateError, 'input-valid': !dateError && editDebt.date }" />
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && editDebt.date }"/>
       </label>
       <span v-if="dateError" class="error-message">{{ dateError }}</span>
       

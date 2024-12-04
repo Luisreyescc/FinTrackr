@@ -20,7 +20,7 @@ export default {
     background-color: #25262B;
     color: white;
     border: 3px solid #25262B;
-    border-radius: 10px;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
     font-size: 16px;
