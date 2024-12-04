@@ -18,6 +18,8 @@ from .views import (
     FilteredExpenseListView,
 )
 
+from .viewPDF import IncomeExpensePDFView
+
 urlpatterns = [
     # User views
     path("register/", RegisterView.as_view(), name="register"),
@@ -66,4 +68,5 @@ urlpatterns = [
     ),
     # Emails views
     path("", include("emails.urls")),
+    path('pdf/', IncomeExpensePDFView.as_view(), name='income_expense_pdf'),
 ]
