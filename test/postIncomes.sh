@@ -54,8 +54,8 @@ get_random_date() {
 }
 
 get_random_income() {
-  MIN_AMOUNT=1000
-  MAX_AMOUNT=999999
+  MIN_AMOUNT=100
+  MAX_AMOUNT=9999
   RANDOM_AMOUNT=$(shuf -i $MIN_AMOUNT-$MAX_AMOUNT -n 1)
   echo "$RANDOM_AMOUNT"
 }
