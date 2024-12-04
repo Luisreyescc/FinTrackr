@@ -178,7 +178,7 @@ export default {
     },
     filterEvents(event) {
       const searchQuery = this.searchQuery.toLowerCase();
-      const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+      const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY", "MM", "MMM"];
       const amount = parseFloat(searchQuery);
 
       return (
@@ -189,7 +189,9 @@ export default {
         dateFormats.some(format => {
           const eventDate = moment(event.date, "YYYY-MMM-DD");
           const filterDate = moment(searchQuery, format);
-          if (searchQuery.length === 4) {
+          if (searchQuery.length === 2 || searchQuery.length === 3) {
+            return eventDate.isSame(filterDate, 'month');
+          }else if (searchQuery.length === 4) {
             return eventDate.isSame(filterDate, 'year');
           } else if (searchQuery.length === 7 || searchQuery.length === 8) {
             return eventDate.isSame(filterDate, 'month');
