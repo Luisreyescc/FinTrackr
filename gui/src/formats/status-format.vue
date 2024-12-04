@@ -23,6 +23,7 @@
       <div class="main-content">
         <div class="graphic-container">
           <div class="chart-area">
+            <span v-if="loadingGraphics">Loading graphic...</span>
             <apexchart
               v-if="chartData.length > 0"
               type="area"
@@ -80,6 +81,7 @@
       <div class="main-content">
         <div class="pie-container">
           <div class="chart-sources">
+             <span v-if="loadingGraphics">Loading graphic...</span>
             <apexchart
               v-if="sourcesChartData.length > 0"
               type="donut"
@@ -90,6 +92,7 @@
 	</div>
         <div class="pie-container">
           <div class="chart-categories">
+            <span v-if="loadingGraphics">Loading graphic...</span>
             <apexchart
               v-if="categoriesChartData.length > 0"
               type="donut"
@@ -124,6 +127,7 @@ export default {
   },
   data() {
     return {
+      loadingGraphics: false,
       currentFilter: "All",
       selectedDate: this.getTodayDate(),
       chartData: [],
@@ -195,6 +199,7 @@ export default {
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
 
       try {
+	this.loadingGraphics = true;
         const [incomeResponse, expenseResponse] = await Promise.all([
           axios.get(incomeUrl, { headers: { Authorization: `Bearer ${token}` } }),
           axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } })
@@ -245,6 +250,8 @@ export default {
         console.log("Categories:", this.chartOptions.xaxis.categories);
       } catch (error) {
         console.error('Error fetching line chart data:', error);
+      } finally {
+        this.loadingGraphics = false;
       }
     },
     async fetchDonutChartData() {
@@ -260,6 +267,7 @@ export default {
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
 
       try {
+	this.loadingGraphics = true;
         const response = await axios.get(expenseUrl, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -280,6 +288,8 @@ export default {
         console.log("Donut Chart Labels:", this.categoriesChartOptions.labels);
       } catch (error) {
         console.error('Error fetching donut chart data:', error);
+      } finally {
+        this.loadingGraphics = false;
       }
     },
     async fetchSourcesChartData() {
@@ -295,6 +305,7 @@ export default {
       const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
 
       try {
+	this.loadingGraphics = true;
         const response = await axios.get(incomeUrl, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -315,6 +326,8 @@ export default {
         console.log("Sources Chart Labels:", this.sourcesChartOptions.labels);
       } catch (error) {
         console.error('Error fetching sources chart data:', error);
+      } finally {
+        this.loadingGraphics = false;
       }
     },
     applyFilter(filter) {

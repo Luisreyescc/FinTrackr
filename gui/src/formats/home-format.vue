@@ -18,6 +18,7 @@
             <h3 class="activity-title">Activity</h3>
             <div class="activity-section">
               <div class="list-container scrollbar">
+		<span v-if="loadingEvents">Loading incomes...</span>
                 <IncomeRow
                   v-for="(income, index) in filteredIncomes"
                   :key="index"
@@ -45,6 +46,7 @@
             <h3 class="activity-title">Activity</h3>
             <div class="activity-section">
               <div class="list-container scrollbar">
+		<span v-if="loadingEvents">Loading expenses...</span>
                 <ExpenseRow
                   v-for="(expense, index) in filteredExpenses"
                   :key="index"
@@ -72,6 +74,7 @@
             <h3 class="activity-title">Activity</h3>
             <div class="activity-section">
               <div class="list-container scrollbar">
+		<span v-if="loadingEvents">Loading debts...</span>
                 <DebtRow
                   v-for="(debt, index) in filteredDebts"
                   :key="index"
@@ -145,7 +148,8 @@ export default {
       expenses: [],
       debts: [],
       messages: [],
-      searchQuery: ""
+      searchQuery: "",
+      loadingEvents: false
     };
   },
   computed: {
@@ -218,6 +222,7 @@ export default {
         if (!token)
           return console.error("No token found");
 
+	this.loadingEvents = true;
         const response = await axios.get("http://localhost:8000/api/incomes/", {
           headers: { Authorization: `Bearer ${token}` } });
         this.incomes = response.data.map((income) => ({
@@ -228,6 +233,8 @@ export default {
       } catch (error) {
         console.error("Error fetching incomes:", error);
         this.addMessage("There was an error fetching your incomes.", "error");
+      } finally {
+	this.loadingEvents = false;
       }
     },
     async fetchExpenses() {
@@ -236,6 +243,7 @@ export default {
         if (!token)
           return console.error("No token found");
 
+	this.loadingEvents = true;
         const response = await axios.get(
           "http://localhost:8000/api/expenses/",
           {
@@ -250,6 +258,8 @@ export default {
       } catch (error) {
         console.error("Error fetching expenses:", error);
         this.addMessage("There was an error fetching your expenses.", "error");
+      } finally {
+	this.loadingEvents = false;
       }
     },
     async fetchDebts() {
@@ -258,6 +268,7 @@ export default {
         if (!token)
           return console.error("No token found");
 
+	this.loadingEvents = true;
         const response = await axios.get("http://localhost:8000/api/debts/", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -269,6 +280,8 @@ export default {
       } catch (error) {
         console.error("Error fetching debts:", error);
         this.addMessage("There was an error fetching your debts.", "error");
+      }  finally {
+	this.loadingEvents = false;
       }
     },
     async handleIncomeSubmission(incomeData) {
@@ -282,6 +295,7 @@ export default {
         };
         delete modifiedIncomeData.categories;
 
+	
         const response = await axios.post(
           "http://localhost:8000/api/incomes/",
           modifiedIncomeData,
