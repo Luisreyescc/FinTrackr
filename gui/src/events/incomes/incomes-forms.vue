@@ -73,16 +73,20 @@
         </label>
         <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
 
-        <label>
+        <label class="date-label">
           Date:
+	</label>
+        <div class="date-container">
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
           <input
             type="date"
             v-model="income.date"
             @input="validateDate"
+            class="custom-date-input"
             :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }"/>
-        </label>
+        </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
-    
+	
         <div class="button-group">
           <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
@@ -548,5 +552,36 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     background-color: #f8f9fa;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+.date-label {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.date-container {
+    left: 0px;
+    position: relative;
+    display: inline-block;
+    width: 100%; 
+}
+
+.birth-icon {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-30%);
+    color: white;
+    pointer-events: none;
+}
+
+.date-container input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
 }
 </style>

@@ -32,6 +32,7 @@ import {
   faAngleUp,
   faClockRotateLeft,
   faMagnifyingGlass,
+  faCalendar
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
@@ -64,7 +65,8 @@ library.add(
   faEnvelopeOpenText,
   faAngleUp,
   faClockRotateLeft,
-  faMagnifyingGlass
+  faMagnifyingGlass,
+  faCalendar
 );
 
 const app = createApp(App)
