@@ -224,8 +224,6 @@ export default {
     },
     handleSearch(query) {
       this.searchQuery = query;
-      console.log("Search query:", query);
-      this.addMessage("Searching: " + query, "neutral");
     },
   },
   mounted() {

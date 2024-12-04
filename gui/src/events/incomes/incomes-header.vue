@@ -1,7 +1,6 @@
 <template>
 <button @click="$emit('toggle-form')" class="add-income-button">
   <span class="button-icon"><font-awesome-icon :icon="['fas', 'plus']"/></span>
-  <span class="button-text">New Income</span>
 </button>
 </template>
 
@@ -17,29 +16,23 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 10px 20px;
-    background-color: #25262B;
-    color: white;
-    border: 3px solid #25262B;
+    width: 50px;
+    height: 50px;
     border-radius: 50px;
+    background-color: #25262B;
+    border: 1px solid #25262B;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .button-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    font-size: 18px;
+    font-size: 24px;
     color: white;
 }
 
-.button-text {
-    font-size: 14px;
-    color: white;
-    font-family: "Wix Madefor Display", sans-serif;
+.add-income-button:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: scale(1.1);
 }
 </style>
