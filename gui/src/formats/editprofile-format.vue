@@ -554,7 +554,7 @@ input {
 .change-password-btn {
     color: white;
     border: none;
-    padding: 13px 30px;
+    padding: 15px 40px;
     border-radius: 20px;
     cursor: pointer;
     font-size: 16px;

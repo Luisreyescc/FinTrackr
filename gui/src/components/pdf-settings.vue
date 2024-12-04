@@ -3,7 +3,7 @@
     <div class="modal-content" @click.stop>
       <h1>PDF Report Settings</h1>
       <button @click="closeModal" class="modal-close-icon">
-        <font-awesome-icon :icon="['fas', 'xmark']" />
+        <font-awesome-icon :icon="['fas', 'xmark']"/>
       </button>
 
       <div class="section">
@@ -11,25 +11,25 @@
         <div class="time-selector">
           <div class="time-unit">
             <button @click="incrementTime('hour')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
             </button>
             <div class="time-value-container">
               <span class="time-value">{{ formatNumber(time.hour) }}</span>
             </div>
             <button @click="decrementTime('hour')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
             </button>
           </div>
           <span class="chars">:</span>
           <div class="time-unit">
             <button @click="incrementTime('minute')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
             </button>
             <div class="time-value-container">
               <span class="time-value">{{ formatNumber(time.minute) }}</span>
             </div>
             <button @click="decrementTime('minute')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
             </button>
           </div>
           <div class="time-unit">
@@ -43,25 +43,25 @@
         <div class="period-selector">
           <div class="time-unit">
             <button @click="incrementPeriod('type')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
             </button>
             <div class="time-value-container">
               <span class="time-value">{{ period.type }}</span>
             </div>
             <button @click="decrementPeriod('type')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
             </button>
           </div>
           <span class="chars">-</span>
           <div class="time-unit">
             <button @click="incrementPeriod('day')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
             </button>
             <div class="time-value-container">
               <span class="time-value">{{ period.day }}</span>
             </div>
             <button @click="decrementPeriod('day')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon" />
+              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 export default {
   name: "PDFSettings",
   components: {
-    FontAwesomeIcon,
+    FontAwesomeIcon
   },
   props: {
     isVisible: {
@@ -171,12 +171,16 @@ export default {
 }
 
 .modal-content {
-    background: white;
+    background: #25262B;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
     width: 500px;
     position: relative; 
+}
+
+.modal-content h1{
+    color: white;
 }
 
 .modal-close-icon {
@@ -186,29 +190,26 @@ export default {
     background: none;
     border: none;
     font-size: 30px;
-    color: #333;
+    color: white;
     cursor: pointer;
 }
 
-.modal-close-icon:hover {
-    color: #555;
-}
-
 .section {
-  margin: 20px 10px;
+    margin: 20px 10px;
+    color: white;
 }
 
 .time-selector, .period-selector {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .time-unit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .arrow-button {
@@ -223,12 +224,12 @@ export default {
 }
 
 .time-button {
-    margin-left: 10px;
+    margin-left: 20px;
     padding: 10px 20px;
-    background:  #25253C;
+    background: white;
     border: none;
-    border-radius: 12px;
-    color: white;
+    border-radius: 3px;
+    color: #25262B;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -260,7 +261,7 @@ export default {
     position: absolute;
     width: 150%;
     height: 4px;
-    background-color: #636389;
+    background-color: #4E60D7;
     border-radius: 2px;
 }
 
@@ -275,10 +276,10 @@ export default {
 .confirm-button {
     margin-top: 15px;
     margin-bottom: 10px;
-    padding: 15px 30px;
-    background-color: #4caf50;
-    border: none;
-    border-radius: 12px;
+    padding: 15px 60px;
+    background-color: #25262B;
+    border: 2px solid white;
+    border-radius: 30px;
     color: white;
     cursor: pointer;
     font-size: 20px;
