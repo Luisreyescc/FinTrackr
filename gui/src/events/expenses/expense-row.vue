@@ -65,30 +65,20 @@
           <div class="categories-select" @click="toggleDropdown">
             Categories
             <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"
-              />
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
               <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
             </span>
           </div>
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li
-              v-else
-              @click="showNewCategoryDialog"
-              style="color: green; font-weight: bold"
-            >
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New
-              category
+            <li v-else @click="showNewCategoryDialog" style="color: green; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
             </li>
             <li
               v-for="(category, index) in categoryOptions"
               :key="index"
-              @click="addCategory(category)"
-            >
-              {{ category }}
+              @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
@@ -99,30 +89,21 @@
               type="text"
               v-model="newCategory"
               placeholder="New category"
-              :maxlength="18"
-            />
+              :maxlength="18" />
             <div class="button-group">
-              <button @click="cancelNewCategory" class="cancel-category">
-                Cancel
-              </button>
+              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
               <button
                 @click="acceptNewCategory"
                 class="accept-category"
-                :disabled="!isAcceptEnabled"
-              >
-                Accept
-              </button>
+                :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
 
           <div class="selected-categories">
             <span
-              v-for="(category, index) in editExpense.categories"
-              :key="index"
-              class="tag"
-            >
+              v-for="(category, index) in editExpense.categories" :key="index" class="tag">
               {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
                 <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </span>
@@ -170,7 +151,6 @@ export default {
     expense: {
       type: Object,
       required: true,
-      // get current categories from selected expense
       default: () => ({ categories: [] }),
     },
   },
@@ -284,23 +264,6 @@ export default {
         this.loadingCategories = false;
       }
     },
-    async sendNewCategory() {
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/categories/",
-          { name: this.newCategory.trim() },
-        );
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.categoryOptions.push(this.newCategory.trim());
-          this.editExpense.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
-      }
-    },
     acceptNewCategory() {
       if (this.newCategory.trim()) {
         const newCategory = this.newCategory.trim();
@@ -318,7 +281,6 @@ export default {
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
-        this.newCategory = "";
       }
       this.dropdownOpen = false;
     },
@@ -329,7 +291,9 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.editExpense.categories.splice(index, 1);
     },
     validateAmount() {

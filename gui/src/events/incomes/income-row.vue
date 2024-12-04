@@ -58,7 +58,7 @@
             </li>
           </ul>
 
-          <div v-if="showNewCategory" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
@@ -74,15 +74,15 @@
                 :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
+        </div>
 
-          <div class="selected-categories">
-            <span v-for="(category, index) in editIncome.categories" :key="index" class="tag">
-              {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']" />
-              </button>
-            </span>
-          </div>
+        <div class="selected-categories">
+          <span v-for="(category, index) in editIncome.categories" :key="index" class="tag">
+            {{ category }}
+            <button type="button" @click="removeCategory(index, $event)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']" />
+            </button>
+          </span>
         </div>
 
         <label>
@@ -242,7 +242,9 @@ export default {
       }
       this.dropdownOpen = false;
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.editIncome.categories.splice(index, 1);
     },
     showNewCategoryDialog() {
