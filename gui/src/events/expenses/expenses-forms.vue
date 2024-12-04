@@ -29,9 +29,7 @@
         <div class="categories-select" @click="toggleDropdown">
           Categories
           <span class="dropdown-icon">
-            <font-awesome-icon
-              v-if="!dropdownOpen"
-              :icon="['fas', 'angle-right']"/>
+            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
             <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
           </span>
         </div>
@@ -39,7 +37,7 @@
         <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
           <li v-if="loadingCategories">Loading categories...</li>
           <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
-            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
           </li>
           <li
             v-for="(category, index) in categoryOptions"
@@ -69,7 +67,7 @@
           <span v-for="(category, index) in expense.categories" :key="index" class="tag">
             {{ category }}
             <button @click="removeCategory(index)" class="close-button">
-              <font-awesome-icon :icon="['fas', 'xmark']" />
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
         </div>

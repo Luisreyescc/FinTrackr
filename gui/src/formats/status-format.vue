@@ -350,7 +350,7 @@ export default {
       const networkAmount = this.totalIncome - this.totalExpense;
       const amount = this.formatCurrency(networkAmount, networkAmount < 0);
 
-      return `<span <span style="color: #B6B001;">${amount}</span>`;
+      return `<span <span style="color: #BF9F00;">${amount}</span>`;
     },
     getIncomes() {
       const amount = this.formatCurrency(this.totalIncome);

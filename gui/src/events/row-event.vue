@@ -162,7 +162,7 @@ export default {
 }
 
 .debt-amount {
-    color: #e98c00;
+    color: #25262B;
 }
 
 .income-type {
@@ -178,7 +178,7 @@ export default {
 }
 
 .debt-type {
-    color: #e98c00;
+    color: #BF9F00;
     font-weight: bold;
     margin-top: 5px;
 }
