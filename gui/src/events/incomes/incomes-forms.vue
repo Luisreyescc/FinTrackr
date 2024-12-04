@@ -108,7 +108,7 @@ export default {
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false,
+      loadingCategories: false
     };
   },
   methods: {
@@ -310,14 +310,14 @@ input::placeholder {
 }
 
 input[type="date"] {
-  color: white;
-  font-size: 16px;
-  font-family: "Wix Madefor Display", sans-serif;
+    color: white;
+    font-size: 16px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  color: white;
-  cursor: pointer;
+    color: white;
+    cursor: pointer;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator:hover {
@@ -433,7 +433,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     text-align: left;
     color: white;
     font-weight: bold;
-    overflow-x: none;
 }
 
 .categories-dropdown li:hover {

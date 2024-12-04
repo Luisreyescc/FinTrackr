@@ -1,141 +1,97 @@
 <template>
-  <div class="form-container">
-    <h3 class="form-title">New Expense data</h3>
-    <div class="form-content scrollbar">
-      <form @submit.prevent="submitForm">
-        <label>
-          Amount:
+<div class="form-container">
+  <h3 class="form-title">New Expense data</h3>
+  <div class="form-content scrollbar">
+    <form @submit.prevent="submitForm">
+      <label>
+        Amount:
+        <input
+          type="text"
+          v-model="expense.amount"
+          @input="validateAmount"
+          :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
+          placeholder="Enter amount (e.g., 1000.00)"/>
+      </label>
+      <span v-if="amountError" class="error-message">{{ amountError }}</span>
+      
+      <label>
+        Description:
+        <input
+          type="text"
+          v-model="expense.description"
+          @input="validateTextField('description')"
+          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
+          placeholder="Enter a description for the expense"/>
+      </label>
+      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+      
+      <div class="categories-wrapper">
+        <div class="categories-select" @click="toggleDropdown">
+          Categories
+          <span class="dropdown-icon">
+            <font-awesome-icon
+              v-if="!dropdownOpen"
+              :icon="['fas', 'angle-right']"/>
+            <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
+          </span>
+        </div>
+	
+        <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+          <li v-if="loadingCategories">Loading categories...</li>
+          <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
+            <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+          </li>
+          <li
+            v-for="(category, index) in categoryOptions"
+            :key="index"
+            @click="addCategory(category)">{{ category }}
+          </li>
+        </ul>
+	
+        <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+        <div v-if="showNewCategory" class="new-category-dialog">
+          <h4>Enter new category</h4>
           <input
             type="text"
-            v-model="expense.amount"
-            @input="validateAmount"
-            :class="{
-              'input-error': amountError,
-              'input-valid': !amountError && expense.amount,
-            }"
-            placeholder="Enter amount (e.g., 1000.00)"
-          />
-        </label>
-        <span v-if="amountError" class="error-message">{{ amountError }}</span>
-
-        <label>
-          Description:
-          <input
-            type="text"
-            v-model="expense.description"
-            @input="validateTextField('description')"
-            :class="{
-              'input-error': descriptionError,
-              'input-valid': !descriptionError && expense.description,
-            }"
-            placeholder="Enter a description for the expense"
-          />
-        </label>
-        <span v-if="descriptionError" class="error-message">{{
-          descriptionError
-        }}</span>
-
-        <div class="categories-wrapper">
-          <div class="categories-select" @click="toggleDropdown">
-            Categories
-            <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"
-              />
-              <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-            </span>
-          </div>
-
-          <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-            <li v-if="loadingCategories">Loading categories...</li>
-            <li
-              v-else
-              @click="showNewCategoryDialog"
-              style="color: green; font-weight: bold"
-            >
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New
-              category
-            </li>
-            <li
-              v-for="(category, index) in categoryOptions"
-              :key="index"
-              @click="addCategory(category)"
-            >
-              {{ category }}
-            </li>
-          </ul>
-
-          <div
-            v-if="showNewCategory"
-            class="overlay"
-            @click="cancelNewCategory"
-          ></div>
-          <div v-if="showNewCategory" class="new-category-dialog">
-            <h4>Enter new category</h4>
-            <input
-              type="text"
-              v-model="newCategory"
-              placeholder="New category"
-              :maxlength="18"
-            />
-            <div class="button-group">
-              <button @click="cancelNewCategory" class="cancel-category">
-                Cancel
-              </button>
-              <button
-                @click="acceptNewCategory"
-                class="accept-category"
-                :disabled="!isAcceptEnabled"
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-
-          <div class="selected-categories">
-            <span
-              v-for="(category, index) in expense.categories"
-              :key="index"
-              class="tag"
-            >
-              {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']" />
-              </button>
-            </span>
+            v-model="newCategory"
+            placeholder="New category"
+            :maxlength="18"/>
+          <div class="button-group">
+            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+            <button
+              @click="acceptNewCategory"
+              class="accept-category"
+              :disabled="!isAcceptEnabled">Accept</button>
           </div>
         </div>
-
-        <label>
-          Date:
-          <input
-            type="date"
-            v-model="expense.date"
-            @input="validateDate"
-            :class="{
-              'input-error': dateError,
-              'input-valid': !dateError && expense.date,
-            }"
-          />
-        </label>
-        <span v-if="dateError" class="error-message">{{ dateError }}</span>
-
-        <div class="button-group">
-          <button type="button" @click="cancelForm" class="cancel-button">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="submit-button"
-            :disabled="!isSubmitEnabled"
-          >
-            Submit
-          </button>
+	
+        <div class="selected-categories">
+          <span v-for="(category, index) in expense.categories" :key="index" class="tag">
+            {{ category }}
+            <button @click="removeCategory(index)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']" />
+            </button>
+          </span>
         </div>
-      </form>
-    </div>
+      </div>
+      
+      <label>
+        Date:
+        <input
+          type="date"
+          v-model="expense.date"
+          @input="validateDate"
+          :class="{ 'input-error': dateError, 'input-valid': !dateError && expense.date }"/>
+      </label>
+      <span v-if="dateError" class="error-message">{{ dateError }}</span>
+      
+      <div class="button-group">
+        <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+      </div>
+    </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -154,7 +110,7 @@ export default {
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false,
+      loadingCategories: false
     };
   },
   methods: {
@@ -276,7 +232,7 @@ export default {
         return false;
       }
       return true;
-    },
+    }
   },
   computed: {
     isSubmitEnabled() {
@@ -284,293 +240,316 @@ export default {
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
-    },
+    }
   },
   mounted() {
     this.fetchCategories();
   },
 };
-</script>
+</scriPt>
 
 <style scoped>
 .form-container {
-  padding: 20px;
-  border-radius: 8px;
-  font-family: "Wix Madefor Display", sans-serif;
-  box-sizing: border-box;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: "Wix Madefor Display", sans-serif;
+    box-sizing: border-box;
 }
 
 .form-title {
-  font-size: 22px;
-  font-weight: bold;
-  color: #333;
-  text-align: left;
-  margin-bottom: 40px;
-  color: #21255b;
-  font-family: "Wix Madefor Display", sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 40px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .form-content {
-  max-height: calc(80vh - 220px);
-  padding: 10px;
-  margin: 0;
-  overflow-y: auto;
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin: 0;
+    overflow-y: auto;
 }
 
 label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 18px;
-  color: #333;
-  text-align: left;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-  width: 90%;
-  padding: 14px;
-  margin-top: 10px;
-  margin-bottom: 2px;
-  border: none;
-  outline: none;
-  background-color: #f0f0f0;
-  border-radius: 4px 4px 0 0;
-  border-bottom: 2px solid #ccc;
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 90%;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 18px;
+    background-color: #25262B;
+    border-radius: 4px;
+    border: 2px solid white;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+input::placeholder {
+    color: white;
+    font-size: 16px;
 }
 
 .input-error {
-  border-bottom-color: #e42121;
-  background-color: #ffebee;
-  outline: none;
+    border-color: #D55C5C;
+    outline: none;
 }
 
 .input-valid {
-  border-bottom-color: #1b1f9c;
-  background-color: #e0f7fa;
-  outline: none;
+    outline: none;
+}
+
+input[type="date"] {
+    color: white;
+    font-size: 16px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: white;
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    color: white;
 }
 
 .error-message {
-  color: #e42121;
-  font-size: 12px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  text-align: left;
+    color: #D55C5C;
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
 }
 
 .button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 80px;
-  justify-content: space-between;
+    display: flex;
+    gap: 10px;
+    margin-top: 60px;
+    justify-content: space-between;
 }
 
 .cancel-button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 13px 30px;
-  border-radius: 2px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: #25262B;
+    color: white;
+    border-radius: 6px;
+    border: 2px solid white;
+    padding: 15px 35px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .submit-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 13px 30px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: white;
+    color: #25262B;
+    border: none;
+    padding: 13px 35px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-button:hover {
-  background-color: #616161;
+    background-color: #333;
 }
 
 .submit-button:hover {
-  background-color: #237242;
+    background-color: #f8f9fa;
 }
 
 .categories-wrapper {
-  position: relative;
-  margin-bottom: 20px;
-  font-family: "Wix Madefor Display", sans-serif;
+    position: relative;
+    margin-bottom: 20px;
+    margin-bottom: 10px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .categories-select {
-  padding: 12px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  width: 110px;
-  font-weight: bold;
-  background-color: #ffffff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s;
+    padding: 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 115px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #25262B;
+    background-color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
 }
 
 .categories-select:hover {
-  background-color: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .dropdown-icon {
-  width: 16px;
-  height: 16px;
-  margin-left: 8px;
-  transform: translateY(-1px);
-  color: #21255b;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    transform: translateY(-3px);
+    color: #25262B;
 }
 
 .categories-dropdown {
-  position: absolute;
-  top: 80%;
-  left: 0;
-  right: 0;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background-color: white;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 0;
-  list-style: none;
-  z-index: 1000;
-  overflow-y: auto;
-  max-height: 160px;
-  max-width: 200px;
-  animation: fadeIn 0.2s ease-out;
+    position: absolute;
+    top: 80%;
+    left: 0;
+    right: 0;
+    border: 1px solid #3F4049;
+    border-radius: 12px;
+    background-color: #404149;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    list-style: none;
+    z-index: 1000;
+    overflow-y: auto;
+    max-height: 160px;
+    max-width: 250px;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .categories-dropdown li {
-  padding: 10px 20px;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-  text-align: left;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: left;
+    color: white;
+    font-weight: bold;
 }
 
 .categories-dropdown li:hover {
-  background-color: #f0f8ff;
-  border-radius: 12px;
-  color: #1010ac;
-  font-weight: bold;
+    background-color: white;
+    border-radius: 12px;
+    color: #25262B;
+    font-weight: bold;
 }
 
 .selected-categories {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    gap: 5px;
 }
 
 .tag {
-  display: flex;
-  align-items: center;
-  border-radius: 16px;
-  padding: 5px 10px;
-  font-weight: bold;
-  background-color: #f3f3f9;
-  border: 1px solid #6f6f7a;
+    display: flex;
+    align-items: center;
+    border-radius: 16px;
+    padding: 8px 20px;
+    font-weight: bold;
+    color: #25262B;
+    background-color: white;
+    border: 1px solid white;
 }
 
 .close-button {
   background: none;
   border: none;
   cursor: pointer;
-  margin-right: -10px;
+  margin-top: 2px;
+  margin-right: -15px;
 }
 
 .close-button .gg-close {
-  font-size: 12px;
-  color: #333;
+    font-size: 18px;
+    color: #25262B;
 }
 
 .new-category-dialog {
-  position: fixed;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1100;
-  width: 220px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+    position: fixed;
+    background: white;
+    border: 1px solid white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    width: 400px;
+    height: 230px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .new-category-dialog h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #21255b;
-  font-family: "Wix Madefor Display", sans-serif;
+    margin-top: 15px;
+    font-size: 22px;
+    color: #25262B;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input {
-  width: 90%;
-  padding: 14px;
-  margin-top: 10px;
-  border: none;
-  outline: none;
-  background-color: #f0f0f0;
-  border-radius: 4px 4px 0 0;
-  border-bottom: 2px solid #ccc;
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 90%;
+    padding: 14px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    border: none;
+    outline: none;
+    color: #25262B;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 4px;
+    border: 2px solid #25262B;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.new-category-dialog input::placeholder {
+    color: #25262B;
 }
 
 .new-category-dialog .button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
 }
 
 .cancel-category,
 .accept-category {
-  color: white;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 2px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-category {
-  background-color: #333;
+    background-color: #25262B;
+    color: white;
 }
 
 .accept-category {
-  background-color: #4caf50;
-}
-
-.cancel-button:hover {
-  background-color: #616161;
-}
-
-.submit-button:hover {
-  background-color: #237242;
+    background-color: white;
+    color: #25262B;
+    border: 2px solid #25262B;
+    
 }
 
 .submit-button:disabled,
 .accept-category:disabled {
-  background-color: #a2cbb2;
-  cursor: not-allowed;
-  opacity: 0.7;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 </style>

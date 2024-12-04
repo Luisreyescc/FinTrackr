@@ -17,8 +17,8 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 10px 20px;
-    background-color: white;
-    color: #25262B;
+    background-color: #25262B;
+    color: white;
     border: 3px solid #25262B;
     border-radius: 10px;
     cursor: pointer;
@@ -34,12 +34,12 @@ export default {
     justify-content: center;
     margin-right: 15px;
     font-size: 18px;
-    color: #25262B;
+    color: white;
 }
 
 .button-text {
     font-size: 14px;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 </style>
