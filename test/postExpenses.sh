@@ -1,92 +1,90 @@
 #!/bin/bash
 
-read -p "Enter login URL: " LOGIN_URL
-read -p "Enter expenses URL: " EXPENSES_URL
-read -p "Enter user info URL: " USER_INFO_URL
-read -p "Enter username: " USERNAME
-read -sp "Enter password: " PASSWORD
+read -p "enter login url: " login_url
+read -p "enter expenses url: " expenses_url
+read -p "enter user info url: " user_info_url
+read -p "enter username: " username
+read -sp "enter password: " password
 echo
-read -p "Enter the number of expenses to post: " NUM_EXPENSES
+read -p "enter the number of expenses to post: " num_expenses
 
-ACCESS_TOKEN=""
-USER_ID=""
+access_token=""
+user_id=""
 
 login() {
-  RESPONSE=$(curl -s -X POST $LOGIN_URL \
+  response=$(curl -s -X POST $login_url \
     -H "Content-Type: application/json" \
-    -d '{"user_name": "'"$USERNAME"'", "password": "'"$PASSWORD"'"}')
+    -d '{"user_name": "'"$username"'", "password": "'"$password"'"}')
 
-  echo "Login response: $RESPONSE"
+  echo "login response: $response"
 
-  ACCESS_TOKEN=$(echo $RESPONSE | jq -r .access)
+  access_token=$(echo $response | jq -r .access)
 
-  if [ "$ACCESS_TOKEN" == "null" ] || [ -z "$ACCESS_TOKEN" ]; then
-    echo "Login failed. Invalid response: $RESPONSE"
+  if [ "$access_token" == "null" ] || [ -z "$access_token" ]; then
+    echo "login failed. invalid response: $response"
     exit 1
   fi
 
-  echo "Login successful. Token obtained: $ACCESS_TOKEN"
+  echo "login successful. token obtained: $access_token"
 }
 
 get_user_id() {
-  RESPONSE=$(curl -s -X GET $USER_INFO_URL \
-    -H "Authorization: Bearer $ACCESS_TOKEN")
+  response=$(curl -s -X GET $user_info_url \
+    -H "Authorization: Bearer $access_token")
 
-  echo "User info response: $RESPONSE"
+  echo "user info response: $response"
 
-  USER_ID=$(echo $RESPONSE | jq -r '.[0].user_id')
+  user_id=$(echo $response | jq -r '.[0].user_id')
 
-  if [ "$USER_ID" == "null" ] || [ -z "$USER_ID" ]; then
-    echo "Failed to retrieve user ID. Invalid response: $RESPONSE"
+  if [ "$user_id" == "null" ] || [ -z "$user_id" ]; then
+    echo "failed to retrieve user id. invalid response: $response"
     exit 1
   fi
 
-  echo "User ID obtained: $USER_ID"
+  echo "user id obtained: $user_id"
 }
 
 get_random_date() {
   START=$(date -d "2000-01-01" +%s)
   END=$(date -d "2024-12-31" +%s)
 
-  RANDOM_TIME=$((START + RANDOM % (END - START)))
+  RANDOM_TIME=$((START + $(od -An -N4 -i /dev/urandom) % (END - START)))
   RANDOM_DATE=$(date -d @$RANDOM_TIME +"%Y-%m-%d")
   echo $RANDOM_DATE
 }
 
 get_random_amount() {
-  MIN_AMOUNT=100
-  MAX_AMOUNT=9999
-  RANDOM_AMOUNT=$(shuf -i $MIN_AMOUNT-$MAX_AMOUNT -n 1)
-  echo "$RANDOM_AMOUNT"
+  min_amount=100
+  max_amount=9999
+  random_amount=$(shuf -i $min_amount-$max_amount -n 1)
+  echo "$random_amount"
 }
 
 get_random_description() {
-  DESCRIPTIONS=("Compra de ropa" "Pago de servicios" "Cena en restaurante" "Compra de libros" "Boleto de cine" "Gasolina" "Supermercado" "Regalo de cumpleaños")
-  RANDOM_INDEX=$(shuf -i 0-$((${#DESCRIPTIONS[@]} - 1)) -n 1)
-  echo "${DESCRIPTIONS[$RANDOM_INDEX]}"
+  descriptions=("compra de ropa" "pago de servicios" "cena en restaurante" "compra de libros" "boleto de cine" "gasolina" "supermercado" "regalo de cumpleaños")
+  random_index=$(shuf -i 0-$((${#descriptions[@]} - 1)) -n 1)
+  echo "${descriptions[$random_index]}"
 }
 
 get_random_category() {
-  CATEGORIES=("Entretenimiento" "Alimentación" "Transporte" "Educación" "Salud" "Hogar" "Servicios" "Otros")
-  NUM_CATEGORIES=1 # Asumiendo que solo se selecciona una categoría
-  SELECTED_CATEGORIES=$(shuf -e "${CATEGORIES[@]}" -n $NUM_CATEGORIES)
-  # Convertir a un arreglo JSON
-  CATEGORY_ARRAY=$(printf '%s\n' "${SELECTED_CATEGORIES[@]}" | jq -R . | jq -s .)
-  echo "$CATEGORY_ARRAY"
+  categories=("entretenimiento" "alimentación" "transporte" "educación" "salud" "hogar" "servicios" "otros")
+  random_index=$(shuf -i 0-$((${#categories[@]} - 1)) -n 1)
+  # Enviar como array
+  echo "[\"${categories[$random_index]}\"]"
 }
 
 post_expense() {
-  RANDOM_DATE=$(get_random_date)
-  RANDOM_AMOUNT=$(get_random_amount)
-  RANDOM_DESCRIPTION=$(get_random_description)
-  RANDOM_CATEGORY=$(get_random_category)
+  random_date=$(get_random_date)
+  random_amount=$(get_random_amount)
+  random_description=$(get_random_description)
+  random_category=$(get_random_category)
 
-  DATA=$(jq -n \
-    --arg amount "$RANDOM_AMOUNT" \
-    --arg date "$RANDOM_DATE" \
-    --arg description "$RANDOM_DESCRIPTION" \
-    --argjson category "$RANDOM_CATEGORY" \
-    --argjson user "$USER_ID" \
+  data=$(jq -n \
+    --arg amount "$random_amount" \
+    --arg date "$random_date" \
+    --arg description "$random_description" \
+    --argjson category "$random_category" \
+    --arg user "$user_id" \
     '{
       amount: ($amount | tonumber),
       description: $description,
@@ -95,18 +93,18 @@ post_expense() {
       category: $category
     }')
 
-  RESPONSE=$(curl -s -X POST $EXPENSES_URL \
+  response=$(curl -s -X POST $expenses_url \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -d "$DATA")
+    -H "Authorization: Bearer $access_token" \
+    -d "$data")
 
-  echo "Response: $RESPONSE"
+  echo "response: $response"
 }
 
-# Main
+# main
 login
 get_user_id
-for i in $(seq 1 $NUM_EXPENSES); do
-  echo "Posting expense $i"
+for i in $(seq 1 $num_expenses); do
+  echo "posting expense $i"
   post_expense
 done
