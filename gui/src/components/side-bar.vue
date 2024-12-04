@@ -204,6 +204,7 @@ export default {
 .icon.a {
     margin-right: 15px;
 }
+
 .menu-option:hover, .bottom-option:hover {
     background-color: #36373D;
     transform: translateX(10px);

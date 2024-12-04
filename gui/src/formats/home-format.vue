@@ -663,7 +663,7 @@ export default {
     right: 0;
     top: 100px;
     bottom: 40px;
-    width: 450px;
+    width: 600px;
     max-width: 100%;
     padding: 20px;
     overflow: hidden;
@@ -671,7 +671,7 @@ export default {
     flex-direction: column;
     background: #25262B;
     border-radius: 12px;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    box-shadow: -2px 0 8px rgba(225, 225, 225, 0.1);
     transition: transform 0.3s ease;
     z-index: 1001;
 }
