@@ -347,10 +347,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .cancel-button {
     background-color: #25262B;
     color: white;
-    border-radius: 6px;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 2px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -362,7 +361,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #25262B;
     border: none;
     padding: 13px 35px;
-    border-radius: 3px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -387,7 +386,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-select {
     padding: 15px 20px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 3px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -529,7 +528,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .accept-category {
     padding: 15px 30px;
     border: none;
-    border-radius: 12px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
