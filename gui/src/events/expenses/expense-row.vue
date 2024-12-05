@@ -46,8 +46,8 @@
             v-model="editExpense.description"
             @input="validateTextField('description')"
             :class="{
-		    'input-error': descriptionError,
-		    'input-valid': !descriptionError && editExpense.description }"
+                    'input-error': descriptionError,
+                    'input-valid': !descriptionError && editExpense.description }"
             placeholder="Enter a description for the expense"/>
         </label>
         <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
