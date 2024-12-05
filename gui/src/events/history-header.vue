@@ -66,9 +66,9 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
-    background: #ffffff;
+    background: white;
     border-radius: 50px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
     min-width: 100px;
     max-width: 600px;
 }
@@ -86,7 +86,7 @@ export default {
     border: none;
     border-radius: 50px;
     font-size: 20px;
-    color: #333;
+    color: #25262B;
     background: transparent;
     outline: none;
     box-shadow: none;
@@ -104,20 +104,20 @@ export default {
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    background: #25262B;
-    border: 1px solid #25262B;
+    background: white;
+    border: 1px solid white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
 }
 
 .icon {
-    color: white;
+    color: #25262B;
     font-size: 24px;
 }
 
 .reset-button:hover {
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 10px rgba(255, 255, 255, 0.15);
     transform: scale(1.1);
 }
 </style>

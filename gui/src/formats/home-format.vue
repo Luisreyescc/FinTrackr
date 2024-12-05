@@ -616,11 +616,7 @@ export default {
     flex-direction: column;
     max-width: 1200px;
     width: 100%;
-    border-radius: 8px;
-    /*border: 2px solid rgba(255, 255, 255, 0.1);*/
-    border-radius: 12px;
-    /*box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);*/
-    background: #25262B;
+    border-radius: 200px;
 }
 
 .header {

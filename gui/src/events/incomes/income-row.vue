@@ -12,10 +12,10 @@
       <span class="income-amount">{{ formattedAmount }}</span>
       <div class="income-actions">
         <button class="edit-button" @click="startEdit">
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
+          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon" />
         </button>
         <button class="delete-button" @click="deleteIncome">
-          <font-awesome-icon :icon="['fas', 'trash-can']" class="icon" />
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
         </button>
       </div>
     </div>
@@ -321,26 +321,28 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
     margin-bottom: 10px;
-    box-shadow: 0px 2px 4px  rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 8px  rgba(255, 255, 255, 0.1);
 }
 
 .income-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
-    background-color: #e0e0e0;
+    background: #25262B;
+    border: 2px solid white;
     margin-right: 14px;
 }
 
 .row-icon {
     font-size: 40px;
-    color: #25262B;
+    color: white;
 }
 
 .income-details {
@@ -356,24 +358,24 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 440px;
+    max-width: 420px;
     margin-left: 10px;
 }
 
 .income-details h4 {
     font-size: 22px;
-    color: #25262B;
+    color: #20C171;
     font-weight: bold;
 }
 
 .income-description {
-    color: #777;
+    color: white;
     font-weight: bold;
     font-size: 20px;
 }
 
 .income-date {
-    color: #aaa;
+    color: #BF9F00;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -385,11 +387,12 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
+    margin-top: 5px;
 }
 
 .income-amount {
     font-weight: bold;
-    color: #4caf50;
+    color: #20C171;
     font-size: 20px;
     flex-shrink: 0;
 }
@@ -397,7 +400,7 @@ export default {
 .income-actions {
     display: flex;
     gap: 10px;
-    margin-top: 5px;
+    margin-top: 15px;
 }
 
 .edit-button, .delete-button {
@@ -413,13 +416,12 @@ export default {
 }
 
 .edit-button {
-    background-color: #25253C;
-    color: white;
+    background-color: white;
 }
 
 .edit-button:hover {
     transform: scale(1.1);
-    background-color: #555;
+    background-color: #F2F2F2;
 }
 
 .delete-button {
@@ -432,7 +434,12 @@ export default {
     background-color: darkred;
 }
 
-.icon {
+.edit-icon {
+    font-size: 20px;
+    color: #25262B;
+}
+
+.trash-icon {
     font-size: 20px;
     color: white;
 }

@@ -12,10 +12,10 @@
     <span class="debt-amount">{{ formattedAmount }}</span>
     <div class="debt-actions">
       <button class="edit-button" @click="startEdit">
-        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/>
+        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon"/>
       </button>
       <button class="delete-button" @click="deleteDebt">
-	<font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
+	<font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon"/>
       </button>
     </div>
   </div>
@@ -302,8 +302,9 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #F9F9F9;
-    border-radius: 8px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
     margin-bottom: 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -334,24 +335,24 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 440px;
+    max-width: 420px;
     margin-left: 10px;
 }
 
 .debt-details h4 {
     font-size: 22px;
-    color: #25262B;
+    color: #6092DE;
     font-weight: bold;
 }
 
 .debt-description {
-    color: #777;
+    color: white;
     font-weight: bold;
     font-size: 20px;
 }
 
 .debt-date {
-    color: #aaa;
+    color: #BF9F00;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -363,11 +364,12 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
+    margin-top: 5px;
 }
 
 .debt-amount {
     font-weight: bold;
-    color: #25262B;
+    color: #6092DE;
     font-size: 20px;
     flex-shrink: 0;
 }
@@ -389,15 +391,13 @@ export default {
     border: none;
     transition: transform 0.2s, background-color 0.2s;
 }
-
 .edit-button {
-    background-color: #25253C;
-    color: white;
+    background-color: white;
 }
 
 .edit-button:hover {
     transform: scale(1.1);
-    background-color: #555;
+    background-color: #F2F2F2;
 }
 
 .delete-button {
@@ -410,7 +410,12 @@ export default {
     background-color: darkred;
 }
 
-.icon {
+.edit-icon {
+    font-size: 20px;
+    color: #25262B;
+}
+
+.trash-icon {
     font-size: 20px;
     color: white;
 }

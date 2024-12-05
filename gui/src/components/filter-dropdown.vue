@@ -61,20 +61,20 @@ export default {
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    background: #25262B;
-    border: 1px solid #25262B;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    border: 1px solid white;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
 }
 
 .filter-button:hover {
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 10px rgba(255, 255, 255, 0.15);
     transform: scale(1.1);
 }
 
 .icon {
-    color: white;
+    color: #25262B;
     font-size: 24px;
 }
 

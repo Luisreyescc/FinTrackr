@@ -368,17 +368,17 @@ export default {
     getIncomes() {
       const amount = this.formatCurrency(this.totalIncome);
 
-      return `<span style="color: #4CAF50;">${amount}</span>`;
+      return `<span style="color: #20C171;">${amount}</span>`;
     },
     getExpenses() {
       const amount = this.formatCurrency(this.totalExpense, true);
 
-      return `<span style="color: darkred;">${amount}</span>`;
+      return `<span style="color: #D55C5C;">${amount}</span>`;
     },
     getDebts() {
       // Placeholder for debts
       const amount = 0;
-      return `<span style="color: #25262B;">${amount}</span>`;
+      return `<span style="color: #6092DE;">${amount}</span>`;
     },
     toggleSidebar() {
       this.$emit('toggleSidebar');
@@ -536,7 +536,9 @@ select {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    border-radius: 20px;
+    background-color: #25262B;
+    border: 2px solid white;
     width: 100%;
     overflow: hidden;
 }
@@ -570,9 +572,10 @@ select {
     margin-right: 0px;
     padding: 20px;
     width: 400px;
-    border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    border-radius: 20px;
+    background-color: #25262B;
+    border: 2px solid white;
 }
 
 .stats-header {
@@ -586,14 +589,14 @@ select {
 .stats-header h3 {
     font-size: 24px;
     font-weight: bold;
-    color: #25262B;
+    color: white;
     flex-direction: column;
     margin: 0;
 }
 
 .icon {
     font-size: 40px;
-    color: #25262B;
+    color: white;
 }
 
 .stats-box p {

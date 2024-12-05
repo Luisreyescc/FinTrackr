@@ -292,11 +292,7 @@ export default {
     flex-direction: column;
     max-width: 1200px;
     width: 100%;
-    border-radius: 8px;
-     border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-    background: white;
+    background: #25262B;
 }
 
 .header {
@@ -304,8 +300,9 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background: white;
-    border-radius: 12px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -316,7 +313,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -326,7 +323,10 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     padding: 20px;
-    border-top: 1px solid #25262B;
+    border: 2px solid white;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: #25262B;
     position: relative;
 }
 
@@ -335,7 +335,7 @@ export default {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -343,47 +343,7 @@ export default {
     flex: 1;
     overflow-y: auto;
     padding-right: 10px;
-    max-height: calc(70vh - 50px);
-}
-
-.forms-section {
-    position: fixed;
-    right: 0;
-    top: 100px;
-    bottom: 40px;
-    width: 450px;
-    max-width: 100%;
-    padding: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: #25262B;
-    border-radius: 9px;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-    z-index: 1001;
-}
-
-.forms-section-enter-active, .forms-section-leave-active {
-    transition: transform 0.3s ease;
-}
-
-.forms-section-enter {
-    transform: translateX(100%);
-}
-
-.forms-section-leave-to {
-    transform: translateX(100%);
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(59, 59, 90, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
+    border-radius: 12px;
+    max-height: calc(70vh - 30px);
 }
 </style>
