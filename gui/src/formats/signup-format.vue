@@ -1,57 +1,58 @@
 <template>    
-  <div class="signup-form">
-    <h2 class="form-title">Sign Up</h2>
-    
-    <div class="username-container">
-      <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
-      <input
-	v-model="username"
-	type="text"
-	id="username"
-	placeholder="Your username"
-	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="validateUser"/>
-    </div>
-    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-    
-    <div class="email-container">
-      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
-      <input
-	v-model="email"
-	type="email"
-	id="email"
-	placeholder="Your email"
-	:class="{ 'input-error': emailError, 'padded-input': true }"
-	@input="validateEmail"/>
-    </div>
-    <span v-if="emailError" class="error-message">{{ emailError }}</span>
-    
-    <div class="password-container">
-      <input
-	v-model="password"
-	:type="showPassword ? 'text' : 'password'"
-	id="password"
-	placeholder="Your password"
-	:class="{ 'input-error': passwordError, 'padded-input': true }"
-	@input="clearError('password')"/>
-      <button
-	type="button" 
-	class="show-password-btn" 
-	@click="togglePasswordVisibility"
-	aria-label="Show or Hide Password" >
-	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-      </button>
-    </div>
-    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-    
-    <div class="password-container">
-      <input
-	v-model="password2"
-	:type="showConfirmPassword ? 'text': 'password'"
-	id="password2"
-	placeholder="Confirm your password"
-	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-	@input="clearError('password2')"/>
+<div class="signup-form">
+  <h2 class="form-title">Sign Up</h2>
+  <span class="admin-status">New account as: {{ isAdminUser ? 'Admin' : 'User' }}</span>
+  
+  <div class="username-container">
+    <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
+    <input
+      v-model="username"
+      type="text"
+      id="username"
+      placeholder="Your username"
+      :class="{ 'input-error': usernameError, 'padded-input': true }"
+      @input="validateUser"/>
+  </div>
+  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+  
+  <div class="email-container">
+    <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
+    <input
+      v-model="email"
+      type="email"
+      id="email"
+      placeholder="Your email"
+      :class="{ 'input-error': emailError, 'padded-input': true }"
+      @input="validateEmail"/>
+  </div>
+  <span v-if="emailError" class="error-message">{{ emailError }}</span>
+  
+  <div class="password-container">
+    <input
+      v-model="password"
+      :type="showPassword ? 'text' : 'password'"
+      id="password"
+      placeholder="Your password"
+      :class="{ 'input-error': passwordError, 'padded-input': true }"
+      @input="clearError('password')"/>
+    <button
+      type="button" 
+      class="show-password-btn" 
+      @click="togglePasswordVisibility"
+      aria-label="Show or Hide Password" >
+      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+    </button>
+  </div>
+  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+  
+  <div class="password-container">
+    <input
+      v-model="password2"
+      :type="showConfirmPassword ? 'text': 'password'"
+      id="password2"
+      placeholder="Confirm your password"
+      :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+      @input="clearError('password2')"/>
     <button 
       type="button" 
       class="show-password-btn" 
@@ -59,17 +60,24 @@
       aria-label="Show or Hide Confirm Password">
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
     </button>
-    </div>
-    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-    
-    <div class="button-group">
-      <button class="accept-btn" @click="emitSignUp" >Accept</button>
-      <div class="divider">
-	<span>or return to</span>
-      </div>
-      <button class="login-btn" @click="$emit('goToLogin')">Log-In</button>
-    </div>
   </div>
+  <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+
+  <div class="admin-toggle-container">
+    <button class="admin-toggle-btn" @click="toggleAdminUser">
+      {{ isAdminUser ? ' Change to Casual User' : 'Change to Admin User' }}
+    </button>
+    
+  </div>
+  
+  <div class="button-group">
+    <button class="accept-btn" @click="emitSignUp">Accept</button>
+    <div class="divider">
+      <span>or return to</span>
+    </div>
+    <button class="login-btn" @click="$emit('goToLogin')">Log-In</button>
+  </div>
+</div>
 </template>
 
 <script>
@@ -90,7 +98,8 @@ export default {
       passwordError: "",
       confirmPasswordError: "",
       showPassword: false,
-      showConfirmPassword: false
+      showConfirmPassword: false,
+      isAdminUser: false
     };
   },
   methods: {
@@ -126,7 +135,12 @@ export default {
       }
       
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
-        this.$emit("signUp", { username: this.username, email: this.email, password: this.password, password2: this.password2});
+        this.$emit("signUp",
+                   { username: this.username,
+                     email: this.email,
+                     password: this.password,
+                     password2: this.password2,
+                     admin_user: this.isAdminUser});
       }
     },
     validateUsername() {
@@ -146,6 +160,9 @@ export default {
     },
     toggleConfirmPasswordVisibility() {
       this.showConfirmPassword = !this.showConfirmPassword;
+    },
+    toggleAdminUser() {
+      this.isAdminUser = !this.isAdminUser;
     }
   }
 };
@@ -318,4 +335,31 @@ input {
 .login-btn:hover {
     opacity: 0.9;
 }
+
+.admin-toggle-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.admin-toggle-btn {
+    background-color: transparent;
+    border: 2px solid #D160DE;
+    color: #D160DE;
+    border-radius: 40px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.admin-status {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #D160DE;
+    font-size: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
 </style>
