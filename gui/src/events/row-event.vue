@@ -85,26 +85,28 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
     margin-bottom: 10px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 8px  rgba(255, 255, 255, 0.1);
 }
 
 .event-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
-    background-color: #e0e0e0;
+    background: #25262B;
+    border: 2px solid white;
     margin-right: 14px;
 }
 
 .row-icon {
     font-size: 40px;
-    color: #25253C;
+    color: white;
 }
 
 .event-details {
@@ -120,24 +122,24 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 440px;
+    max-width: 420px;
     margin-left: 10px;
 }
 
 .event-details h4 {
     font-size: 22px;
-    color: #25262B;
+    color: #D160DE;
     font-weight: bold;
 }
 
 .event-description {
-    color: #777;
+    color: white;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 .event-date {
-    color: #aaa;
+    color: #BF9F00;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -148,37 +150,36 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    font-weight: bold;
-    font-size: 20px;
     margin-left: 25px;
+    margin-top: 5px;
 }
 
 .income-amount {
-    color: #4caf50;
+    color: #20C171;
 }
 
 .expense-amount {
-    color: #f44336;
+    color: #D55C5C;
 }
 
 .debt-amount {
-    color: #25262B;
+    color: #6092DE;
 }
 
 .income-type {
-    color: #4caf50;
+    color: #20C171;
     font-weight: bold;
     margin-top: 5px;
 }
 
 .expense-type {
-    color: #f44336;
+    color: #D55C5C;
     font-weight: bold;
     margin-top: 5px;
 }
 
 .debt-type {
-    color: #BF9F00;
+    color: #6092DE;
     font-weight: bold;
     margin-top: 5px;
 }
