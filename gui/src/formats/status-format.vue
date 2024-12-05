@@ -493,16 +493,16 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
+    border-radius: 20px;
+    background-color: #25262B;
+    border: 2px solid white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -510,7 +510,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 15px;
-    color: #25262B;
+    color: white;
     font-size: 18px;
 }
 

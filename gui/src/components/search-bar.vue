@@ -37,7 +37,7 @@ export default {
     align-items: center;
     background: #ffffff;
     border-radius: 50px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
 }
 
 .search-icon {

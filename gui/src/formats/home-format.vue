@@ -617,10 +617,10 @@ export default {
     max-width: 1200px;
     width: 100%;
     border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    /*border: 2px solid rgba(255, 255, 255, 0.1);*/
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-    background: white;
+    /*box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);*/
+    background: #25262B;
 }
 
 .header {
@@ -628,8 +628,9 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background: white;
-    border-radius: 12px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -640,7 +641,7 @@ export default {
 .section-title {
     font-size: 32px;
     font-weight: bold;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -650,8 +651,10 @@ export default {
     max-height: 100vh;
     overflow: hidden;
     padding: 20px;
-    border-top: 1px solid #25262B;
-    background: white;
+    border: 2px solid white;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: #25262B;
     position: relative;
 }
 
@@ -660,7 +663,7 @@ export default {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
-    color: #25262B;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -669,7 +672,7 @@ export default {
     overflow-y: auto;
     padding-right: 10px;
     border-radius: 12px;
-    max-height: calc(70vh - 50px);
+    max-height: calc(70vh - 30px);
 }
 
 .forms-section {
