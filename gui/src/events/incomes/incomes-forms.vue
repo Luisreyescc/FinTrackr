@@ -51,15 +51,15 @@
                 :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
+        </div>
 
-          <div class="selected-categories">
-            <span v-for="(category, index) in income.categories" :key="index" class="tag">
-              {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']"/>
-              </button>
-            </span>
-          </div>
+        <div class="selected-categories">
+          <span v-for="(category, index) in income.categories" :key="index" class="tag">
+            {{ category }}
+            <button type="button" @click="removeCategory(index, $event)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
+            </button>
+          </span>
         </div>
 
         <label>
@@ -75,7 +75,7 @@
 
         <label class="date-label">
           Date:
-	</label>
+        </label>
         <div class="date-container">
           <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
           <input
@@ -86,7 +86,7 @@
             :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
-	
+    
         <div class="button-group">
           <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
@@ -183,7 +183,9 @@ export default {
         this.dropdownOpen = false;
       }
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.income.categories.splice(index, 1);
     },
     clearErrors() {
@@ -405,7 +407,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .dropdown-icon {
     width: 16px;
     height: 16px;
-    margin-left: 15px;
+    margin-left: 16px;
     transform: translateY(-3px);
     color: #25262B;
 }

@@ -82,7 +82,7 @@ export default {
 
 .search-bar {
     width: 100%;
-    padding: 21px 200px 21px 50px;
+    padding: 21px 50px 21px 50px;
     border: none;
     border-radius: 50px;
     font-size: 20px;

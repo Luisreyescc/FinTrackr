@@ -66,7 +66,7 @@
         <div class="selected-categories">
           <span v-for="(category, index) in expense.categories" :key="index" class="tag">
             {{ category }}
-            <button @click="removeCategory(index)" class="close-button">
+            <button type="button" @click="removeCategory(index, $event)" class="close-button">
               <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
@@ -78,7 +78,7 @@
       </label>
       <div class="date-container">
         <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
-	<input
+        <input
           type="date"
           v-model="expense.date"
           @input="validateDate"
@@ -182,13 +182,14 @@ export default {
         this.dropdownOpen = false;
       }
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.expense.categories.splice(index, 1);
     },
     clearErrors() {
       this.amountError = "";
       this.descriptionError = "";
-      this.categoriesError = "";
       this.dateError = "";
     },
     cancelForm() {
@@ -197,7 +198,6 @@ export default {
     },
     resetForm() {
       this.expense = { amount: "", description: "", categories: [], date: "" };
-      this.dropdownOpen = false;
       this.clearErrors();
     },
     validateAmount() {

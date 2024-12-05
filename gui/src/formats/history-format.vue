@@ -99,12 +99,14 @@ export default {
             const amount = parseFloat(filterValue);
             events = events.filter(event => event.amount <= amount);
           } else if (filterType === 'date') {
-            const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+            const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY", "MM", "MMM"];
             events = events.filter(event => {
               return dateFormats.some(format => {
                 const eventDate = moment(event.date, "YYYY-MMM-DD");
                 const filterDate = moment(filterValue, format);
-                if (filterValue.length === 4) {
+                if (filterValue.length === 2 || filterValue.length === 3) {
+                  return eventDate.isSame(filterDate, 'month');
+                } else if (filterValue.length === 4) {
                   return eventDate.isSame(filterDate, 'year');
                 } else if (filterValue.length === 7 || filterValue.length === 8) {
                   return eventDate.isSame(filterDate, 'month');

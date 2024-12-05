@@ -145,7 +145,11 @@ export default {
     return {
       showForm: false,
       incomes: [],
-      expenses: [],
+      expenses: [
+      { income_id: 1, amount: 1500.0, description: "Freelance project", date: "2024-12-01", categories: ["Work"] },
+      { income_id: 2, amount: 500.0, description: "Gift from friend", date: "2024-12-02", categories: ["Gift"] },
+    ],
+      //expenses: [],
       debts: [],
       messages: [],
       searchQuery: "",
@@ -178,7 +182,7 @@ export default {
     },
     filterEvents(event) {
       const searchQuery = this.searchQuery.toLowerCase();
-      const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
+      const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY", "MM", "MMM"];
       const amount = parseFloat(searchQuery);
 
       return (
@@ -189,7 +193,9 @@ export default {
         dateFormats.some(format => {
           const eventDate = moment(event.date, "YYYY-MMM-DD");
           const filterDate = moment(searchQuery, format);
-          if (searchQuery.length === 4) {
+          if (searchQuery.length === 2 || searchQuery.length === 3) {
+            return eventDate.isSame(filterDate, 'month');
+          }else if (searchQuery.length === 4) {
             return eventDate.isSame(filterDate, 'year');
           } else if (searchQuery.length === 7 || searchQuery.length === 8) {
             return eventDate.isSame(filterDate, 'month');
@@ -684,7 +690,7 @@ export default {
     flex-direction: column;
     background: #25262B;
     border-radius: 12px;
-    box-shadow: -2px 0 8px rgba(225, 225, 225, 0.1);
+    box-shadow: 0 4px 10px rgba(225, 225, 225, 0.1);
     transition: transform 0.3s ease;
     z-index: 1001;
 }

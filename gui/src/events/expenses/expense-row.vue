@@ -14,10 +14,10 @@
       <span class="expense-amount">{{ formattedAmount }}</span>
       <div class="expense-actions">
         <button class="edit-button" @click="startEdit">
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon"/>
+          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon"/>
         </button>
         <button class="delete-button" @click="deleteExpense">
-          <font-awesome-icon :icon="['fas', 'trash-can']" class="icon"/>
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon"/>
         </button>
       </div>
     </div>
@@ -67,17 +67,15 @@
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li
-              v-else
-              @click="showNewCategoryDialog"
-              style="color: green; font-weight: bold">
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
+            <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
             </li>
             <li
               v-for="(category, index) in categoryOptions"
               :key="index"
               @click="addCategory(category)">
               {{ category }}
+              @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
@@ -100,27 +98,29 @@
 
           <div class="selected-categories">
             <span
-              v-for="(category, index) in editExpense.categories"
-              :key="index"
-              class="tag">
+              v-for="(category, index) in editExpense.categories" :key="index" class="tag">
               {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']"/>
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
+                <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </span>
           </div>
         </div>
 
-        <label>
+        <label class="date-label">
           Date:
+        </label>
+        <div class="date-container">
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
           <input
             v-model="editExpense.date"
             type="date"
             @input="validateDate"
+            class="custom-date-input"
             :class="{
               'input-error': dateError,
               'input-valid': !dateError && editExpense.date }"/>
-        </label>
+        </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
         <div class="button-group">
@@ -150,7 +150,6 @@ export default {
     expense: {
       type: Object,
       required: true,
-      // get current categories from selected expense
       default: () => ({ categories: [] }),
     },
   },
@@ -264,23 +263,6 @@ export default {
         this.loadingCategories = false;
       }
     },
-    async sendNewCategory() {
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/categories/",
-          { name: this.newCategory.trim() },
-        );
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.categoryOptions.push(this.newCategory.trim());
-          this.editExpense.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
-      }
-    },
     acceptNewCategory() {
       if (this.newCategory.trim()) {
         const newCategory = this.newCategory.trim();
@@ -298,7 +280,6 @@ export default {
     addCategory(category) {
       if (!this.editExpense.categories.includes(category)) {
         this.editExpense.categories.push(category);
-        this.newCategory = "";
       }
       this.dropdownOpen = false;
     },
@@ -309,7 +290,9 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.editExpense.categories.splice(index, 1);
     },
     validateAmount() {
@@ -374,7 +357,7 @@ export default {
     border: 2px solid white;
     border-radius: 20px;
     margin-bottom: 10px;
-    box-shadow: -2px 0 8px rgba(255, 255, 255, 0.1);
+    box-shadow: -2px 0 8px  rgba(255, 255, 255, 0.1);
 }
 
 .expense-icon {
@@ -466,13 +449,12 @@ export default {
 }
 
 .edit-button {
-    background-color: #25253C;
-    color: white;
+    background-color: white;
 }
 
 .edit-button:hover {
     transform: scale(1.1);
-    background-color: #555;
+    background-color: #F2F2F2;
 }
 
 .delete-button {
@@ -485,7 +467,12 @@ export default {
     background-color: darkred;
 }
 
-.icon {
+.edit-icon {
+    font-size: 20px;
+    color: #25262B;
+}
+
+.trash-icon {
     font-size: 20px;
     color: white;
 }
@@ -495,11 +482,11 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: #25262B;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
-    width: 400px;
+    width: 600px;
     z-index: 1000;
 }
 
@@ -520,12 +507,11 @@ export default {
 }
 
 .edit-title {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: bold;
-    color: #333;
-    text-align: left;
-    margin-bottom: 40px;
-    color: #21255b;
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -533,96 +519,123 @@ label {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
-    font-size: 18px;
-    color: #333;
+    font-size: 24px;
+    color: white;
     text-align: left;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-    width: 90%;
-    padding: 14px;
+    width: 93%;
+    padding: 20px;
     margin-top: 10px;
     margin-bottom: 2px;
     border: none;
     outline: none;
-    background-color: #f0f0f0;
-    border-radius: 4px 4px 0 0;
-    border-bottom: 2px solid #ccc;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    color: white;
+    font-size: 18px;
+    background-color: #25262B;
+    border-radius: 4px;
+    border: 2px solid white;
+    transition: background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+input::placeholder {
+    color: white;
+    font-size: 16px;
+}
+
 .input-error {
-    border-bottom-color: #e42121;
-    background-color: #ffebee;
+    border-color: #D55C5C;
     outline: none;
 }
 
 .input-valid {
-    border-bottom-color: #1b1f9c;
-    background-color: #e0f7fa;
     outline: none;
 }
 
+input[type="date"] {
+    color: white;
+    font-size: 16px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: white;
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    color: white;
+}
+
 .error-message {
-    color: red;
-    font-size: 12px;
+    color: #D55C5C;
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
 }
 
 .button-group {
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 50px;
 }
 
 .cancel-button {
-    background-color: #333;
+    background-color: #25262B;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    border: 2px solid white;
+    padding: 15px 35px;
+    border-radius: 20px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .submit-button {
-    background-color: #4caf50;
-    color: white;
+    background-color: white;
+    color: #25262B;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 15px 35px;
+    border-radius: 20px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-button:hover {
-    background-color: #555;
+    background-color: #333;
 }
 
 .submit-button:hover {
-    background-color: #237242;
+    background-color: #f8f9fa;
 }
 
 .categories-wrapper {
     position: relative;
+    margin-top: 20px;
     margin-bottom: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .categories-select {
-    padding: 12px 15px;
+    padding: 15px 30px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 3px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    width: 110px;
+    width: 115px;
+    font-size: 18px;
     font-weight: bold;
-    background-color: #ffffff;
+    color: #25262B;
+    background-color: white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
 }
@@ -634,9 +647,9 @@ input {
 .dropdown-icon {
     width: 16px;
     height: 16px;
-    margin-left: 8px;
-    transform: translateY(-1px);
-    color: #21255b;
+    margin-left: 16px;
+    transform: translateY(-3px);
+    color: #25262B;
 }
 
 .categories-dropdown {
@@ -644,32 +657,33 @@ input {
     top: 80%;
     left: 0;
     right: 0;
-    border: 1px solid #ddd;
+    border: 1px solid #3F4049;
     border-radius: 12px;
-    background-color: white;
+    background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     padding: 0;
     list-style: none;
     z-index: 1000;
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: 160px;
-    max-width: 200px;
+    max-width: 250px;
     animation: fadeIn 0.2s ease-out;
 }
 
 .categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition:
-	background-color 0.3s,
-	color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
     text-align: left;
+    color: white;
+    font-weight: bold;
 }
 
 .categories-dropdown li:hover {
-    background-color: #f0f8ff;
+    background-color: white;
     border-radius: 12px;
-    color: #1010ac;
+    color: #25262B;
     font-weight: bold;
 }
 
@@ -684,96 +698,130 @@ input {
     display: flex;
     align-items: center;
     border-radius: 16px;
-    padding: 5px 10px;
+    padding: 8px 20px;
     font-weight: bold;
-    background-color: #f3f3f9;
-    border: 1px solid #6f6f7a;
+    color: #25262B;
+    background-color: white;
+    border: 1px solid white;
 }
 
 .close-button {
     background: none;
     border: none;
     cursor: pointer;
-    margin-right: -10px;
+    margin-top: 2px;
+    margin-right: -15px;
 }
 
 .close-button .gg-close {
-    font-size: 12px;
-    color: #333;
+    font-size: 18px;
+    color: #25262B;
 }
 
 .new-category-dialog {
     position: fixed;
     background: white;
-    border: 1px solid #ccc;
+    border: 1px solid white;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1100;
-    width: 220px;
+    width: 400px;
+    height: 230px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .new-category-dialog h4 {
-    margin: 0 0 10px;
-    font-size: 18px;
-    color: #21255b;
+    margin-top: 15px;
+    font-size: 22px;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input {
     width: 90%;
     padding: 14px;
-    margin-top: 10px;
+    margin-bottom: 2px;
     border: none;
     outline: none;
-    background-color: #f0f0f0;
-    border-radius: 4px 4px 0 0;
-    border-bottom: 2px solid #ccc;
+    color: #25262B;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 4px;
+    border: 2px solid #25262B;
     transition: background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.new-category-dialog input::placeholder {
+    color: #25262B;
 }
 
 .new-category-dialog .button-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 15px;
+    margin-top: 30px;
 }
 
 .cancel-category,
 .accept-category {
-    color: white;
+    padding: 15px 30px;
     border: none;
-    padding: 8px 18px;
-    border-radius: 2px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-category {
-    background-color: #333;
+    background-color: #25262B;
+    color: white;
 }
 
 .accept-category {
-    background-color: #4caf50;
-}
-
-.cancel-button:hover {
-    background-color: #616161;
-}
-
-.submit-button:hover {
-    background-color: #237242;
+    background-color: white;
+    color: #25262B;
+    border: 2px solid #25262B;
 }
 
 .submit-button:disabled,
 .accept-category:disabled {
-    background-color: #a2cbb2;
+    background-color: #f8f9fa;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+.date-label {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.date-container {
+    left: 0px;
+    position: relative;
+    display: inline-block;
+    width: 100%; 
+}
+
+.birth-icon {
+    position: absolute;
+    right: 23px;
+    top: 50%;
+    transform: translateY(-30%);
+    color: white;
+    pointer-events: none;
+}
+
+.date-container input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
 }
 </style>
