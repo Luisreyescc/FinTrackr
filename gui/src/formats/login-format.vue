@@ -3,14 +3,14 @@
   <h2 class="form-title">Log In</h2>
   
   <div class="username-container">
-    <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+    <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
     <input
       v-model="username"
       type="text"
       id="username"
       placeholder="Username"
       :class="{ 'input-error': usernameError, 'padded-input': true }"
-      @input="clearError('username')" />
+      @input="clearError('username')"/>
   </div>
   <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
   
@@ -21,7 +21,7 @@
       id="password"
       placeholder="Password"
       :class="{ 'input-error': passwordError, 'padded-input': true }"
-      @input="clearError('password')" />
+      @input="clearError('password')"/>
     <button
       type="button"
       class="show-password-btn"
@@ -40,7 +40,7 @@
     <button class="register-btn" @click="$emit('goToSignUp')">Sing-up</button>
   </div>
   
-  <a href="#" class="recover-password" @click.prevent="goToRecovery"> Forget password?</a>
+  <a href="#" class="recover-password" @click.prevent="goToRecovery">Forget password?</a>
 </div>
 </template>
 

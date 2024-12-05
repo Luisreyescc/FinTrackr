@@ -3,26 +3,26 @@
     <h2 class="form-title">Sign Up</h2>
     
     <div class="username-container">
-      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
       <input
 	v-model="username"
 	type="text"
 	id="username"
 	placeholder="Your username"
 	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="validateUser" />
+	@input="validateUser"/>
     </div>
     <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
     
     <div class="email-container">
-      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
       <input
 	v-model="email"
 	type="email"
 	id="email"
 	placeholder="Your email"
 	:class="{ 'input-error': emailError, 'padded-input': true }"
-	@input="validateEmail" />
+	@input="validateEmail"/>
     </div>
     <span v-if="emailError" class="error-message">{{ emailError }}</span>
     
@@ -33,7 +33,7 @@
 	id="password"
 	placeholder="Your password"
 	:class="{ 'input-error': passwordError, 'padded-input': true }"
-	@input="clearError('password')" />
+	@input="clearError('password')"/>
       <button
 	type="button" 
 	class="show-password-btn" 
@@ -51,7 +51,7 @@
 	id="password2"
 	placeholder="Confirm your password"
 	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-	@input="clearError('password2')" />
+	@input="clearError('password2')"/>
     <button 
       type="button" 
       class="show-password-btn" 
