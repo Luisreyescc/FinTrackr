@@ -145,11 +145,7 @@ export default {
     return {
       showForm: false,
       incomes: [],
-      expenses: [
-      { income_id: 1, amount: 1500.0, description: "Freelance project", date: "2024-12-01", categories: ["Work"] },
-      { income_id: 2, amount: 500.0, description: "Gift from friend", date: "2024-12-02", categories: ["Gift"] },
-    ],
-      //expenses: [],
+      expenses: [],
       debts: [],
       messages: [],
       searchQuery: "",

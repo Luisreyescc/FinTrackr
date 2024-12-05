@@ -34,9 +34,7 @@
             type="text"
             v-model="editExpense.amount"
             @input="validateAmount"
-            :class="{
-              'input-error': amountError,
-              'input-valid': !amountError && editExpense.amount }"
+            :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
             placeholder="Enter amount (e.g., 1000.00)"/>
         </label>
         <span v-if="amountError" class="error-message">{{ amountError }}</span>
@@ -48,8 +46,8 @@
             v-model="editExpense.description"
             @input="validateTextField('description')"
             :class="{
-              'input-error': descriptionError,
-              'input-valid': !descriptionError && editExpense.description }"
+		    'input-error': descriptionError,
+		    'input-valid': !descriptionError && editExpense.description }"
             placeholder="Enter a description for the expense"/>
         </label>
         <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
@@ -101,7 +99,7 @@
               v-for="(category, index) in editExpense.categories" :key="index" class="tag">
               {{ category }}
               <button type="button" @click="removeCategory(index, $event)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']" />
+                <font-awesome-icon :icon="['fas', 'xmark']"/>
               </button>
             </span>
           </div>
@@ -124,16 +122,8 @@
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
         <div class="button-group">
-          <button type="button" class="cancel-button" @click="cancelEdit">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="submit-button"
-            :disabled="!isSubmitEnabled"
-          >
-            Save
-          </button>
+          <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
         </div>
       </form>
     </div>
