@@ -13,6 +13,8 @@ from .models import (
     Categories,
     Expenses,
     ExpenseCategories,
+    Debts,
+    DebtCategories,
 )
 from .serializers import (
     RegisterSerializer,
@@ -22,6 +24,7 @@ from .serializers import (
     IncomeSerializer,
     CategorySerializer,
     ExpenseSerializer,
+    DebtSerializer,
 )
 
 
@@ -218,7 +221,8 @@ class ExpenseDetailView(APIView):
                 {"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = ExpenseSerializer(expense, data=request.data, partial=True)
+        serializer = ExpenseSerializer(
+            expense, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -278,34 +282,134 @@ class UserExpenseCategoriesView(APIView):
         return Response({"categories": list(categories)}, status=status.HTTP_200_OK)
 
 
+# Debt List and Create View
+class DebtListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        debts = Debts.objects.filter(user=request.user)
+        serializer = DebtSerializer(debts, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = DebtSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Debt Detail View
+class DebtDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, debt_id, user):
+        try:
+            return Debts.objects.get(pk=debt_id, user=user)
+        except Debts.DoesNotExist:
+            return None
+
+    def get(self, request, debt_id):
+        debt = self.get_object(debt_id, request.user)
+        if not debt:
+            return Response(
+                {"error": "Debt not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = DebtSerializer(debt)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, debt_id):
+        debt = self.get_object(debt_id, request.user)
+        if not debt:
+            return Response(
+                {"error": "Debt not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = DebtSerializer(debt, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, debt_id):
+        debt = self.get_object(debt_id, request.user)
+        if not debt:
+            return Response(
+                {"error": "Debt not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        debt.delete()
+        return Response(
+            {"message": "Debt deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+# Debt Category Summary View
+class DebtCategorySummaryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        categories_summary = (
+            DebtCategories.objects.filter(debt__user=request.user)
+            .values("category__name")
+            .annotate(total_amount=Sum("debt__amount"))
+            .order_by("category__name")
+        )
+
+        response_data = [
+            {
+                "category": category["category__name"],
+                "total_amount": category["total_amount"],
+            }
+            for category in categories_summary
+        ]
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+# User Debt Categories View
+class UserDebtCategoriesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        categories = (
+            DebtCategories.objects.filter(debt__user=request.user)
+            .values_list("category__name", flat=True)
+            .distinct()
+        )
+        return Response({"categories": list(categories)}, status=status.HTTP_200_OK)
+
+
 # Filtered views
 class FilteredIncomeListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        filter_type = request.query_params.get('filter', 'All')
-        date_str = request.query_params.get('date', None)
+        filter_type = request.query_params.get("filter", "All")
+        date_str = request.query_params.get("date", None)
 
-        if filter_type != 'All' and not date_str:
+        if filter_type != "All" and not date_str:
             return Response(
                 {"error": "Date is required for the selected filter."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if filter_type == 'All':
+        if filter_type == "All":
             incomes = Incomes.objects.filter(user=request.user)
         else:
-            date = datetime.strptime(date_str, '%Y-%m-%d')
-            if filter_type == 'Day':
+            date = datetime.strptime(date_str, "%Y-%m-%d")
+            if filter_type == "Day":
                 start_date = date
                 end_date = date + timedelta(days=1)
-            elif filter_type == 'Month':
+            elif filter_type == "Month":
                 start_date = date.replace(day=1)
                 end_date = (start_date + timedelta(days=32)).replace(day=1)
-            elif filter_type == 'Year':
+            elif filter_type == "Year":
                 start_date = date.replace(month=1, day=1)
                 end_date = date.replace(year=date.year + 1, month=1, day=1)
-            elif filter_type == 'Fortnight':
+            elif filter_type == "Fortnight":
                 if date.day <= 15:
                     start_date = date.replace(day=1)
                     end_date = date.replace(day=15)
@@ -316,9 +420,11 @@ class FilteredIncomeListView(APIView):
                 start_date = date
                 end_date = date + timedelta(days=1)
 
-            incomes = Incomes.objects.filter(user=request.user, date__range=[start_date, end_date])
+            incomes = Incomes.objects.filter(
+                user=request.user, date__range=[start_date, end_date]
+            )
 
-        total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
+        total_income = incomes.aggregate(Sum("amount"))["amount__sum"] or 0
         categories_summary = (
             IncomeCategories.objects.filter(income__in=incomes)
             .values("category__name")
@@ -327,18 +433,23 @@ class FilteredIncomeListView(APIView):
         )
 
         # Sum incomes by date
-        income_data = incomes.values('date').annotate(total_amount=Sum('amount')).order_by('date')
+        income_data = (
+            incomes.values("date").annotate(
+                total_amount=Sum("amount")).order_by("date")
+        )
 
         response_data = {
-            'incomes': [{'x': item['date'], 'y': item['total_amount']} for item in income_data],
-            'total_income': total_income,
-            'categories_summary': [
+            "incomes": [
+                {"x": item["date"], "y": item["total_amount"]} for item in income_data
+            ],
+            "total_income": total_income,
+            "categories_summary": [
                 {
                     "category": category["category__name"],
                     "total_amount": category["total_amount"],
                 }
                 for category in categories_summary
-            ]
+            ],
         }
 
         return Response(response_data)
@@ -348,29 +459,29 @@ class FilteredExpenseListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        filter_type = request.query_params.get('filter', 'All')
-        date_str = request.query_params.get('date', None)
+        filter_type = request.query_params.get("filter", "All")
+        date_str = request.query_params.get("date", None)
 
-        if filter_type != 'All' and not date_str:
+        if filter_type != "All" and not date_str:
             return Response(
                 {"error": "Date is required for the selected filter."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if filter_type == 'All':
+        if filter_type == "All":
             expenses = Expenses.objects.filter(user=request.user)
         else:
-            date = datetime.strptime(date_str, '%Y-%m-%d')
-            if filter_type == 'Day':
+            date = datetime.strptime(date_str, "%Y-%m-%d")
+            if filter_type == "Day":
                 start_date = date
                 end_date = date + timedelta(days=1)
-            elif filter_type == 'Month':
+            elif filter_type == "Month":
                 start_date = date.replace(day=1)
                 end_date = (start_date + timedelta(days=32)).replace(day=1)
-            elif filter_type == 'Year':
+            elif filter_type == "Year":
                 start_date = date.replace(month=1, day=1)
                 end_date = date.replace(year=date.year + 1, month=1, day=1)
-            elif filter_type == 'Fortnight':
+            elif filter_type == "Fortnight":
                 if date.day <= 15:
                     start_date = date.replace(day=1)
                     end_date = date.replace(day=15)
@@ -381,9 +492,11 @@ class FilteredExpenseListView(APIView):
                 start_date = date
                 end_date = date + timedelta(days=1)
 
-            expenses = Expenses.objects.filter(user=request.user, date__range=[start_date, end_date])
+            expenses = Expenses.objects.filter(
+                user=request.user, date__range=[start_date, end_date]
+            )
 
-        total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        total_expense = expenses.aggregate(Sum("amount"))["amount__sum"] or 0
         categories_summary = (
             ExpenseCategories.objects.filter(expense__in=expenses)
             .values("category__name")
@@ -392,18 +505,25 @@ class FilteredExpenseListView(APIView):
         )
 
         # Sum expenses by date
-        expense_data = expenses.values('date').annotate(total_amount=Sum('amount')).order_by('date')
+        expense_data = (
+            expenses.values("date")
+            .annotate(total_amount=Sum("amount"))
+            .order_by("date")
+        )
 
         response_data = {
-            'expenses': [{'x': item['date'], 'y': item['total_amount']} for item in expense_data],
-            'total_expense': total_expense,
-            'categories_summary': [
+            "expenses": [
+                {"x": item["date"], "y": item["total_amount"]} for item in expense_data
+            ],
+            "total_expense": total_expense,
+            "categories_summary": [
                 {
                     "category": category["category__name"],
                     "total_amount": category["total_amount"],
                 }
                 for category in categories_summary
-            ]
+            ],
         }
 
         return Response(response_data)
+
