@@ -5,9 +5,9 @@
     </div>
     
     <div class="user-details">
-      <h4>{{ user.username }}</h4>
+      <h4>{{ user.user_name }}</h4>
       <p class="user-fullname">{{ formattedFullname }}</p>
-      <span class="user-bday">{{ formattedBDay }}</span>
+      <span v-if="user.birth_date" class="user-bday">{{ formattedBDate }}</span>
     </div>
     
     <div class="user-actions-section">
@@ -21,18 +21,14 @@
     
     <div v-if="isFullData" class="overlay" @click="cancelFullData"></div>
     <div v-if="isFullData" class="data-popup">
-      <h3 class="user-title">{{ user.username }}</h3>
+      <h3 class="user-title">{{ user.user_name }}</h3>
       <div class="popup-content">
         <label>Fullname:</label><span>{{ formattedFullname }}</span>
         <label>Email:</label><span>{{ user.email }}</span>
         <label>CURP:</label><span>{{ user.curp }}</span>
         <label>RFC:</label><span>{{ user.rfc }}</span>
         <label>Phone Number:</label><span>{{ user.phone }}</span>
-        <label>Password:</label><span>{{ user.password }}</span>
-        <label>Network:</label><span>{{ formattedNetwork }}</span>
-        <label>Incomes:</label><span>{{ formattedCurrency(user.incomes) }}</span>
-        <label>Expenses:</label><span>{{ formattedCurrency(user.expenses) }}</span>
-        <label>Debts:</label><span>{{ formattedCurrency(user.debts) }}</span>
+        <label v-if="user.birth_date">Birth Date:</label><span v-if="user.birth_date">{{ formattedBDate }}</span>
         <button type="button" class="close-button" @click="cancelFullData">Close</button>
       </div>
     </div>
@@ -61,6 +57,7 @@ export default {
       return this.formattedCurrency(this.user.network);
     },
     formattedBDate() {
+      if (!this.user.birth_date) return '';
       const date = new Date(this.user.birth_date);
       const day = String(date.getDate()).padStart(2, "0");
       const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
