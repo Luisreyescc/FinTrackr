@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     showBanner() {
-      const bannerRoutes = ['/home', '/status', '/history', '/leaderboard', '/edit-profile'];
+      const bannerRoutes = ['/home', '/status', '/history', '/leaderboard', '/edit-profile', '/users'];
       return bannerRoutes.includes(this.$route.path);
     }
   },

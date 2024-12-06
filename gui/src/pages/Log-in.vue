@@ -41,26 +41,28 @@ export default {
     },
     async login({ username, password }) {
       if (username && password) {
-	try {
+        try {
           const response = await axios.post("http://localhost:8000/api/login/",
                                             { user_name: username, password: password },
                                             { headers: { "Content-Type": "application/json" } } );
           console.log(response.data);
           if (response.status === 200) {
             const token = response.data.access;
-            const isAdmin = response.data.is_admin; //Supossing Isaac will implement a return for this const
+            const isAdmin = response.data.is_admin;
             localStorage.setItem("token", token);
             localStorage.setItem("isAdmin", isAdmin);
             this.addMessage("Login successful", "success");
             this.$emit("login");
-          } else
+          } else {
             this.addMessage("Invalid username or password. Please try again.", "error");
-	} catch (error) {
+          }
+        } catch (error) {
           console.error("Login failed:", error);
           this.addMessage("Login failed. Please try again.", "error");
         }
-      } else
+      } else {
         this.addMessage("Please enter username and password", "neutral");
+      }
     },
     goToSignUp() {
       this.$router.push("/signup");

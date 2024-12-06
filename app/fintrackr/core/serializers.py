@@ -19,10 +19,11 @@ class UsersSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
+    admin_user = serializers.BooleanField(write_only=True, default=False)
 
     class Meta:
         model = Users
-        fields = ["user_name", "email", "password", "password2"]
+        fields = ["user_name", "email", "password", "password2", "admin_user"]
         extra_kwargs = {
             "password": {"write_only": True},
             "password2": {"write_only": True},
@@ -35,10 +36,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("password2")
+        admin_user = validated_data.pop("admin_user", False)
         user = Users.objects.create_user(
             user_name=validated_data["user_name"],
             email=validated_data["email"],
             password=validated_data["password"],
+            is_staff=admin_user
         )
         return user
 

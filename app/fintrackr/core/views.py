@@ -52,6 +52,7 @@ class LoginView(APIView):
             {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "is_admin": user.is_staff,
             },
             status=status.HTTP_200_OK,
         )

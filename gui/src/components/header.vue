@@ -12,7 +12,7 @@
             v-if="isLoggedIn"
             to="/edit-profile"
             class="nav-item user-item">
-            {{ isAdmin ? `Hello, Admin ${userName}` : `Hello, {{ userName` }}
+            {{ isAdmin ? `Hello, Admin ${userName}` : `Hello, ${userName}` }}
             <span></span>
          </router-link>
 	</nav>
@@ -39,6 +39,17 @@ export default {
   created() {
     this.fetchUserName();
     this.checkAdminStatus();
+  },
+  watch: {
+    isLoggedIn(newVal) {
+      if (newVal) {
+        this.fetchUserName();
+        this.checkAdminStatus();
+      } else {
+        this.userName = "";
+        this.isAdmin = false;
+      }
+    }
   },
   methods: {
     toggleDropdown() {
