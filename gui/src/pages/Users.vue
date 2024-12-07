@@ -22,8 +22,7 @@
           <h3 class="activity-title">Users</h3>
           <div class="list-container scrollbar">
             <span v-if="loadingUsers">Loading users...</span>
-            <!-- <UserRow v-for="user in filteredUsers" :key="user.user_id" :user="user" @userDeleted="fetchUsers"/> -->
-           <UserRow />
+            <UserRow v-for="user in filteredUsers" :key="user.user_id" :user="user" @userDeleted="fetchUsers"/>
           </div>
         </div>
       </div>

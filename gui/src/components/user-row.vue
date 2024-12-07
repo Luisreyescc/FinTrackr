@@ -73,28 +73,13 @@ import axios from 'axios';
 export default {
   name: 'UserRow',
   props: {
-    //user: {
-      //type: Object,
-      //required: true
-    //},
+    user: {
+      type: Object,
+      required: true
+    },
   },
   data() {
     return {
-      user: {
-        user_id: 1,
-        user_name: "john_doe",
-        name: "John",
-        last_name: "Doe",
-        email: "johndoe@example.com",
-        curp: "JODO950101HDFLNN01",
-        rfc: "JODO950101ABC",
-        phone: "55-1234-5678",
-        birth_date: "1995-01-01",
-        incomes: 50000,
-        expenses: 20000,
-        debts: 10000,
-        network: 20000
-      },
       isFullData: false,
       showDeletePopup: false
     };
