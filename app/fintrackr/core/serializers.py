@@ -275,6 +275,7 @@ class DebtSerializer(serializers.ModelSerializer):
         fields = [
             "debt_id",
             "user",
+            "debtor_name",
             "amount",
             "description",
             "date",

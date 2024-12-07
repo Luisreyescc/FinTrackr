@@ -93,6 +93,7 @@ class ExpenseCategories(models.Model):
 class Debts(models.Model):
     debt_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    debtor_name = models.CharField(max_length=255, default="Unknown")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
