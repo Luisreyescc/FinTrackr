@@ -12,9 +12,12 @@
     
     <div class="user-actions-section">
       <span class="user-network">{{ formattedNetwork }}</span>
-      <div class="user-data">
-	<button class="full-button" @click="showFullData">
+      <div class="user-actions">
+        <button class="full-button" @click="showFullData">
           <font-awesome-icon :icon="['fas', 'circle-info']" class="edit-icon" />
+        </button>
+        <button class="delete-button" @click="deleteUser">
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
         </button>
       </div>
     </div>
@@ -29,6 +32,10 @@
         <label>RFC:</label><span>{{ user.rfc }}</span>
         <label>Phone Number:</label><span>{{ user.phone }}</span>
         <label v-if="user.birth_date">Birth Date:</label><span v-if="user.birth_date">{{ formattedBDate }}</span>
+        <label>Incomes:</label><span>{{ formattedCurrency(user.incomes) }}</span>
+        <label>Expenses:</label><span>{{ formattedCurrency(user.expenses) }}</span>
+        <label>Debts:</label><span>{{ formattedCurrency(user.debts) }}</span>
+        <label>Network:</label><span>{{ formattedCurrency(user.network) }}</span>
         <button type="button" class="close-button" @click="cancelFullData">Close</button>
       </div>
     </div>
@@ -54,7 +61,7 @@ export default {
       return `${this.user.name} ${this.user.last_name}`;
     },
     formattedNetwork() {
-      return this.formattedCurrency(this.user.network);
+      return this.formattedCurrency(this.user.network || 0);
     },
     formattedBDate() {
       if (!this.user.birth_date) return '';
@@ -71,7 +78,7 @@ export default {
         style: "currency",
         currency: "USD",
       });
-      return formatter.format(amount);
+      return formatter.format(amount || 0);
     },
     showFullData() {
       this.isFullData = true;
@@ -79,6 +86,10 @@ export default {
     cancelFullData() {
       this.isFullData = false;
     },
+    deleteUser() {
+      // Aquí puedes implementar la funcionalidad de eliminar usuario en el futuro
+      console.log(`Eliminar usuario: ${this.user.user_name}`);
+    }
   },
 };
 </script>
@@ -159,13 +170,57 @@ export default {
 }
 
 .user-network {
+    font-weight: bold;
     color: #20C171;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.full-button, .delete-button {
+    border-radius: 10px;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .full-button {
-    background: none;
-    border: none;
-    cursor: pointer;
+    background-color: white;
+}
+
+.full-button:hover {
+    transform: scale(1.1);
+    background-color: #F2F2F2;
+}
+
+.delete-button {
+    background-color: #D55C5C;
+    color: white;
+}
+
+.delete-button:hover {
+    transform: scale(1.1);
+    background-color: darkred;
+}
+
+.edit-icon {
+    font-size: 20px;
+    color: #25262B;
+}
+
+.trash-icon {
+    font-size: 20px;
+    color: white;
 }
 
 .overlay {

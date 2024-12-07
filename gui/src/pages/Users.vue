@@ -6,7 +6,7 @@
     @closeSidebar="toggleSidebar"
     @selectContent="updateContent"/>
   <div class="sidebar">
-    <button @click="toggleSidebar" class="menu-button">
+    <button @click="toggleSidebar" class="menu-button" :class="{ 'hidden': isSidebarVisible }">
       <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
     </button>
   </div>
@@ -22,7 +22,7 @@
           <h3 class="activity-title">Users</h3>
           <div class="list-container scrollbar">
             <span v-if="loadingUsers">Loading users...</span>
-            <UserRow v-for="user in filteredUsers" :key="user.id" :user="user"/>
+            <UserRow v-for="user in filteredUsers" :key="user.user_id" :user="user"/>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default {
     async fetchUsers() {
       try {
         this.loadingUsers = true;
-        const response = await axios.get("http://localhost:8000/api/users/", {
+        const response = await axios.get("http://localhost:8000/api/admin/financial-summary/", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         this.users = response.data;
@@ -137,6 +137,10 @@ export default {
 
 .menu-button:hover {
     transform: scale(1.1);
+}
+
+.menu-button.hidden {
+    display: none;
 }
 
 .content-wrapper {

@@ -1,5 +1,6 @@
 from django.urls import path, include
 from .views import (
+    user_financial,
     RegisterView,
     LoginView,
     ProfileView,
@@ -19,6 +20,8 @@ from .views import (
 )
 
 urlpatterns = [
+    # Admin views
+    path("admin/financial-summary/", user_financial, name="user_financial_summary"),    
     # User views
     path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),

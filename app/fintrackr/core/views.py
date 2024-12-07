@@ -24,14 +24,40 @@ from .serializers import (
     ExpenseSerializer,
 )
 
+# Admin / Super user views
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
-def user_list(request):
+def user_financial(request):
     users = Users.objects.all()
-    serializer = UserSerializer(users, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    user_data = []
+
+    for user in users:
+        incomes = Incomes.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+        expenses = Expenses.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+        debts = 0  # Assuming you have a model for debts, replace this with the actual calculation
+        network = incomes - expenses
+
+        user_info = {
+            "user_id": user.user_id,
+            "user_name": user.user_name,
+            "email": user.email,
+            "name": user.name,
+            "last_name": user.last_name,
+            "phone": user.phone,
+            "curp": user.curp,
+            "rfc": user.rfc,
+            "birth_date": user.birth_date,
+            "incomes": float(incomes),
+            "expenses": float(expenses),
+            "debts": float(debts),
+            "network": float(network)
+        }
+        user_data.append(user_info)
+
+    return Response(user_data, status=status.HTTP_200_OK)
 
 
+# User views
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def user_list(request):
