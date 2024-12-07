@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions, status, viewsets
 from django.db.models import Sum
+from django.core.mail import send_mail
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -58,6 +59,33 @@ def user_financial(request):
         user_data.append(user_info)
 
     return Response(user_data, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAdminUser])
+def delete_user(request, user_id):
+    try:
+        user = Users.objects.get(user_id=user_id)
+        email = user.email
+        user_name = user.user_name
+
+        Incomes.objects.filter(user=user).delete()
+        Expenses.objects.filter(user=user).delete()
+        # Assuming you have a model for debts, add the deletion here
+        # Debts.objects.filter(user=user).delete()
+
+        user.delete()
+
+        send_mail(
+            subject="User Account Deleted",
+            message=f"Dear {user_name},\n\nYour user account has been removed. Thank you for using our service.\n\nBest regards,\nYour Company",
+            from_email=None,
+            recipient_list=[email],
+        )
+
+        return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    except Users.DoesNotExist:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 # User views

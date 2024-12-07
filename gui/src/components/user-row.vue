@@ -16,7 +16,7 @@
         <button class="full-button" @click="showFullData">
           <font-awesome-icon :icon="['fas', 'circle-info']" class="edit-icon" />
         </button>
-        <button class="delete-button" @click="deleteUser">
+        <button class="delete-button" @click="showDeleteWarning">
           <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
         </button>
       </div>
@@ -39,10 +39,22 @@
         <button type="button" class="close-button" @click="cancelFullData">Close</button>
       </div>
     </div>
+
+    <div v-if="showDeletePopup" class="overlay" @click="cancelDelete"></div>
+    <div v-if="showDeletePopup" class="delete-popup">
+      <h3 class="warning-title">Warning</h3>
+      <p>This action is permanent and cannot be undone. Are you sure you want to delete this user?</p>
+      <div class="popup-actions">
+        <button class="cancel-button" @click="cancelDelete">Cancel</button>
+        <button class="confirm-delete-button" @click="confirmDelete">Delete</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'UserRow',
   props: {
@@ -53,7 +65,8 @@ export default {
   },
   data() {
     return {
-      isFullData: false
+      isFullData: false,
+      showDeletePopup: false
     };
   },
   computed: {
@@ -86,8 +99,22 @@ export default {
     cancelFullData() {
       this.isFullData = false;
     },
-    deleteUser() {
-      console.log(`Eliminar usuario: ${this.user.user_name}`);
+    showDeleteWarning() {
+      this.showDeletePopup = true;
+    },
+    cancelDelete() {
+      this.showDeletePopup = false;
+    },
+    async confirmDelete() {
+      try {
+        await axios.delete(`http://localhost:8000/api/admin/delete-user/${this.user.user_id}/`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        });
+        this.$emit('userDeleted', this.user.user_id);
+        this.showDeletePopup = false;
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
     }
   },
 };
@@ -232,7 +259,7 @@ export default {
     z-index: 1000;
 }
 
-.data-popup {
+.data-popup, .delete-popup {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -251,7 +278,7 @@ export default {
     gap: 10px;
 }
 
-.close-button {
+.close-button, .cancel-button, .confirm-delete-button {
     background: #d160de;
     border: none;
     color: white;
@@ -260,5 +287,21 @@ export default {
     border-radius: 5px;
     margin-top: 20px;
     align-self: center;
+}
+
+.cancel-button {
+    background: #D55C5C;
+}
+
+.confirm-delete-button {
+    background: #20C171;
+}
+
+.warning-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #D55C5C;
 }
 </style>
