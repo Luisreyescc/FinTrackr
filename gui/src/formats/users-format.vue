@@ -39,7 +39,6 @@
 
 <script>
 import axios from 'axios';
-//import moment from 'moment';
 import '@/css/scrollbar.css';
 import MessageAlerts from '@/components/messages.vue';
 

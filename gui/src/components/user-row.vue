@@ -87,7 +87,6 @@ export default {
       this.isFullData = false;
     },
     deleteUser() {
-      // Aquí puedes implementar la funcionalidad de eliminar usuario en el futuro
       console.log(`Eliminar usuario: ${this.user.user_name}`);
     }
   },
