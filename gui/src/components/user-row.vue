@@ -14,7 +14,7 @@
       <span class="user-network">{{ formattedNetwork }}</span>
       <div class="user-actions">
         <button class="full-button" @click="showFullData">
-          <font-awesome-icon :icon="['fas', 'circle-info']" class="edit-icon" />
+          <font-awesome-icon :icon="['fas', 'circle-info']" class="data-icon" />
         </button>
         <button class="delete-button" @click="showDeleteWarning">
           <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
@@ -25,26 +25,41 @@
     <div v-if="isFullData" class="overlay" @click="cancelFullData"></div>
     <div v-if="isFullData" class="data-popup">
       <h3 class="user-title">{{ user.user_name }}</h3>
-      <div class="popup-content">
-        <label>Fullname:</label><span>{{ formattedFullname }}</span>
-        <label>Email:</label><span>{{ user.email }}</span>
-        <label>CURP:</label><span>{{ user.curp }}</span>
-        <label>RFC:</label><span>{{ user.rfc }}</span>
-        <label>Phone Number:</label><span>{{ user.phone }}</span>
-        <label v-if="user.birth_date">Birth Date:</label><span v-if="user.birth_date">{{ formattedBDate }}</span>
-        <label>Incomes:</label><span>{{ formattedCurrency(user.incomes) }}</span>
-        <label>Expenses:</label><span>{{ formattedCurrency(user.expenses) }}</span>
-        <label>Debts:</label><span>{{ formattedCurrency(user.debts) }}</span>
-        <label>Network:</label><span>{{ formattedCurrency(user.network) }}</span>
-        <button type="button" class="close-button" @click="cancelFullData">Close</button>
+      <div class="popup-content srollbar">
+	<div class="labels-content">
+          <label>Fullname:</label>
+          <label>Email:</label>
+          <label>CURP:</label>
+          <label>RFC:</label>
+          <label>Phone Number:</label>
+          <label v-if="user.birth_date">Birth Date:</label>
+          <label>Incomes:</label>
+          <label>Expenses:</label>
+          <label>Debts:</label>
+          <label>Network:</label>
+	</div>
+	<div class="spans-content">
+          <span>{{ formattedFullname }}</span>
+          <span>{{ user.email }}</span>
+          <span>{{ user.curp }}</span>
+          <span>{{ user.rfc }}</span>
+          <span>{{ user.phone }}</span>
+          <span v-if="user.birth_date">{{ formattedBDate }}</span>
+          <span>{{ formattedCurrency(user.incomes) }}</span>
+          <span>{{ formattedCurrency(user.expenses) }}</span>
+          <span>{{ formattedCurrency(user.debts) }}</span>
+          <span>{{ formattedCurrency(user.network) }}</span>
+	</div>
       </div>
+      <button type="button" class="close-button" @click="cancelFullData">Close</button>
     </div>
 
     <div v-if="showDeletePopup" class="overlay" @click="cancelDelete"></div>
     <div v-if="showDeletePopup" class="delete-popup">
       <h3 class="warning-title">Warning</h3>
-      <p>This action is permanent and cannot be undone. Are you sure you want to delete this user?</p>
-      <div class="popup-actions">
+      <p>This action is permanent and cannot be undone.</p>
+      <p>Are you sure you want to delete this user?</p>
+      <div class="button-group">
         <button class="cancel-button" @click="cancelDelete">Cancel</button>
         <button class="confirm-delete-button" @click="confirmDelete">Delete</button>
       </div>
@@ -73,7 +88,7 @@ export default {
         email: "johndoe@example.com",
         curp: "JODO950101HDFLNN01",
         rfc: "JODO950101ABC",
-        phone: "555-123-4567",
+        phone: "55-1234-5678",
         birth_date: "1995-01-01",
         incomes: 50000,
         expenses: 20000,
@@ -254,8 +269,8 @@ export default {
     background-color: darkred;
 }
 
-.edit-icon {
-    font-size: 20px;
+.data-icon {
+    font-size: 24px;
     color: #25262B;
 }
 
@@ -264,59 +279,110 @@ export default {
     color: white;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-}
-
 .data-popup, .delete-popup {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #25262b;
-    color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 20px;
+    width: 600px;
     z-index: 1100;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(59, 59, 90, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 
 .popup-content {
-    display: grid;
-    grid-template-columns: 150px auto;
-    gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin: 0;
+    overflow-y: auto;
 }
 
-.close-button, .cancel-button, .confirm-delete-button {
-    background: #d160de;
-    border: none;
+.user-title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
     color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 20px;
-    align-self: center;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-.cancel-button {
-    background: #D55C5C;
+label {
+    display: block;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
-.confirm-delete-button {
-    background: #20C171;
+span {
+    display: block;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-align: right;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .warning-title {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
-    color: #D55C5C;
+    color: white;
+}
+
+.delete-popup p {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+}    
+
+.close-button, .cancel-button, .confirm-delete-button {
+    padding: 15px 30px;
+    margin-top: 30px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.close-button,
+.cancel-button {
+    background-color: #25262B;
+    color: white;
+    border: 2px solid white;
+}
+
+.confirm-delete-button {
+    background-color: white;
+    color: #25262B;
 }
 </style>

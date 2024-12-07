@@ -54,6 +54,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    background-color: #25262B;
 }
 
 #app {
