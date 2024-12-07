@@ -6,6 +6,8 @@ from .models import (
     Expenses,
     ExpenseCategories,
     IncomeCategories,
+    Debts,
+    DebtCategories,
 )
 from django.contrib.auth import authenticate
 
@@ -31,7 +33,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
+            raise serializers.ValidationError(
+                {"password": "Passwords do not match."})
         return attrs
 
     def create(self, validated_data):
@@ -53,9 +56,11 @@ class LoginSerializer(serializers.Serializer):
     )
 
     def validate(self, attrs):
-        user = authenticate(username=attrs["user_name"], password=attrs["password"])
+        user = authenticate(
+            username=attrs["user_name"], password=attrs["password"])
         if not user:
-            raise serializers.ValidationError({"detail": "Invalid credentials.."})
+            raise serializers.ValidationError(
+                {"detail": "Invalid credentials.."})
         attrs["user"] = user
         return attrs
 
@@ -115,7 +120,9 @@ class CategorySerializer(serializers.ModelSerializer):
 # Income Serializer
 class IncomeSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.ListField(child=serializers.CharField(), write_only=True, source="categories")
+    category = serializers.ListField(
+        child=serializers.CharField(), write_only=True, source="categories"
+    )
     categories = serializers.SerializerMethodField()
 
     class Meta:
@@ -139,18 +146,21 @@ class IncomeSerializer(serializers.ModelSerializer):
         income = Incomes.objects.create(**validated_data)
 
         for category_name in category_names:
-            category, created = Categories.objects.get_or_create(name=category_name)
+            category, created = Categories.objects.get_or_create(
+                name=category_name)
             IncomeCategories.objects.create(income=income, category=category)
 
         return income
-    
+
     def update(self, instance, validated_data):
         category_names = validated_data.pop("categories", None)
         if category_names is not None:
             IncomeCategories.objects.filter(income=instance).delete()
             for category_name in category_names:
-                category, created = Categories.objects.get_or_create(name=category_name)
-                IncomeCategories.objects.create(income=instance, category=category)
+                category, created = Categories.objects.get_or_create(
+                    name=category_name)
+                IncomeCategories.objects.create(
+                    income=instance, category=category)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -161,7 +171,8 @@ class IncomeSerializer(serializers.ModelSerializer):
 
 class IncomeCategorySerializer(serializers.ModelSerializer):
     income = serializers.PrimaryKeyRelatedField(queryset=Incomes.objects.all())
-    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Categories.objects.all())
 
     class Meta:
         model = IncomeCategories
@@ -170,8 +181,10 @@ class IncomeCategorySerializer(serializers.ModelSerializer):
 
 # Expense Serializer
 class ExpenseCategorySerializer(serializers.ModelSerializer):
-    expense = serializers.PrimaryKeyRelatedField(queryset=Expenses.objects.all())
-    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
+    expense = serializers.PrimaryKeyRelatedField(
+        queryset=Expenses.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Categories.objects.all())
 
     class Meta:
         model = ExpenseCategories
@@ -180,7 +193,9 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
-    category = serializers.ListField(child=serializers.CharField(), write_only=True, source="categories")
+    category = serializers.ListField(
+        child=serializers.CharField(), write_only=True, source="categories"
+    )
     categories = serializers.SerializerMethodField()
 
     class Meta:
@@ -211,8 +226,10 @@ class ExpenseSerializer(serializers.ModelSerializer):
         expense = Expenses.objects.create(**validated_data)
 
         for category_name in category_names:
-            category, created = Categories.objects.get_or_create(name=category_name)
-            ExpenseCategories.objects.create(expense=expense, category=category)
+            category, created = Categories.objects.get_or_create(
+                name=category_name)
+            ExpenseCategories.objects.create(
+                expense=expense, category=category)
 
         return expense
 
@@ -224,10 +241,82 @@ class ExpenseSerializer(serializers.ModelSerializer):
             # Remove old categories and replace with new ones
             ExpenseCategories.objects.filter(expense=instance).delete()
             for category_name in category_names:
-                category, created = Categories.objects.get_or_create(name=category_name)
-                ExpenseCategories.objects.create(expense=instance, category=category)
+                category, created = Categories.objects.get_or_create(
+                    name=category_name)
+                ExpenseCategories.objects.create(
+                    expense=instance, category=category)
 
         # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+
+# Debts Serializer
+class DebtCategorySerializer(serializers.ModelSerializer):
+    debt = serializers.PrimaryKeyRelatedField(queryset=Debts.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Categories.objects.all())
+
+    class Meta:
+        model = DebtCategories
+        fields = ["debt", "category"]
+
+
+class DebtSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
+    category = serializers.ListField(
+        child=serializers.CharField(), write_only=True, source="categories"
+    )
+    categories = serializers.SerializerMethodField()
+    is_payed = serializers.BooleanField()
+
+    class Meta:
+        model = Debts
+        fields = [
+            "debt_id",
+            "user",
+            "debtor_name",
+            "amount",
+            "description",
+            "date",
+            "is_payed",
+            "category",
+            "categories",
+        ]
+
+    def get_categories(self, obj):
+        return obj.debtcategories_set.values_list("category__name", flat=True)
+
+    def create(self, validated_data):
+        category_names = validated_data.pop("categories", None)
+
+        if not category_names:
+            raise serializers.ValidationError(
+                {"categories": "Este campo es requerido."}
+            )
+
+        debt = Debts.objects.create(**validated_data)
+
+        for category_name in category_names:
+            category, created = Categories.objects.get_or_create(
+                name=category_name)
+            DebtCategories.objects.create(debt=debt, category=category)
+
+        return debt
+
+    def update(self, instance, validated_data):
+        category_names = validated_data.pop("categories", None)
+
+        if category_names is not None:
+            DebtCategories.objects.filter(debt=instance).delete()
+            for category_name in category_names:
+                category, created = Categories.objects.get_or_create(
+                    name=category_name)
+                DebtCategories.objects.create(debt=instance, category=category)
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 

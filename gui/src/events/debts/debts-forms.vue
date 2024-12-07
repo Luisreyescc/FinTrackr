@@ -1,132 +1,170 @@
 <template>
-<div class="form-container">
-  <h3 class="form-title">New debt data</h3>
-  <div class="form-content scrollbar">
-    <form @submit.prevent="submitForm">
-      <label>
-	Amount:
-	<input
-          type="text"
-          v-model="expense.amount"
-          @input="validateAmount"
-          :class="{ 'input-error': amountError, 'input-valid': !amountError && expense.amount }"
-          placeholder="Enter amount (e.g., 1000.00)"/>
-      </label>
-      <span v-if="amountError" class="error-message">{{ amountError }}</span>
-      
-      <label>
-	Description:
-	<input
-          type="text"
-          v-model="expense.description"
-          @input="validateTextField('description')"
-          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && expense.description }"
-          placeholder="Enter a description for the debt"/>
-      </label>
-      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-      
-      <div class="categories-wrapper">
-	<div class="categories-select" @click="toggleDropdown">
-          Categories
-          <span class="dropdown-icon">
-            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
-            <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
-          </span>
-	</div>
-	
-	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-          <li v-if="loadingCategories">Loading categories...</li>
-          <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold;">
-            <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
-          </li>
-          <li
-            v-for="(category, index) in categoryOptions"
-            :key="index"
-            @click="addCategory(category)">{{ category }}
-          </li>
-	</ul>
-	
-	<div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
-	<div v-if="showNewCategory" class="new-category-dialog">
-          <h4>Enter new category</h4>
+  <div class="form-container">
+    <h3 class="form-title">New debt data</h3>
+    <div class="form-content scrollbar">
+      <form @submit.prevent="submitForm">
+        <label>
+          Amount:
           <input
             type="text"
-            v-model="newCategory"
-            placeholder="New category"
-            :maxlength="18"/>
-          <div class="button-group">
-            <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
-            <button
-              @click="acceptNewCategory"
-              class="accept-category"
-              :disabled="!isAcceptEnabled">Accept</button>
-          </div>
-	</div>
+            v-model="debt.amount"
+            @input="validateAmount"
+            :class="{ 'input-error': amountError, 'input-valid': !amountError && debt.amount }"
+            placeholder="Enter amount (e.g., 1000.00)"/>
+        </label>
+        <span v-if="amountError" class="error-message">{{ amountError }}</span>
+
+	<label>
+          Creditor:
+          <input
+            type="text"
+            v-model="debt.creditor"
+            @input="validateTextField('creditor')"
+            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && debt.creditor }"
+            placeholder="Enter the name of your creditor"/>
+        </label>
+        <span v-if="creditorError" class="error-message">{{ creditorError }}</span>
 	
-	<div class="selected-categories">
-          <span v-for="(category, index) in debt.categories" :key="index" class="tag">
-            {{ category }}
-            <button @click="removeCategory(index)" class="close-button">
-              <font-awesome-icon :icon="['fas', 'xmark']"/>
-            </button>
-          </span>
-	</div>
-      </div>
-      
-      <label class="date-label">
-        Date:
-      </label>
-      <div class="date-container">
-        <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
-        <input
-          type="date"
-          v-model="income.date"
-          @input="validateDate"
-          class="custom-date-input"
-          :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }"/>
-      </div>
-      <span v-if="dateError" class="error-message">{{ dateError }}</span>
-      
-      <div class="button-group">
-	<button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-	<button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
-      </div>
-    </form>
+        <label>
+          Description:
+          <input
+            type="text"
+            v-model="debt.description"
+            @input="validateTextField('description')"
+            :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && debt.description }"
+            placeholder="Enter a description for the debt"/>
+        </label>
+        <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+
+        <div class="categories-wrapper">
+          <div class="categories-select" @click="toggleDropdown">
+            Categories
+            <span class="dropdown-icon">
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
+            </span>
+          </div>
+
+          <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+            <li v-if="loadingCategories">Loading categories...</li>
+            <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New Category
+            </li>
+            <li
+              v-for="(category, index) in categoryOptions"
+              :key="index"
+              @click="addCategory(category)">{{ category }}
+            </li>
+          </ul>
+
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="new-category-dialog">
+            <h4>Enter new category</h4>
+            <input
+              type="text"
+              v-model="newCategory"
+              placeholder="New category"
+              :maxlength="18"/>
+            <div class="button-group">
+              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+              <button
+                @click="acceptNewCategory"
+                class="accept-category"
+                :disabled="!isAcceptEnabled">Accept</button>
+            </div>
+          </div>
+
+          <div class="selected-categories">
+            <span v-for="(category, index) in debt.categories" :key="index" class="tag">
+              {{ category }}
+              <button type="button" @click="removeCategory(index)" class="close-button">
+                <font-awesome-icon :icon="['fas', 'xmark']"/>
+              </button>
+            </span>
+          </div>
+        </div>
+
+        <label class="date-label">
+          Date:
+	</label>
+        <div class="date-container">
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
+          <input
+            type="date"
+            v-model="debt.date"
+            @input="validateDate"
+            class="custom-date-input"
+            :class="{ 'input-error': dateError, 'input-valid': !dateError && debt.date }"/>
+        </div>
+        <span v-if="dateError" class="error-message">{{ dateError }}</span>
+
+        <div class="button-group">
+          <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
-import '@/css/scrollbar.css';
-import axios from 'axios';
- 
+import "@/css/scrollbar.css";
+import axios from "axios";
+
 export default {
   name: "DebtsForm",
   data() {
     return {
-      debt: { amount: '', description: '', categories: [], date: '' },
+      debt: { amount: "", description: "", categories: [], date: "", creditor: "" },
       amountError: "",
       descriptionError: "",
       dateError: "",
+      creditorError: "",
       categoryOptions: [],
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false
+      loadingCategories: false,
     };
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
-      const isDescriptionValid = this.validateTextField('description');
+      const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
-      
-      if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit('submitForm', { ...this.debt });
-        this.$emit('closeForm');
-        this.resetForm();
+      const isCreditorValid = this.validateTextField("creditor");
+
+      if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            console.error("No token found");
+            return;
+          }
+
+          const response = await axios.post(
+            "http://localhost:8000/api/debts/",
+            {
+              ...this.debt,
+              categories: this.debt.categories.map((cat) => ({ name: cat })),
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+
+          if (response.status === 201) {
+            this.$emit("submitForm", response.data);
+            this.$emit("closeForm");
+            this.resetForm();
+          } else {
+            console.error("Failed to create debt:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Error submitting debt:", error);
+        }
       }
     },
     toggleDropdown() {
@@ -141,10 +179,13 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get('http://localhost:8000/api/expense-categories/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.categoryOptions = response.data.categories;
+        const response = await axios.get(
+          "http://localhost:8000/api/categories/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        this.categoryOptions = response.data.categories.map((cat) => cat.name);
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -153,9 +194,19 @@ export default {
     },
     async sendNewCategory() {
       try {
-        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        const response = await axios.post(
+          "http://localhost:8000/api/categories/",
+          { name: this.newCategory.trim() },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
         if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
           this.categoryOptions.push(this.newCategory.trim());
           this.debt.categories.push(this.newCategory.trim());
         } else {
@@ -181,10 +232,9 @@ export default {
     async acceptNewCategory() {
       if (this.newCategory.trim()) {
         await this.sendNewCategory();
-        this.debt.categories.push(this.newCategory);
-        this.showNewCategory = false;
         this.newCategory = "";
-	this.dropdownOpen = false;
+        this.showNewCategory = false;
+        this.dropdownOpen = false;
       }
     },
     removeCategory(index) {
@@ -193,15 +243,21 @@ export default {
     clearErrors() {
       this.amountError = "";
       this.descriptionError = "";
-      this.categoriesError = "";
       this.dateError = "";
+      this.debtorNameError = "";
     },
     cancelForm() {
       this.resetForm();
-      this.$emit('closeForm');
+      this.$emit("closeForm");
     },
     resetForm() {
-      this.debt = { amount: '', description: '', categories: [], date: '' };
+      this.debt = {
+        amount: "",
+        description: "",
+        categories: [],
+        date: "",
+        debtor_name: "",
+      };
       this.dropdownOpen = false;
       this.clearErrors();
     },
@@ -219,14 +275,14 @@ export default {
       return true;
     },
     validateTextField(field) {
-      //function to determine the label error
       this[`${field}Error`] = "";
       if (!this.debt[field]) {
-        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] =
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.debt[field].length > 180) {
-        this[`${field}Error`] = "Exceeded the maximum character limit of 180";
+      if (this.debt[field].length > 120) {
+        this[`${field}Error`] = `Exceeded the maximum character limit of 120`;
         return false;
       }
       return true;
@@ -238,7 +294,7 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
   computed: {
     isSubmitEnabled() {
@@ -297,10 +353,12 @@ input {
     outline: none;
     color: white;
     font-size: 18px;
-    background-color: #25262B;
+    background-color: #25262b;
     border-radius: 4px;
     border: 2px solid white;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition:
+	background-color 0.3s,
+	border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -310,7 +368,7 @@ input::placeholder {
 }
 
 .input-error {
-    border-color: #D55C5C;
+    border-color: #d55c5c;
     outline: none;
 }
 
@@ -334,7 +392,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .error-message {
-    color: #D55C5C;
+    color: #d55c5c;
     font-size: 16px;
     margin-top: -10px;
     margin-bottom: 10px;
@@ -349,7 +407,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-button {
-    background-color: #25262B;
+    background-color: #25262b;
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
@@ -362,7 +420,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .submit-button {
     background-color: white;
-    color: #25262B;
+    color: #25262b;
     border: none;
     padding: 13px 35px;
     border-radius: 20px;
@@ -397,7 +455,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 115px;
     font-size: 18px;
     font-weight: bold;
-    color: #25262B;
+    color: #25262b;
     background-color: white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
@@ -412,7 +470,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     height: 16px;
     margin-left: 8px;
     transform: translateY(-3px);
-    color: #25262B;
+    color: #25262b;
 }
 
 .categories-dropdown {
@@ -420,7 +478,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     top: 80%;
     left: 0;
     right: 0;
-    border: 1px solid #3F4049;
+    border: 1px solid #3f4049;
     border-radius: 12px;
     background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -436,7 +494,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+	background-color 0.3s,
+	color 0.3s;
     text-align: left;
     color: white;
     font-weight: bold;
@@ -445,7 +505,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li:hover {
     background-color: white;
     border-radius: 12px;
-    color: #25262B;
+    color: #25262b;
     font-weight: bold;
 }
 
@@ -462,22 +522,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     border-radius: 16px;
     padding: 8px 20px;
     font-weight: bold;
-    color: #25262B;
+    color: #25262b;
     background-color: white;
     border: 1px solid white;
 }
 
 .close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-top: 2px;
-  margin-right: -15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 2px;
+    margin-right: -15px;
 }
 
 .close-button .gg-close {
     font-size: 18px;
-    color: #25262B;
+    color: #25262b;
 }
 
 .new-category-dialog {
@@ -498,7 +558,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .new-category-dialog h4 {
     margin-top: 15px;
     font-size: 22px;
-    color: #25262B;
+    color: #25262b;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -509,17 +569,19 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     margin-bottom: 2px;
     border: none;
     outline: none;
-    color: #25262B;
+    color: #25262b;
     font-size: 18px;
     background-color: white;
     border-radius: 4px;
-    border: 2px solid #25262B;
-    transition: background-color 0.3s, border-color 0.3s;
+    border: 2px solid #25262b;
+    transition:
+	background-color 0.3s,
+	border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-    color: #25262B;
+    color: #25262b;
 }
 
 .new-category-dialog .button-group {
@@ -540,15 +602,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-category {
-    background-color: #25262B;
+    background-color: #25262b;
     color: white;
 }
 
 .accept-category {
     background-color: white;
-    color: #25262B;
-    border: 2px solid #25262B;
-    
+    color: #25262b;
+    border: 2px solid #25262b;
 }
 
 .submit-button:disabled,
@@ -572,7 +633,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     left: 0px;
     position: relative;
     display: inline-block;
-    width: 100%; 
+    width: 100%;
 }
 
 .birth-icon {

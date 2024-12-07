@@ -88,3 +88,18 @@ class Expenses(models.Model):
 class ExpenseCategories(models.Model):
     expense = models.ForeignKey(Expenses, on_delete=models.CASCADE)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+
+
+class Debts(models.Model):
+    debt_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    debtor_name = models.CharField(max_length=255, default="Unknown")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(null=True, blank=True)
+    date = models.DateField()
+    is_payed = models.BooleanField(default=False)
+
+
+class DebtCategories(models.Model):
+    debt = models.ForeignKey(Debts, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)

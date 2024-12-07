@@ -79,6 +79,7 @@
                   v-for="(debt, index) in filteredDebts"
                   :key="index"
                   :debt="debt"
+                  @markDebtAsPaid="handleMarkDebtAsPaid"
                   @updateDebt="handleDebtUpdate"
                   @deleteDebt="handleDebtDelete"/>
               </div>
@@ -527,6 +528,40 @@ export default {
           "There was an error while saving the debt changes.",
           "error",
         );
+      }
+    },
+    async handleMarkDebtAsPaid(updatedDebt) {
+      try {
+	const token = localStorage.getItem("token");
+	const userId = localStorage.getItem("user_id") ?? 1;
+	
+	const expenseData = {
+          amount: updatedDebt.amount,
+          description: updatedDebt.description,
+          categories: updatedDebt.categories,
+          date: updatedDebt.date,
+          user: userId,
+	};
+	
+	await axios.post(
+          "http://localhost:8000/api/expenses/",
+          expenseData,
+          { headers: { Authorization: `Bearer ${token}` } }
+	);
+	
+        await axios.put(
+          `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
+          { isChecked: true },
+          { headers: { Authorization: `Bearer ${token}` } }
+	);
+	
+	const debtIndex = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
+	if (debtIndex !== -1)
+          this.debts[debtIndex].isChecked = true;
+	
+	this.addMessage(`Debt "${updatedDebt.description}" marked as paid.`, "success");
+      } catch (error) {
+	this.addMessage("There was an error marking the debt as paid.", "error");
       }
     },
     async handleDebtDelete(debtId) {

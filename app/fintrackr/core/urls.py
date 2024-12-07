@@ -17,6 +17,10 @@ from .views import (
     ExpenseCategorySummaryView,
     UserExpenseCategoriesView,
     FilteredExpenseListView,
+    DebtListCreateView,
+    DebtDetailView,
+    DebtCategorySummaryView,
+    UserDebtCategoriesView,
 )
 
 urlpatterns = [
@@ -36,7 +40,8 @@ urlpatterns = [
         IncomeSourceSummaryView.as_view(),
         name="income-source-summary",
     ),
-    path("incomes/<int:income_id>/", IncomeDetailView.as_view(), name="income-detail"),
+    path("incomes/<int:income_id>/",
+         IncomeDetailView.as_view(), name="income-detail"),
     path(
         "income-categories/", UserIncomeCategoriesView.as_view(), name="user-categories"
     ),
@@ -46,7 +51,8 @@ urlpatterns = [
         name="filtered-income-list",
     ),
     # Category views
-    path("categories/", CategoryListCreateView.as_view(), name="category-list-create"),
+    path("categories/", CategoryListCreateView.as_view(),
+         name="category-list-create"),
     # Expense views
     path("expenses/", ExpenseListCreateView.as_view(), name="expense-list-create"),
     path(
@@ -67,6 +73,20 @@ urlpatterns = [
         FilteredExpenseListView.as_view(),
         name="filtered-expense-list",
     ),
+    # Debt views
+    path("debts/", DebtListCreateView.as_view(), name="debt-list-create"),
+    path("debts/<int:debt_id>/", DebtDetailView.as_view(), name="debt-detail"),
+    path(
+        "debts/category-summary/",
+        DebtCategorySummaryView.as_view(),
+        name="debt-category-summary",
+    ),
+    path(
+        "debt-categories/",
+        UserDebtCategoriesView.as_view(),
+        name="user-debt-categories",
+    ),
     # Emails views
     path("", include("emails.urls")),
 ]
+

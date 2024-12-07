@@ -56,9 +56,7 @@
           <div class="categories-select" @click="toggleDropdown">
             Categories
             <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
               <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
             </span>
           </div>
@@ -95,8 +93,7 @@
           </div>
 
           <div class="selected-categories">
-            <span
-              v-for="(category, index) in editExpense.categories" :key="index" class="tag">
+            <span v-for="(category, index) in editExpense.categories" :key="index" class="tag">
               {{ category }}
               <button type="button" @click="removeCategory(index, $event)" class="close-button">
                 <font-awesome-icon :icon="['fas', 'xmark']"/>
@@ -104,7 +101,7 @@
             </span>
           </div>
         </div>
-
+	
         <label class="date-label">
           Date:
         </label>
@@ -185,9 +182,7 @@ export default {
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return (
-        this.editExpense.categories && this.editExpense.categories.length > 0
-      );
+      return this.editExpense.categories && this.editExpense.categories.length > 0;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -301,8 +296,7 @@ export default {
       this[`${field}Error`] = "";
       if (!this.editExpense[field]) {
         // Corrected this line
-        this[`${field}Error`] =
-          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editExpense[field].length > 180) {
