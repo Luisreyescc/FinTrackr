@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from datetime import datetime, timedelta
 from .models import (
     Users,
@@ -26,6 +26,13 @@ from .serializers import (
     ExpenseSerializer,
     DebtSerializer,
 )
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def user_list(request):
+    users = Users.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -55,6 +62,7 @@ class LoginView(APIView):
             {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "is_admin": user.is_staff,
             },
             status=status.HTTP_200_OK,
         )

@@ -7,10 +7,14 @@
           <router-link to="/home" class="nav-item">Home<span></span></router-link>
           <router-link to="/status" class="nav-item">Status<span></span></router-link>
           <router-link to="/history" class="nav-item">History<span></span></router-link>
+          <router-link v-if="isAdmin" to="/users" class="nav-item">Users<span></span></router-link>
           <router-link
             v-if="isLoggedIn"
             to="/edit-profile"
-            class="nav-item user-item">Hello, {{ userName }} <span></span></router-link>
+            class="nav-item user-item">
+            {{ isAdmin ? `Hello, Admin ${userName}` : `Hello, ${userName}` }}
+            <span></span>
+         </router-link>
 	</nav>
       </div>
     </div>
@@ -23,16 +27,29 @@ import axios from "axios";
 export default {
   name: "AppHeader",
   props: {
-    isLoggedIn: Boolean,
+    isLoggedIn: Boolean
   },
   data() {
     return {
       dropdownOpen: false,
       userName: "",
+      isAdmin: false
     };
   },
   created() {
     this.fetchUserName();
+    this.checkAdminStatus();
+  },
+  watch: {
+    isLoggedIn(newVal) {
+      if (newVal) {
+        this.fetchUserName();
+        this.checkAdminStatus();
+      } else {
+        this.userName = "";
+        this.isAdmin = false;
+      }
+    }
   },
   methods: {
     toggleDropdown() {
@@ -42,16 +59,17 @@ export default {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:8000/api/profile/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await axios.get("http://localhost:8000/api/profile/",
+                                           { headers: { Authorization: `Bearer ${token}` } });
           this.userName = response.data.user_name;
         }
       } catch (error) {
         console.error("Error fetching user name:", error);
       }
+    },
+    checkAdminStatus() {
+      const isAdmin = localStorage.getItem("isAdmin");
+      this.isAdmin = isAdmin === "true"; //Change string to boolean cause why not ?
     },
     editProfile() {
       this.$router.push("/edit-profile");
@@ -59,6 +77,7 @@ export default {
     logout() {
       sessionStorage.removeItem("isLoggedIn");
       localStorage.removeItem("token");
+      localStorage.removeItem("isAdmin"); //Clean admin status
       this.$router.push("/");
     },
   },
