@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import (
     user_financial,
+    delete_user,
     RegisterView,
     LoginView,
     ProfileView,
@@ -21,7 +22,8 @@ from .views import (
 
 urlpatterns = [
     # Admin views
-    path("admin/financial-summary/", user_financial, name="user_financial_summary"),    
+    path("admin/financial-summary/", user_financial, name="user_financial_summary"),
+    path("admin/delete-user/<int:user_id>/", delete_user, name="delete_user"),
     # User views
     path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
