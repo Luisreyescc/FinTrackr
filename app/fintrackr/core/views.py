@@ -535,3 +535,62 @@ class FilteredExpenseListView(APIView):
 
         return Response(response_data)
 
+
+class FilteredDebtListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        filter_type = request.query_params.get("filter", "All")
+        date_str = request.query_params.get("date", None)
+
+        if filter_type != "All" and not date_str:
+            return Response(
+                {"error": "Date is required for the selected filter."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if filter_type == "All":
+            debts = Debts.objects.filter(user=request.user)
+        else:
+            date = datetime.strptime(date_str, "%Y-%m-%d")
+            if filter_type == "Day":
+                start_date = date
+                end_date = date + timedelta(days=1)
+            elif filter_type == "Month":
+                start_date = date.replace(day=1)
+                end_date = (start_date + timedelta(days=32)).replace(day=1)
+            elif filter_type == "Year":
+                start_date = date.replace(month=1, day=1)
+                end_date = date.replace(year=date.year + 1, month=1, day=1)
+            elif filter_type == "Fortnight":
+                if date.day <= 15:
+                    start_date = date.replace(day=1)
+                    end_date = date.replace(day=15)
+                else:
+                    start_date = date.replace(day=16)
+                    end_date = (start_date + timedelta(days=15)).replace(day=1)
+            else:
+                start_date = date
+                end_date = date + timedelta(days=1)
+
+            debts = Debts.objects.filter(
+                user=request.user, date__range=[start_date, end_date]
+            )
+
+        total_debt = debts.aggregate(Sum("amount"))["amount__sum"] or 0
+
+        # Sum debts by date
+        debt_data = (
+            debts.values("date")
+            .annotate(total_amount=Sum("amount"))
+            .order_by("date")
+        )
+
+        response_data = {
+            "debts": [
+                {"x": item["date"], "y": item["total_amount"]} for item in debt_data
+            ],
+            "total_debt": total_debt,
+        }
+
+        return Response(response_data)
