@@ -41,9 +41,9 @@
           Creditor:
           <input
             type="text"
-            v-model="editDebt.creditor"
-            @input="validateTextField('creditor')"
-            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && editDebt.creditor }"
+            v-model="editDebt.debtor_name"
+            @input="validateTextField('debtor_name')"
+            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && editDebt.debtor_name }"
             placeholder="Enter the name of your creditor"/>
         </label>
         <span v-if="creditorError" class="error-message">{{ creditorError }}</span>

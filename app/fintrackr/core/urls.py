@@ -22,6 +22,7 @@ from .views import (
     DebtDetailView,
     DebtCategorySummaryView,
     UserDebtCategoriesView,
+    FilteredDebtListView,
 )
 
 urlpatterns = [
@@ -88,7 +89,11 @@ urlpatterns = [
         UserDebtCategoriesView.as_view(),
         name="user-debt-categories",
     ),
+    path(
+        "debts/filtered/",
+        FilteredDebtListView.as_view(),
+        name="filtered-debt-list",
+    ),
     # Emails views
     path("", include("emails.urls")),
 ]
-

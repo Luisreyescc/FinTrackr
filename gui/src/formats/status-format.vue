@@ -133,6 +133,7 @@ export default {
       chartData: [],
       totalIncome: 0,
       totalExpense: 0,
+      totalDebt: 0,
       chartOptions: Object.freeze({
         chart: {
           type: 'area',
@@ -148,7 +149,7 @@ export default {
         dataLabels: {
           enabled: false
         },
-        colors: ['#008FFB', '#FAA700'],
+        colors: ['#008FFB', '#FAA700', '#fA4300'],
         stroke: {
           curve: 'straight',
         },
@@ -197,12 +198,14 @@ export default {
 
       const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
+      const debtUrl = `http://localhost:8000/api/debts/filtered/?filter=${filter}&date=${date}`;
 
       try {
-	this.loadingGraphics = true;
-        const [incomeResponse, expenseResponse] = await Promise.all([
+        this.loadingGraphics = true;
+        const [incomeResponse, expenseResponse, debtResponse] = await Promise.all([
           axios.get(incomeUrl, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(debtUrl, { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
         const incomeData = incomeResponse.data.incomes.map(item => ({
@@ -213,8 +216,12 @@ export default {
           x: this.formatDate(item.x),
           y: parseFloat(item.y)
         }));
+        const debtData = debtResponse.data.debts.map(item => ({
+          x: this.formatDate(item.x),
+          y: parseFloat(item.y)
+        }));
 
-        const uniqueDates = [...new Set([...incomeData, ...expenseData].map(item => item.x))].sort();
+        const uniqueDates = [...new Set([...incomeData, ...expenseData, ...debtData].map(item => item.x))].sort();
 
         // Populate data for missing dates with y: 0 to ensure continuity
         const fillMissingData = (data, dates) => {
@@ -228,6 +235,7 @@ export default {
         this.chartData = [
           { name: 'Incomes', data: fillMissingData(incomeData, uniqueDates) },
           { name: 'Expenses', data: fillMissingData(expenseData, uniqueDates) },
+          { name: 'Debts', data: fillMissingData(debtData, uniqueDates) },
         ];
 
         // Set xaxis categories based on unique dates from both data sets
@@ -242,9 +250,10 @@ export default {
           }
         };
 
-        // Update total incomes and expenses
+        // Update total incomes, expenses and debts
         this.totalIncome = incomeResponse.data.total_income;
         this.totalExpense = expenseResponse.data.total_expense;
+        this.totalDebt = debtResponse.data.total_debt;
 
         console.log("Chart Data:", this.chartData);
         console.log("Categories:", this.chartOptions.xaxis.categories);
@@ -376,8 +385,8 @@ export default {
       return `<span style="color: #D55C5C;">${amount}</span>`;
     },
     getDebts() {
-      // Placeholder for debts
-      const amount = 0;
+      const amount = this.formatCurrency(this.totalDebt, true);
+
       return `<span style="color: #6092DE;">${amount}</span>`;
     },
     toggleSidebar() {
