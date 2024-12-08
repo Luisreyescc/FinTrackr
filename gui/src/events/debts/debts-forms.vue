@@ -18,9 +18,9 @@
           Creditor:
           <input
             type="text"
-            v-model="debt.creditor"
-            @input="validateTextField('creditor')"
-            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && debt.creditor }"
+            v-model="debt.debtor_name"
+            @input="validateTextField('debtor_name')"
+            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && debt.debtor_name }"
             placeholder="Enter the name of your creditor"/>
         </label>
         <span v-if="creditorError" class="error-message">{{ creditorError }}</span>
@@ -77,7 +77,7 @@
           <div class="selected-categories">
             <span v-for="(category, index) in debt.categories" :key="index" class="tag">
               {{ category }}
-              <button type="button" @click="removeCategory(index)" class="close-button">
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
                 <font-awesome-icon :icon="['fas', 'xmark']"/>
               </button>
             </span>
@@ -115,7 +115,7 @@ export default {
   name: "DebtsForm",
   data() {
     return {
-      debt: { amount: "", description: "", categories: [], date: "", creditor: "" },
+      debt: { amount: "", description: "", categories: [], date: "", debtor_name: "" },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -128,44 +128,19 @@ export default {
     };
   },
   methods: {
-    async submitForm() {
+    submitForm() {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
-      const isCreditorValid = this.validateTextField("creditor");
+      const isCreditorValid = this.validateTextField("debtor_name");
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) {
-            console.error("No token found");
-            return;
-          }
-
-          const response = await axios.post(
-            "http://localhost:8000/api/debts/",
-            {
-              ...this.debt,
-              categories: this.debt.categories.map((cat) => ({ name: cat })),
-            },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-
-          if (response.status === 201) {
-            this.$emit("submitForm", response.data);
-            this.$emit("closeForm");
-            this.resetForm();
-          } else {
-            console.error("Failed to create debt:", response.statusText);
-          }
-        } catch (error) {
-          console.error("Error submitting debt:", error);
+          this.$emit("submitForm", { ...this.debt, is_payed: false });
+          this.$emit("closeForm");
+          this.resetForm();
         }
-      }
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
@@ -180,40 +155,17 @@ export default {
 
         this.loadingCategories = true;
         const response = await axios.get(
-          "http://localhost:8000/api/categories/",
+          "http://localhost:8000/api/debt-categories/",
           {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
-        this.categoryOptions = response.data.categories.map((cat) => cat.name);
+        this.categoryOptions = response.data.categories || [];
+        this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
         this.loadingCategories = false;
-      }
-    },
-    async sendNewCategory() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          return;
-        }
-
-        const response = await axios.post(
-          "http://localhost:8000/api/categories/",
-          { name: this.newCategory.trim() },
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
-        if (response.status === 201) {
-          this.categoryOptions.push(this.newCategory.trim());
-          this.debt.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
       }
     },
     addCategory(category) {
@@ -229,22 +181,30 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    async acceptNewCategory() {
+    acceptNewCategory() {
       if (this.newCategory.trim()) {
-        await this.sendNewCategory();
+        const newCategory = this.newCategory.trim();
+        if (!this.categoryOptions.includes(newCategory)) {
+          this.categoryOptions.push(newCategory);
+        }
+        if (!this.debt.categories.includes(newCategory)) {
+          this.debt.categories.push(newCategory);
+        }
         this.newCategory = "";
         this.showNewCategory = false;
         this.dropdownOpen = false;
       }
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault(); // Prevent the default form submission
       this.debt.categories.splice(index, 1);
     },
     clearErrors() {
       this.amountError = "";
       this.descriptionError = "";
       this.dateError = "";
-      this.debtorNameError = "";
+      this.creditorError = "";
     },
     cancelForm() {
       this.resetForm();

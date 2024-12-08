@@ -346,34 +346,40 @@ export default {
       }
     },
     async handleDebtSubmission(debtData) {
-      try {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("user_id") ?? 1;
-        const modifiedDebtData = {
-          ...debtData,
-          user: userId,
-          category: debtData.categories,
-        };
-        delete modifiedDebtData.categories;
+  try {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id") ?? 1;
+    const modifiedDebtData = {
+      ...debtData,
+      user: userId,
+      category: debtData.categories,
+    };
+    delete modifiedDebtData.categories;
 
-        const response = await axios.post(
-          "http://localhost:8000/api/debts/",
-          modifiedDebtData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+    console.log("Sending debt data:", modifiedDebtData); // Log 1: Datos enviados
 
-        this.debts.push(response.data);
-        this.showForm = false;
-        this.fetchDebts();
-        this.addMessage("New debt added succesfully.", "success");
-      } catch (error) {
-        console.error(
-          "Error submitting debt:",
-          error.response?.data || error.message,
-        );
-        this.addMessage("There was an error while adding the debt.", "error");
-      }
-    },
+    const response = await axios.post(
+      "http://localhost:8000/api/debts/",
+      modifiedDebtData,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    console.log("Received response:", response.data); // Log 2: Respuesta recibida
+
+    this.debts.push(response.data);
+    this.showForm = false;
+    this.fetchDebts();
+    this.addMessage("New debt added succesfully.", "success");
+
+    console.log("Updated debts list:", this.debts); // Log 3: Lista de debts actualizada
+  } catch (error) {
+    console.error(
+      "Error submitting debt:",
+      error.response?.data || error.message,
+    );
+    this.addMessage("There was an error while adding the debt.", "error");
+  }
+},
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
