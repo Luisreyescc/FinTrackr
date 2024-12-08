@@ -147,7 +147,33 @@ export default {
       showForm: false,
       incomes: [],
       expenses: [],
-      debts: [],
+      //debts: [],
+      debts: [
+      {
+        debt_id: 1,
+        description: "Pago de hipoteca",
+        amount: 1200.50,
+        date: "2024-12-01",
+        categories: ["Vivienda"],
+        isChecked: false,
+      },
+      {
+        debt_id: 2,
+        description: "Préstamo estudiantil",
+        amount: 300.00,
+        date: "2024-11-15",
+        categories: ["Educación"],
+        isChecked: false,
+      },
+      {
+        debt_id: 3,
+        description: "Tarjeta de crédito",
+        amount: 600.75,
+        date: "2024-10-30",
+        categories: ["Gastos generales"],
+        isChecked: false,
+      },
+    ],
       messages: [],
       searchQuery: "",
       loadingEvents: false
@@ -346,34 +372,40 @@ export default {
       }
     },
     async handleDebtSubmission(debtData) {
-      try {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("user_id") ?? 1;
-        const modifiedDebtData = {
-          ...debtData,
-          user: userId,
-          category: debtData.categories,
-        };
-        delete modifiedDebtData.categories;
+  try {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id") ?? 1;
+    const modifiedDebtData = {
+      ...debtData,
+      user: userId,
+      category: debtData.categories,
+    };
+    delete modifiedDebtData.categories;
 
-        const response = await axios.post(
-          "http://localhost:8000/api/debts/",
-          modifiedDebtData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+    console.log("Sending debt data:", modifiedDebtData); // Log 1: Datos enviados
 
-        this.debts.push(response.data);
-        this.showForm = false;
-        this.fetchDebts();
-        this.addMessage("New debt added succesfully.", "success");
-      } catch (error) {
-        console.error(
-          "Error submitting debt:",
-          error.response?.data || error.message,
-        );
-        this.addMessage("There was an error while adding the debt.", "error");
-      }
-    },
+    const response = await axios.post(
+      "http://localhost:8000/api/debts/",
+      modifiedDebtData,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    console.log("Received response:", response.data); // Log 2: Respuesta recibida
+
+    this.debts.push(response.data);
+    this.showForm = false;
+    this.fetchDebts();
+    this.addMessage("New debt added succesfully.", "success");
+
+    console.log("Updated debts list:", this.debts); // Log 3: Lista de debts actualizada
+  } catch (error) {
+    console.error(
+      "Error submitting debt:",
+      error.response?.data || error.message,
+    );
+    this.addMessage("There was an error while adding the debt.", "error");
+  }
+},
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
