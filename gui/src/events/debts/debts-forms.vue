@@ -98,6 +98,17 @@
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="debt.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="debt.icon" class="selected-icon">
+            <font-awesome-icon :icon="debt.icon"/>
+          </span>
+        </div>
+	
         <div class="button-group">
           <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
@@ -110,12 +121,16 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "DebtsForm",
+  components: {
+    IconDropdown
+  },
   data() {
     return {
-      debt: { amount: "", description: "", categories: [], date: "", debtor_name: "" },
+      debt: { amount: "", description: "", categories: [], date: "", debtor_name: "", icon: "" },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -125,6 +140,80 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   methods: {
@@ -137,10 +226,15 @@ export default {
       const isCreditorValid = this.validateTextField("debtor_name");
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
-          this.$emit("submitForm", { ...this.debt, is_payed: false });
-          this.$emit("closeForm");
-          this.resetForm();
-        }
+        //New form to send income data
+	const debtData = { ...this.debt, iconId: this.debt.icon, is_payed: false };
+        this.$emit('submitForm', debtData);
+	
+	//Old one
+        //this.$emit("submitForm", { ...this.debt, is_payed: false });
+        this.$emit("closeForm");
+        this.resetForm();
+      }
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
@@ -255,10 +349,13 @@ export default {
       }
       return true;
     },
+    applyIcon(selectedIcon) {
+      this.debt.icon = selectedIcon;
+    },
   },
   computed: {
     isSubmitEnabled() {
-      return this.debt.categories.length > 0;
+      return this.debt.categories.length > 0 && this.debt.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -608,5 +705,21 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>
