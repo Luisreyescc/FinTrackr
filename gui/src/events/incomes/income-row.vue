@@ -299,16 +299,16 @@ export default {
       if (isAmountValid && isDescriptionValid && isDateValid) {
 	//New form to send updated income data
 	const incomeData = {
-	  ...this.editIncome,
-	  categories: [...this.editIncome.categories],
-	  iconId: this.editIncome.icon };
+          ...this.editIncome,
+          categories: [...this.editIncome.categories],
+          iconId: this.editIncome.icon };
         this.$emit('updateIncome', incomeData);
 
 	//Old one
-	z/* this.$emit("updateIncome", {
-          ...this.editIncome,
-          categories: [...this.editIncome.categories], // Ensure categories is an array of strings
-          }); */
+	/* this.$emit("updateIncome", {
+           ...this.editIncome,
+           categories: [...this.editIncome.categories], // Ensure categories is an array of strings
+           }); */
 	this.isEditing = false;
       }
     },
