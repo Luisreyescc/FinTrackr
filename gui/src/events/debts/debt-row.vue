@@ -1,7 +1,7 @@
 <template>
   <div class="debt-row">
-    <div class="debt-checkbox">
-      <input type="checkbox" :checked="isChecked" :disabled="isChecked" @change="markAsPaid" class="checkbox"/>
+    <div class="debt-checkbox" :class="{ 'checked': isChecked }" @click="markAsPaid">
+      <font-awesome-icon v-if="isChecked" :icon="['fas', 'check']" class="check-icon"/>
     </div>
     <div class="debt-details">
       <h4>{{ formattedCategories }}</h4>
@@ -372,18 +372,30 @@ export default {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.checkbox {
-    width: 70px;
-    height: 70px;
-    accent-color: #25262b;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.debt-checkbox {
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    margin-left: 5px;
 }
 
-.checkbox:checked {
-    background-color: #4DBEC8;
+.debt-checkbox.checked {
+    border-color: #4DBEC8;
+    background: #4DBEC8;
 }
+
+.check-icon {
+    color: white;
+    font-size: 36px;
+}
+
 
 .debt-details {
     flex: 1;
@@ -391,6 +403,7 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden;
+    margin-left: 10px;
 }
 
 .debt-details h4,
@@ -428,7 +441,6 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
-    margin-top: 5px;
 }
 
 .debt-amount {
@@ -438,7 +450,7 @@ export default {
     flex-shrink: 0;
 }
 
-.debts-actions {
+.debt-actions {
     display: flex;
     gap: 10px;
     margin-top: 5px;
@@ -454,9 +466,7 @@ export default {
     align-items: center;
     justify-content: center;
     border: none;
-    transition:
-	transform 0.2s,
-	background-color 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
 }
 .edit-button {
     background-color: white;

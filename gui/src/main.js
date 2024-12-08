@@ -5,6 +5,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import {
+  faCheck,
   faUser,
   faEnvelope,
   faKey,
@@ -40,6 +41,7 @@ import {
 import { faDocker } from '@fortawesome/free-brands-svg-icons';
 
 library.add(
+  faCheck,
   faUser,
   faEnvelope,
   faKey,
