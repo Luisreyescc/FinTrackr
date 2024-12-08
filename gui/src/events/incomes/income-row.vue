@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-      <font-awesome-icon :icon="['fas', 'circle-dollar-to-slot']" class="row-icon"/>
+      <font-awesome-icon :icon="income.icon" class="row-icon"/>
     </div>
     <div class="income-details">
       <h4>{{ formattedCategories }}</h4>
@@ -112,6 +112,17 @@
             </div>
 	<span v-if="dateError" class="error-message">{{ dateError }}</span>
 
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="ediIncome.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="editIncome.icon" class="selected-icon">
+            <font-awesome-icon :icon="editIncome.icon"/>
+          </span>
+        </div>
+
         <div class="button-group">
           <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
@@ -124,9 +135,13 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "IncomeRow",
+  components: {
+    IconDropdown
+  },
   props: {
     income: {
       type: Object,
@@ -149,6 +164,80 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   computed: {
@@ -172,7 +261,7 @@ export default {
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.editIncome.categories && this.editIncome.categories.length > 0;
+      return this.editIncome.categories && this.editIncome.categories.length > 0 && this.editIncome.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -208,12 +297,19 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        console.log("Edit Income Data before emit:", this.editIncome);
-        this.$emit("updateIncome", {
+	//New form to send updated income data
+	const incomeData = {
+	  ...this.editIncome,
+	  categories: [...this.editIncome.categories],
+	  iconId: this.editIncome.icon };
+        this.$emit('updateIncome', incomeData);
+
+	//Old one
+	z/* this.$emit("updateIncome", {
           ...this.editIncome,
           categories: [...this.editIncome.categories], // Ensure categories is an array of strings
-        });
-        this.isEditing = false;
+          }); */
+	this.isEditing = false;
       }
     },
     async fetchCategories() {
@@ -313,7 +409,10 @@ export default {
       const day = String(d.getDate()).padStart(2, '0');
       const year = d.getFullYear();
       return `${year}-${month}-${day}`;
-    }
+    },
+    applyIcon(selectedIcon) {
+      this.editIncome.icon = selectedIcon;
+    },
   },
   mounted() {
     this.fetchCategories();
@@ -796,5 +895,21 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

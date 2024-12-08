@@ -1,9 +1,7 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon
-        :icon="['fas', 'money-bill-transfer']"
-        class="row-icon"/>
+      <font-awesome-icon :icon="expense.icon" class="row-icon"/>
     </div>
     <div class="expense-details">
       <h4>{{ formattedCategories }}</h4>
@@ -112,12 +110,21 @@
             type="date"
             @input="validateDate"
             class="custom-date-input"
-            :class="{
-              'input-error': dateError,
-              'input-valid': !dateError && editExpense.date }"/>
+            :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="editExpense.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="editExpense.icon" class="selected-icon">
+            <font-awesome-icon :icon="editExpense.icon"/>
+          </span>
+        </div>
+	
         <div class="button-group">
           <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
@@ -130,9 +137,13 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "ExpenseRow",
+  components: {
+    IconDropdown
+  },
   props: {
     expense: {
       type: Object,
@@ -155,6 +166,80 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   computed: {
@@ -182,7 +267,7 @@ export default {
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.editExpense.categories && this.editExpense.categories.length > 0;
+      return this.editExpense.categories && this.editExpense.categories.length > 0 && this.editExpense.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -218,10 +303,18 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateExpense", {
+	//New form to send updated expense data
+	const expenseData = {
           ...this.editExpense,
           categories: [...this.editExpense.categories],
-        });
+          iconId: this.editExpense.icon };
+        this.$emit('updateExpense', expenseData);
+
+	//Old one
+        /* this.$emit("updateExpense", {
+          ...this.editExpense,
+          categories: [...this.editExpense.categories],
+        }); */
         this.isEditing = false;
       }
     },
@@ -323,6 +416,9 @@ export default {
       const day = String(d.getDate()).padStart(2, "0");
       const year = d.getFullYear();
       return `${year}-${month}-${day}`;
+    },
+    applyIcon(selectedIcon) {
+      this.editExpense.icon = selectedIcon;
     },
   },
   mounted() {
@@ -807,5 +903,21 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

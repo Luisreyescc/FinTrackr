@@ -128,7 +128,6 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
-
       iconOptions: [
         ['fas', 'circle-dollar-to-slot'],
         ['fas', 'money-bill-transfer'],
@@ -214,8 +213,8 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	const incomeData = { ...this.income, iconId: this.income.icon };
 	//New form to send income data
+	const incomeData = { ...this.income, iconId: this.income.icon };
         this.$emit('submitForm', incomeData);
 
 	//Old one
