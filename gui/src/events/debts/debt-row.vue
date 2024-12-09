@@ -1,6 +1,6 @@
 <template>
   <div class="debt-row">
-    <div class="debt-checkbox" :class="{ 'checked': isChecked }" @click="markAsPaid">
+    <div class="debt-checkbox" :class="{ 'checked': isChecked }" @click="triggerConfirmation">
       <font-awesome-icon v-if="isChecked" :icon="['fas', 'check']" class="check-icon"/>
     </div>
     <div class="debt-details">
@@ -18,6 +18,18 @@
           <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
         </button>
       </div>
+    </div>
+  </div>
+
+  <div v-if="showConfirmPopup" class="overlay" @click="cancelConfirm"></div>
+  <div v-if="showConfirmPopup" class="confirm-popup">
+    <h3 class="warning-title">Warning</h3>
+    <p>Marking a debt as paid is permanent and cannot be undone.</p>
+  <p>Once marked as paid, you will no longer be able to edit it, but you can delete it.</p>
+  <p>Are you sure you want to mark this debt as paid?</p>
+    <div class="buttons-group">
+      <button class="quit-button" @click="cancelConfirm">Cancel</button>
+      <button class="confirm-button" @click="confirmMark">Confirm</button>
     </div>
   </div>
 
@@ -165,7 +177,8 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
-      isChecked: this.debt.isChecked || false
+      isChecked: this.debt.isChecked || false,
+      showConfirmPopup: false
     };
   },
   computed: {
@@ -196,6 +209,22 @@ export default {
     },
   },
   methods: {
+    cancelConfirm() {
+      this.showConfirmPopup = false;
+    },
+    confirmMark() {
+      this.isChecked = true;
+      this.showConfirmPopup = false;
+      this.$emit("markDebtAsPaid", {
+        ...this.debt,
+        isChecked: true,
+      });
+    },
+    triggerConfirmation() {
+      if (!this.isChecked) {
+        this.showConfirmPopup = true;
+      }
+    },
     async markAsPaid() {
       if (this.isChecked)
 	return;
@@ -843,5 +872,62 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.confirm-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #25262b;
+    border-radius: 12px;
+    padding: 20px;
+    width: 650px;
+    z-index: 1100;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.warning-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: white;
+}
+
+.confirm-popup p {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.buttons-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.quit-button, .confirm-button {
+    padding: 15px 30px;
+    margin-top: 30px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.quit-button {
+    background-color: #25262B;
+    color: white;
+    border: 2px solid white;
+}
+
+.confirm-button {
+    background-color: white;
+    color: #25262B;
 }
 </style>
