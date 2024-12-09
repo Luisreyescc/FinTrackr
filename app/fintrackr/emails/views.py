@@ -329,6 +329,9 @@ class IncomeExpensePDFView(APIView):
         doc.build(elements)
         return response
     
+    # the next steps on these code is to make it for one mont and in an specific hour
+    # like been able to now if a mont has happend, and if so
+    # been able to now the exact time and set it
     def periodic_email_task(self, interval, stop_event, user_id):
         sleep_interval = 0.5
         elapsed_time = 0
