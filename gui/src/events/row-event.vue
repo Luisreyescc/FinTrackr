@@ -1,7 +1,7 @@
 <template>
   <div :class="rowClass">
     <div class="event-icon">
-      <font-awesome-icon :icon="icon" class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(event.icon)" class="row-icon"/>
     </div>
     <div class="event-details">
       <h4>{{ formattedCategories }}</h4>
@@ -32,14 +32,6 @@ export default {
         return 'expense-row';
 
       return 'debt-row';
-    },
-    icon() {
-      if (this.event.type === 'Income')
-        return ['fas', 'circle-dollar-to-slot'];
-      if (this.event.type === 'Expense')
-        return ['fas', 'money-bill-transfer'];
-
-      return ['fas', 'hand-holding-dollar'];
     },
     amountClass() {
       if (this.event.type === 'Income')
@@ -76,6 +68,14 @@ export default {
       return `${year}-${month}-${day}`;
     }
   },
+  methods: {
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    }
+  }
 };
 </script>
 

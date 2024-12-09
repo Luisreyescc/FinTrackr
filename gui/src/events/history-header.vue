@@ -11,7 +11,7 @@
    </div>
    
    <FilterDropdown
-     :filterOptions="['Category:', 'Amount ==', 'Description:', 'Date:', 'Amount >=', 'Amount <=']"
+     :filterOptions="['Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
      :currentFilter="currentFilter"
      @filterSelected="applyFilter"/>
    
