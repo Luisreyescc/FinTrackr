@@ -284,6 +284,7 @@ class DebtSerializer(serializers.ModelSerializer):
             "amount",
             "description",
             "date",
+            "icon",
             "is_payed",
             "category",
             "categories",

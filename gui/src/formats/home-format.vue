@@ -355,23 +355,15 @@ export default {
       category: debtData.categories,
     };
     delete modifiedDebtData.categories;
-
-    console.log("Sending debt data:", modifiedDebtData); // Log 1: Datos enviados
-
     const response = await axios.post(
       "http://localhost:8000/api/debts/",
       modifiedDebtData,
       { headers: { Authorization: `Bearer ${token}` } },
     );
-
-    console.log("Received response:", response.data); // Log 2: Respuesta recibida
-
     this.debts.push(response.data);
     this.showForm = false;
     this.fetchDebts();
     this.addMessage("New debt added succesfully.", "success");
-
-    console.log("Updated debts list:", this.debts); // Log 3: Lista de debts actualizada
   } catch (error) {
     console.error(
       "Error submitting debt:",

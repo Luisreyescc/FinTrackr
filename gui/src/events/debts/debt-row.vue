@@ -92,11 +92,10 @@
               :key="index"
               @click="addCategory(category)">
               {{ category }}
-              @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
-          <div v-if="showNewCategory" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
@@ -114,10 +113,10 @@
           </div>
 
           <div class="selected-categories">
-            <span v-for="(category, index) in debt.categories" :key="index" class="tag">
+            <span v-for="(category, index) in editDebt.categories" :key="index" class="tag">
               {{ category }}
-              <button @click="removeCategory(index)" class="close-button">
-                <font-awesome-icon :icon="['fas', 'xmark']" />
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
+                <font-awesome-icon :icon="['fas', 'xmark']"/>
               </button>
             </span>
           </div>
@@ -146,7 +145,7 @@
             @iconSelected="applyIcon" />
           <span class="selected-text">Selected Icon: </span>
           <span v-if="editDebt.icon" class="selected-icon">
-            <font-awesome-icon :icon="editDebt.icon"/>
+            <font-awesome-icon :icon="parseIcon(editDebt.icon)"/>
           </span>
         </div>
 	
@@ -352,26 +351,28 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    },
     submitEdit() {
       this.clearErrors();
 
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
-      const isCreditorValid = this.validateTextField("creditor");
+      const isCreditorValid = this.validateTextField("debtor_name");
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
-	//New form to send updated expense data
-	const debtData = {
+        const iconString = Array.isArray(this.editDebt.icon) ? this.editDebt.icon.join(' ') : this.editDebt.icon;
+        const debtData = {
           ...this.editDebt,
-          categories: [...this.editDebt.categories],
-          iconId: this.editDebt.icon };
-        this.$emit('updateExpense', debtData);
-	
-        /* this.$emit("updateDebt", {
-          ...this.editDebt,
-          categories: [...this.editDebt.categories],
-        }); */
+          icon: iconString,
+        };
+
+        this.$emit('updateDebt', debtData);
         this.isEditing = false;
       }
     },

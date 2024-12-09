@@ -227,7 +227,9 @@ export default {
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
         //New form to send income data
-	const debtData = { ...this.debt, iconId: this.debt.icon, is_payed: false };
+        const iconString = this.debt.icon.join(' ');
+        
+	const debtData = { ...this.debt, icon: iconString, is_payed: false };
         this.$emit('submitForm', debtData);
 	
 	//Old one

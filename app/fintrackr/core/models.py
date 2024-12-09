@@ -100,6 +100,7 @@ class Debts(models.Model):
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
     is_payed = models.BooleanField(default=False)
+    icon = models.CharField(max_length=50, null=True, blank=True) 
 
 
 class DebtCategories(models.Model):
