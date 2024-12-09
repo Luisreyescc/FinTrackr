@@ -58,7 +58,9 @@ export default {
       return `${sign}${formatter.format(this.event.amount)}`;
     },
     formattedCategories() {
-      return this.event.categories ? this.event.categories.join(', ') : 'No categories';
+      return this.event.categories
+        ? this.event.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)).join(', ')
+        : 'No categories';
     },
     formattedDate() {
       const date = new Date(this.event.date);

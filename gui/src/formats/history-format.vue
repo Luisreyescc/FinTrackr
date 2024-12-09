@@ -165,7 +165,8 @@ export default {
         const incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
-          type: 'Income' // Add type field
+          type: 'Income', // Add type field
+          categories: income.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...incomes);
       } catch (error) {
@@ -188,7 +189,8 @@ export default {
         const expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
-          type: 'Expense' // Add type field
+          type: 'Expense', // Add type field
+          categories: expense.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...expenses);
       } catch (error) {
@@ -211,7 +213,8 @@ export default {
         const debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
-          type: 'Debt' // Add type field
+          type: 'Debt', // Add type field
+          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...debts);
       } catch (error) {
