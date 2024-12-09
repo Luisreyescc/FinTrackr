@@ -139,6 +139,17 @@
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="editDebt.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="editDebt.icon" class="selected-icon">
+            <font-awesome-icon :icon="editDebt.icon"/>
+          </span>
+        </div>
+	
         <div class="button-group">
           <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
           <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
@@ -151,9 +162,13 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "DebtRow",
+  components: {
+    IconDropdown
+  },
   props: {
     debt: {
       type: Object,
@@ -178,7 +193,81 @@ export default {
       newCategory: "",
       loadingCategories: false,
       isChecked: this.debt.isChecked || false,
-      showConfirmPopup: false
+      showConfirmPopup: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   computed: {
@@ -202,7 +291,7 @@ export default {
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.editDebt.categories && this.editDebt.categories.length > 0;
+      return this.editDebt.categories && this.editDebt.categories.length > 0 && this.editDebt.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -272,10 +361,17 @@ export default {
       const isCreditorValid = this.validateTextField("creditor");
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
-        this.$emit("updateDebt", {
+	//New form to send updated expense data
+	const debtData = {
           ...this.editDebt,
           categories: [...this.editDebt.categories],
-        });
+          iconId: this.editDebt.icon };
+        this.$emit('updateExpense', debtData);
+	
+        /* this.$emit("updateDebt", {
+          ...this.editDebt,
+          categories: [...this.editDebt.categories],
+        }); */
         this.isEditing = false;
       }
     },
@@ -380,6 +476,9 @@ export default {
       const day = String(d.getDate()).padStart(2, "0");
       const year = d.getFullYear();
       return `${year}-${month}-${day}`;
+    },
+    applyIcon(selectedIcon) {
+      this.editDebt.icon = selectedIcon;
     },
   },
   mounted() {
@@ -929,5 +1028,21 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .confirm-button {
     background-color: white;
     color: #25262B;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

@@ -260,9 +260,7 @@ export default {
       // Data format day-MONTH-year
       const date = new Date(this.expense.date);
       const day = String(date.getDate()).padStart(2, "0");
-      const month = date
-        .toLocaleString("en-US", { month: "short" })
-        .toUpperCase();
+      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
