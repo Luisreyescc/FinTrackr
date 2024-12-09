@@ -213,12 +213,12 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	//New form to send expense data
-	const expenseData = { ...this.expense, iconId: this.expense.icon };
+
+        const iconString = this.expense.icon.join(' ');
+
+        const expenseData = { ...this.expense, icon: iconString };
         this.$emit('submitForm', expenseData);
 
-	//Old one
-        //this.$emit("submitForm", { ...this.expense });
         this.$emit("closeForm");
         this.resetForm();
       }
@@ -335,7 +335,7 @@ export default {
   },
   computed: {
     isSubmitEnabled() {
-      return this.expense.categories.length > 0 && this.income.icon;
+      return this.expense.categories.length > 0 && this.expense.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;

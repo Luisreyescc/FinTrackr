@@ -207,6 +207,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
             "amount",
             "description",
             "date",
+            "icon",
             "category",
             "categories",
         ]

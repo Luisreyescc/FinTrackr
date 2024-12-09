@@ -1,7 +1,7 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon :icon="expense.icon" class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(expense.icon)" class="row-icon"/>
     </div>
     <div class="expense-details">
       <h4>{{ formattedCategories }}</h4>
@@ -67,13 +67,11 @@
             <li
               v-for="(category, index) in categoryOptions"
               :key="index"
-              @click="addCategory(category)">
-              {{ category }}
               @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
-          <div v-if="showNewCategory" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
@@ -89,6 +87,7 @@
                 :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
+        </div>
 
           <div class="selected-categories">
             <span v-for="(category, index) in editExpense.categories" :key="index" class="tag">
@@ -98,7 +97,6 @@
               </button>
             </span>
           </div>
-        </div>
 	
         <label class="date-label">
           Date:
@@ -121,7 +119,7 @@
             @iconSelected="applyIcon" />
           <span class="selected-text">Selected Icon: </span>
           <span v-if="editExpense.icon" class="selected-icon">
-            <font-awesome-icon :icon="editExpense.icon"/>
+            <font-awesome-icon :icon="parseIcon(editExpense.icon)"/>
           </span>
         </div>
 	
@@ -293,6 +291,12 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    },
     submitEdit() {
       this.clearErrors();
 
@@ -301,18 +305,13 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	//New form to send updated expense data
-	const expenseData = {
+        const iconString = Array.isArray(this.editExpense.icon) ? this.editExpense.icon.join(' ') : this.editExpense.icon;
+        const expenseData = {
           ...this.editExpense,
           categories: [...this.editExpense.categories],
-          iconId: this.editExpense.icon };
+          icon: iconString
+        };
         this.$emit('updateExpense', expenseData);
-
-	//Old one
-        /* this.$emit("updateExpense", {
-          ...this.editExpense,
-          categories: [...this.editExpense.categories],
-        }); */
         this.isEditing = false;
       }
     },
