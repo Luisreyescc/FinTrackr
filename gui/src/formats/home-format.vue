@@ -530,36 +530,45 @@ export default {
     },
     async handleMarkDebtAsPaid(updatedDebt) {
       try {
-	const token = localStorage.getItem("token");
-	const userId = localStorage.getItem("user_id") ?? 1;
-	
-	const expenseData = {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("user_id") ?? 1;
+
+        const formattedDate = moment(updatedDebt.date, "YYYY-MMM-DD").format("YYYY-MM-DD");
+
+        const modifiedExpenseData = {
           amount: updatedDebt.amount,
           description: updatedDebt.description,
-          categories: updatedDebt.categories,
-          date: updatedDebt.date,
           user: userId,
-	};
-	
-	await axios.post(
+          category: updatedDebt.categories,
+          date: formattedDate,
+          icon: updatedDebt.icon,
+        };
+        delete modifiedExpenseData.categories;
+
+        await axios.post(
           "http://localhost:8000/api/expenses/",
-          expenseData,
+          modifiedExpenseData,
           { headers: { Authorization: `Bearer ${token}` } }
-	);
-	
-        await axios.put(
+        );
+
+        const debtResponse = await axios.put(
           `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
-          { isChecked: true },
+          { is_payed: true },
           { headers: { Authorization: `Bearer ${token}` } }
-	);
-	
-	const debtIndex = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
-	if (debtIndex !== -1)
-          this.debts[debtIndex].isChecked = true;
-	
-	this.addMessage(`Debt "${updatedDebt.description}" marked as paid.`, "success");
+        );
+
+        if (debtResponse.status === 200) {
+          const debtIndex = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
+          if (debtIndex !== -1) {
+            this.debts[debtIndex].is_payed = true;
+          }
+
+          this.addMessage(`Debt "${updatedDebt.description}" marked as paid and added as an expense.`, "success");
+        }
+
+        this.fetchExpenses();
       } catch (error) {
-	this.addMessage("There was an error marking the debt as paid.", "error");
+        this.addMessage("There was an error marking the debt as paid.", "error");
       }
     },
     async handleDebtDelete(debtId) {

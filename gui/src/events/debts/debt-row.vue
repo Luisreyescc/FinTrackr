@@ -1,7 +1,7 @@
 <template>
   <div class="debt-row">
-    <div class="debt-checkbox" :class="{ 'checked': isChecked }" @click="triggerConfirmation">
-      <font-awesome-icon v-if="isChecked" :icon="['fas', 'check']" class="check-icon"/>
+    <div class="debt-checkbox" :class="{ 'checked': debt.is_payed }" @click="markAsPaid">
+      <font-awesome-icon v-if="debt.is_payed" :icon="['fas', 'check']" class="check-icon"/>
     </div>
     <div class="debt-details">
       <h4>{{ formattedCategories }}</h4>
@@ -313,19 +313,9 @@ export default {
         this.showConfirmPopup = true;
       }
     },
-    async markAsPaid() {
-      if (this.isChecked)
-	return;
-
-      const expenseDescription = `${this.debt.creditor}: ${this.debt.description}`;
-
-      this.$emit("markDebtAsPaid", {
-        ...this.debt,
-        isChecked: true,
-        description: expenseDescription,
-      });
-
-      this.isChecked = true;
+    markAsPaid() {
+      if (this.debt.is_payed) return;
+      this.showConfirmPopup = true;
     },
     startEdit() {
       if (this.isChecked)
