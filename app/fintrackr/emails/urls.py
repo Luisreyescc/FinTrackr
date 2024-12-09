@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SendCodeView, ValidateCodeView, ChangePasswordView
+from .views import SendCodeView, ValidateCodeView, ChangePasswordView, IncomeExpensePDFView
 from .pdfView import start_email_task, stop_email_task
 
 urlpatterns = [
@@ -8,6 +8,5 @@ urlpatterns = [
     path("change-password/", ChangePasswordView.as_view(), name="change-password"),
 
     #pdf view
-    path("start-thread/", start_email_task, name="start-thread"), 
-    path("stop-thread/", stop_email_task, name="stop-thread"),
+    path("pdf/", IncomeExpensePDFView.as_view(), name="send-pdf"),
 ]
