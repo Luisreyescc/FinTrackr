@@ -1,52 +1,58 @@
 from django.http import JsonResponse
 import threading
 import time
-    
+from django.core.mail import send_mail
 
 # Store threads and their stop events
 threads = {}
 
+# Periodic email task
+def periodic_email_task(interval, stop_event, email):
+    sleep_interval = 0.5  # Check the stop event every 0.5 seconds
+    elapsed_time = 0
 
-# Periodic task
-def periodic_task(interval, stop_event):
     while not stop_event.is_set():
-        print(f"Task executed", flush=True)  # Replace with actual logic
-        time.sleep(interval)
+        if elapsed_time >= interval:
+            # Send an email
+            try:
+                send_mail(
+                    subject="Hello!",
+                    message="Hello, this is a periodic email!",
+                    from_email=None,  # Use the default email from settings
+                    recipient_list=[email],
+                )
+                print(f"Email sent to {email}", flush=True)
+            except Exception as e:
+                print(f"Error sending email to {email}: {e}", flush=True)
 
-# View to start the thread
-def start_thread(request):
-    interval = int(request.GET.get("interval", 10))  # Seconds
-    task_id = request.GET.get("task_id", "default_task")  # Unique identifier for the task
+            elapsed_time = 0  # Reset elapsed time
+        time.sleep(sleep_interval)
+        elapsed_time += sleep_interval
 
-    # Check if the task already exists
-    if task_id in threads:
-        return JsonResponse({"status": "Task already running", "task_id": task_id})
 
-    # Create a stop event
+# Start a new periodic task
+def start_email_task(request):
+    interval = int(request.GET.get("interval", 60))  # Default interval: 60 seconds
+    email = request.GET.get("email", "default@example.com")  # Default email address
+
+    if email in threads:
+        threads[email]["stop_event"].set()
+        threads[email]["thread"].join(timeout=1) 
+        del threads[email]
+
     stop_event = threading.Event()
+    thread = threading.Thread(target=periodic_email_task, args=(interval, stop_event, email))
+    thread.daemon = True  # Ensures thread exits when the main program exits
+    thread.start()
+    threads[email] = {"thread": thread, "stop_event": stop_event}
+    return JsonResponse({"message": "Periodic email task started successfully."})
 
-    # Start a new thread
-    task_thread = threading.Thread(target=periodic_task, args=(interval, stop_event))
-    task_thread.daemon = True
-    task_thread.start()
-
-    # Save the thread and stop event
-    threads[task_id] = stop_event
-
-    return JsonResponse({"status": "Thread started", "task_id": task_id, "interval": f"{interval} seconds"})
-
-# View to stop the thread
-def stop_thread(request):
-    task_id = request.GET.get("task_id", "default_task")  # Unique identifier for the task
-
-    # Check if the task exists
-    if task_id in threads:
-        # Signal the thread to stop
-        threads[task_id].set()
-
-        # Remove the task from the dictionary
-        del threads[task_id]
-
-        return JsonResponse({"status": "Thread stopped", "task_id": task_id})
-    else:
-        return JsonResponse({"status": "Task not found", "task_id": task_id})
+# Stop a running periodic task
+def stop_email_task(request):
+    email = request.GET.get("email")
+    if email in threads:
+        threads[email]["stop_event"].set()
+        threads[email]["thread"].join(timeout=1) 
+        del threads[email]
+        return JsonResponse({"message": "Periodic email task stopped successfully."})
+    return JsonResponse({"error": "No running task found for this email."}, status=404)
