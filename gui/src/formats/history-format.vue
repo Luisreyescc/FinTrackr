@@ -86,7 +86,7 @@ export default {
 
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
-        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [null, query];
+        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [query, query];
 
         if (filterValue) {
           if (filterType === 'amount ==') {
@@ -119,6 +119,12 @@ export default {
             events = events.filter(event => event.categories.some(category => category.toLowerCase().startsWith(filterValue.toLowerCase())));
           } else if (filterType === 'description') {
             events = events.filter(event => event.description.toLowerCase().includes(filterValue.toLowerCase()));
+          } else if (filterType === 'income') {
+            events = events.filter(event => event.type.toLowerCase() === 'income');
+          } else if (filterType === 'expense') {
+            events = events.filter(event => event.type.toLowerCase() === 'expense');
+          } else if (filterType === 'debt') {
+            events = events.filter(event => event.type.toLowerCase() === 'debt');
           } else {
             // Global search
             const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
