@@ -305,14 +305,15 @@ export default {
       if (isAmountValid && isDescriptionValid && isDateValid) {
         // Convert icon array to string
         const iconString = Array.isArray(this.editIncome.icon) ? this.editIncome.icon.join(' ') : this.editIncome.icon;
-
         const incomeData = {
           ...this.editIncome,
           categories: [...this.editIncome.categories],
           icon: iconString
         };
+        
         this.$emit('updateIncome', incomeData);
         this.isEditing = false;
+        this.fetchCategories();
       }
     },
     async fetchCategories() {

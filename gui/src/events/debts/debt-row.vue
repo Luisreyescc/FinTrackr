@@ -364,6 +364,7 @@ export default {
 
         this.$emit('updateDebt', debtData);
         this.isEditing = false;
+        this.fetchCategories();
       }
     },
     async fetchCategories() {

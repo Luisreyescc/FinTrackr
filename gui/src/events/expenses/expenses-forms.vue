@@ -215,12 +215,12 @@ export default {
       if (isAmountValid && isDescriptionValid && isDateValid) {
 
         const iconString = this.expense.icon.join(' ');
-
         const expenseData = { ...this.expense, icon: iconString };
-        this.$emit('submitForm', expenseData);
 
+        this.$emit('submitForm', expenseData);
         this.$emit("closeForm");
         this.resetForm();
+        this.fetchCategories();
       }
     },
     toggleDropdown() {

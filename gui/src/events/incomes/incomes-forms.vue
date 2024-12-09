@@ -215,13 +215,13 @@ export default {
       if (isAmountValid && isDescriptionValid && isDateValid) {
         // Convert icon array to string
         const iconString = this.income.icon.join(' ');
-
         // New form to send income data
         const incomeData = { ...this.income, icon: iconString };
-        this.$emit('submitForm', incomeData);
 
+        this.$emit('submitForm', incomeData);
         this.$emit("closeForm");
         this.resetForm();
+        this.fetchCategories();
       }
     },
     toggleDropdown() {

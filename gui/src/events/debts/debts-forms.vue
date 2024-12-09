@@ -226,16 +226,13 @@ export default {
       const isCreditorValid = this.validateTextField("debtor_name");
 
       if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
-        //New form to send income data
         const iconString = this.debt.icon.join(' ');
-        
-	const debtData = { ...this.debt, icon: iconString, is_payed: false };
+        const debtData = { ...this.debt, icon: iconString, is_payed: false };
+
         this.$emit('submitForm', debtData);
-	
-	//Old one
-        //this.$emit("submitForm", { ...this.debt, is_payed: false });
         this.$emit("closeForm");
         this.resetForm();
+        this.fetchCategories();
       }
     },
     toggleDropdown() {

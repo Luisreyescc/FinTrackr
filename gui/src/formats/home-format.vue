@@ -231,6 +231,7 @@ export default {
         this.incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
+          categories: income.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.incomes);
       } catch (error) {
@@ -256,6 +257,7 @@ export default {
         this.expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
+          categories: expense.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.expenses);
       } catch (error) {
@@ -278,6 +280,7 @@ export default {
         this.debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
+          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.debts);
       } catch (error) {
@@ -294,11 +297,10 @@ export default {
         const modifiedIncomeData = {
           ...incomeData,
           user: userId,
-          category: incomeData.categories,
+          category: incomeData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
         };
         delete modifiedIncomeData.categories;
 
-	
         const response = await axios.post(
           "http://localhost:8000/api/incomes/",
           modifiedIncomeData,
@@ -307,7 +309,7 @@ export default {
         this.incomes.unshift(response.data);
         this.showForm = false;
         this.fetchIncomes();
-        this.addMessage("New income added succesfully.", "success");
+        this.addMessage("New income added successfully.", "success");
       } catch (error) {
         console.error("Error submitting income:", error);
         this.addMessage("There was an error while adding the income.", "error");
@@ -320,7 +322,7 @@ export default {
         const modifiedExpenseData = {
           ...expenseData,
           user: userId,
-          category: expenseData.categories,
+          category: expenseData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
         };
         delete modifiedExpenseData.categories;
 
@@ -333,7 +335,7 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
         this.fetchExpenses();
-        this.addMessage("New expense added succesfully.", "success");
+        this.addMessage("New expense added successfully.", "success");
       } catch (error) {
         console.error(
           "Error submitting expense:",
@@ -352,7 +354,7 @@ export default {
     const modifiedDebtData = {
       ...debtData,
       user: userId,
-      category: debtData.categories,
+      category: debtData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
     };
     delete modifiedDebtData.categories;
     const response = await axios.post(
@@ -363,7 +365,7 @@ export default {
     this.debts.push(response.data);
     this.showForm = false;
     this.fetchDebts();
-    this.addMessage("New debt added succesfully.", "success");
+    this.addMessage("New debt added successfully.", "success");
   } catch (error) {
     console.error(
       "Error submitting debt:",

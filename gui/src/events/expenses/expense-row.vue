@@ -313,6 +313,7 @@ export default {
         };
         this.$emit('updateExpense', expenseData);
         this.isEditing = false;
+        this.fetchCategories();
       }
     },
     async fetchCategories() {
