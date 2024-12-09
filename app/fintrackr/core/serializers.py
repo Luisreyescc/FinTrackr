@@ -133,6 +133,7 @@ class IncomeSerializer(serializers.ModelSerializer):
             "amount",
             "description",
             "date",
+            "icon",
             "category",
             "categories",
         ]

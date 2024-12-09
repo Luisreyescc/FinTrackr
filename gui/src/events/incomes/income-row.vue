@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-      <font-awesome-icon :icon="income.icon" class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(income.icon)" class="row-icon"/>
     </div>
     <div class="income-details">
       <h4>{{ formattedCategories }}</h4>
@@ -115,11 +115,11 @@
 	<div class="icons-wrapper">
           <IconDropdown
             :iconOptions="iconOptions"
-            :currentIcon="ediIncome.icon"
+            :currentIcon="editIncome.icon"
             @iconSelected="applyIcon" />
           <span class="selected-text">Selected Icon: </span>
           <span v-if="editIncome.icon" class="selected-icon">
-            <font-awesome-icon :icon="editIncome.icon"/>
+            <font-awesome-icon :icon="parseIcon(editIncome.icon)"/>
           </span>
         </div>
 
@@ -289,6 +289,12 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    },
     submitEdit() {
       this.clearErrors();
 
@@ -297,19 +303,16 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	//New form to send updated income data
-	const incomeData = {
+        // Convert icon array to string
+        const iconString = Array.isArray(this.editIncome.icon) ? this.editIncome.icon.join(' ') : this.editIncome.icon;
+
+        const incomeData = {
           ...this.editIncome,
           categories: [...this.editIncome.categories],
-          iconId: this.editIncome.icon };
+          icon: iconString
+        };
         this.$emit('updateIncome', incomeData);
-
-	//Old one
-	/* this.$emit("updateIncome", {
-           ...this.editIncome,
-           categories: [...this.editIncome.categories], // Ensure categories is an array of strings
-           }); */
-	this.isEditing = false;
+        this.isEditing = false;
       }
     },
     async fetchCategories() {

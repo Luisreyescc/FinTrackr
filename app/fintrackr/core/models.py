@@ -70,6 +70,7 @@ class Incomes(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
+    icon = models.CharField(max_length=50, null=True, blank=True) 
 
 
 class IncomeCategories(models.Model):

@@ -213,12 +213,13 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-	//New form to send income data
-	const incomeData = { ...this.income, iconId: this.income.icon };
+        // Convert icon array to string
+        const iconString = this.income.icon.join(' ');
+
+        // New form to send income data
+        const incomeData = { ...this.income, icon: iconString };
         this.$emit('submitForm', incomeData);
 
-	//Old one
-        //this.$emit('submitForm', { ...this.income });
         this.$emit("closeForm");
         this.resetForm();
       }
