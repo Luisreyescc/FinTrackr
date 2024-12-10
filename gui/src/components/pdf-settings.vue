@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default {
@@ -144,10 +145,30 @@ export default {
       const year = today.getFullYear();
       return new Date(year, currentMonth + 1, 0).getDate();
     },
-    confirmSettings() {
+    async confirmSettings() {
       const maxDay = this.getMaxDay();
       if (this.period.day > maxDay)
         this.period.day = maxDay;
+
+      const token = localStorage.getItem("token");
+      if (!token)
+        return console.error("No token found");
+      
+      if(this.period.type == "Bimester") {
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=2&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
+
+      } else if(this.period.type == "Trimester"){
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=3&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
+
+      } else {
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
+      }
+      
+      this.$emit('closeModal');
+
     },
     closeModal() {
       this.$emit('closeModal');

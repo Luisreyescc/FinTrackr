@@ -332,9 +332,12 @@ class IncomeExpensePDFView(APIView):
     # the next steps on these code is to make it for one mont and in an specific hour
     # like been able to now if a mont has happend, and if so
     # been able to now the exact time and set it
-    def periodic_email_task(self, interval, stop_event, user_id):
+    def periodic_email_task(self, interval, stop_event, user_id, first):
         sleep_interval = 0.5
-        elapsed_time = 0
+        elapsed_time = interval
+        if(first==1):
+            elapsed_time = 0
+        
 
         while not stop_event.is_set():
             if elapsed_time >= interval:
@@ -369,6 +372,7 @@ class IncomeExpensePDFView(APIView):
                     print(f"Error sending email to {email}: {e}")
 
                 elapsed_time = 0
+            
             time.sleep(sleep_interval)
             elapsed_time += sleep_interval
 
@@ -376,6 +380,7 @@ class IncomeExpensePDFView(APIView):
         # Get interval and unit from query parameters
         interval = int(request.GET.get("interval", 60))  # Default interval: 60 seconds
         unit = request.GET.get("unit", "seconds")  # Default unit: seconds
+        first = int(request.GET.get("first", 0))
         user_id = request.user.id
 
         interval_in_seconds = self.convert_to_seconds(interval, unit)
@@ -386,7 +391,7 @@ class IncomeExpensePDFView(APIView):
             del threads[user_id]
 
         stop_event = Event()
-        thread = Thread(target=self.periodic_email_task, args=(interval_in_seconds, stop_event, user_id))
+        thread = Thread(target=self.periodic_email_task, args=(interval_in_seconds, stop_event, user_id, first))
         thread.daemon = True
         thread.start()
 

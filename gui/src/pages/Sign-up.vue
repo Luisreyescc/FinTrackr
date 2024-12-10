@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import SignUpForm from '@/formats/signup-format.vue';
 import MessageAlerts from '@/components/messages.vue';
 import apiClient from "@/apiClient.js";
@@ -48,7 +49,25 @@ export default {
             admin_user: admin_user
           });
 
+        // 
+
           if (response.status === 201) {
+            
+            const responseLog = await axios.post(
+            "http://localhost:8000/api/login/", { user_name: username, password: password },
+            { headers: { "Content-Type": "application/json" } } );
+                  console.log(responseLog.data);
+                  if (responseLog.status === 200) {
+            const token = responseLog.data.access;
+
+            await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&unit=months&first=1", {
+              headers: { Authorization: `Bearer ${token}` } });
+            
+            this.addMessage("Login successful", "success");
+                  } else {
+            this.addMessage("Invalid username or password. Please try again.", "error");
+            }
+
             this.addMessage("User registered successfully! Redirecting to login...", "success");
             setTimeout(() => { this.$router.push("/login") }, 2500);
           } else
