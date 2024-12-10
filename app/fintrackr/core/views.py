@@ -18,6 +18,7 @@ from .models import (
     DebtCategories,
 )
 from .serializers import (
+    AdminUserSerializer,
     RegisterSerializer,
     LoginSerializer,
     UserSerializer,
@@ -33,32 +34,8 @@ from .serializers import (
 @permission_classes([IsAdminUser])
 def user_financial(request):
     users = Users.objects.all()
-    user_data = []
-
-    for user in users:
-        incomes = Incomes.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-        expenses = Expenses.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-        debts = 0  # Assuming you have a model for debts, replace this with the actual calculation
-        network = incomes - expenses
-
-        user_info = {
-            "user_id": user.user_id,
-            "user_name": user.user_name,
-            "email": user.email,
-            "name": user.name,
-            "last_name": user.last_name,
-            "phone": user.phone,
-            "curp": user.curp,
-            "rfc": user.rfc,
-            "birth_date": user.birth_date,
-            "incomes": float(incomes),
-            "expenses": float(expenses),
-            "debts": float(debts),
-            "network": float(network)
-        }
-        user_data.append(user_info)
-
-    return Response(user_data, status=status.HTTP_200_OK)
+    serializer = AdminUserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
@@ -71,14 +48,13 @@ def delete_user(request, user_id):
 
         Incomes.objects.filter(user=user).delete()
         Expenses.objects.filter(user=user).delete()
-        # Assuming you have a model for debts, add the deletion here
-        # Debts.objects.filter(user=user).delete()
+        Debts.objects.filter(user=user).delete()
 
         user.delete()
 
         send_mail(
             subject="User Account Deleted",
-            message=f"Dear {user_name},\n\nYour user account has been removed. Thank you for using our service.\n\nBest regards,\nYour Company",
+            message=f"Dear {user_name},\n\nYour user account has been removed. Thank you for using our service.\n\nBest regards,\nYour trusted website",
             from_email=None,
             recipient_list=[email],
         )

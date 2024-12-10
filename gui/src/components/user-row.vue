@@ -8,6 +8,7 @@
       <h4>{{ user.user_name }}</h4>
       <p class="user-fullname">{{ formattedFullname }}</p>
       <span v-if="user.birth_date" class="user-bday">{{ formattedBDate }}</span>
+      <span class="user-role">{{ userRole }}</span>
     </div>
     
     <div class="user-actions-section">
@@ -100,6 +101,9 @@ export default {
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
+    userRole() {
+      return this.user.is_staff ? 'Admin' : 'User';
+    }
   },
   methods: {
     formattedCurrency(amount) {
@@ -197,6 +201,14 @@ export default {
 
 .user-bday {
     color: #BF9F00;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.user-role {
+    color: #FFA500;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
