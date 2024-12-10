@@ -155,15 +155,21 @@ export default {
 }
 
 .income-amount {
+    font-weight: bold;
     color: #20C171;
+    font-size: 20px;
 }
 
 .expense-amount {
+    font-weight: bold;
     color: #D55C5C;
+    font-size: 20px;
 }
 
 .debt-amount {
+    font-weight: bold;
     color: #6092DE;
+    font-size: 20px;
 }
 
 .income-type {

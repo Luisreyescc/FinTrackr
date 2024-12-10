@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faCheck,
   faUser,
+  faUsers,
   faEnvelope,
   faKey,
   faBars,
@@ -111,6 +112,7 @@ import {
 library.add(
   faCheck,
   faUser,
+  faUsers,
   faEnvelope,
   faKey,
   faBars,

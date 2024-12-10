@@ -697,7 +697,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 30px;
+    right: 33px;
     top: 50%;
     transform: translateY(-30%);
     color: white;

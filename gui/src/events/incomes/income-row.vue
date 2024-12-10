@@ -888,7 +888,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 23px;
+    right: 26px;
     top: 50%;
     transform: translateY(-30%);
     color: white;
@@ -901,10 +901,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .icons-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .selected-text {
