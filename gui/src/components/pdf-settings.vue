@@ -221,6 +221,7 @@ export default {
 
 .arrow-icon {
     font-size: 28px;
+    color: white;
 }
 
 .time-button {

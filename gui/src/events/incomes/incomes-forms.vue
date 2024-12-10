@@ -1,8 +1,8 @@
 <template>
   <div class="form-container">
     <h3 class="form-title">New Income Data</h3>
-    <div class="form-content scrollbar">
-      <form @submit.prevent="submitForm">
+    <div class="form-content">
+      <form class="forms-content scrollbar" @submit.prevent="submitForm">
         <label>
           Amount:
           <input
@@ -97,12 +97,12 @@
             <font-awesome-icon :icon="income.icon"/>
           </span>
         </div>
-	
-        <div class="button-group">
-          <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
-        </div>
       </form>
+      
+      <div class="button-group">
+        <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+      </div>
     </div>
   </div>
 </template>
@@ -361,15 +361,21 @@ export default {
     font-size: 32px;
     font-weight: bold;
     text-align: left;
-    margin-bottom: 40px;
+    margin-bottom: 5px;
     color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .form-content {
-    max-height: calc(80vh - 200px);
+    display: flex;
+    flex-direction: column;
     padding: 10px;
-    margin: 0;
+}
+
+.forms-content {
+    max-height: calc(70vh - 190px);
+    padding: 10px;
+    margin-bottom: 5px;
     overflow-y: auto;
 }
 
@@ -439,7 +445,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .button-group {
     display: flex;
     gap: 10px;
-    margin-top: 60px;
+    margin-top: 10px;
     justify-content: space-between;
 }
 
@@ -448,7 +454,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -460,7 +466,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #25262B;
     border: none;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -673,7 +679,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 33px;
+    right: 32px;
     top: 50%;
     transform: translateY(-30%);
     color: white;
@@ -689,7 +695,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .selected-text {

@@ -8,6 +8,7 @@
       <h4>{{ user.user_name }}</h4>
       <p class="user-fullname">{{ formattedFullname }}</p>
       <span v-if="user.birth_date" class="user-bday">{{ formattedBDate }}</span>
+      <span class="user-role">{{ userRole }}</span>
     </div>
     
     <div class="user-actions-section">
@@ -39,16 +40,16 @@
           <label>Network:</label>
 	</div>
 	<div class="spans-content">
-          <span>{{ formattedFullname }}</span>
-          <span>{{ user.email }}</span>
-          <span>{{ user.curp }}</span>
-          <span>{{ user.rfc }}</span>
-          <span>{{ user.phone }}</span>
-          <span v-if="user.birth_date">{{ formattedBDate }}</span>
-          <span>{{ formattedCurrency(user.incomes) }}</span>
-          <span>{{ formattedCurrency(user.expenses) }}</span>
-          <span>{{ formattedCurrency(user.debts) }}</span>
-          <span>{{ formattedCurrency(user.network) }}</span>
+          <span>{{ formattedFullname || 'No data' }}</span>
+          <span>{{ user.email || 'No data' }}</span>
+          <span>{{ user.curp || 'No data' }}</span>
+          <span>{{ user.rfc || 'No data' }}</span>
+          <span>{{ user.phone || 'No data' }}</span>
+          <span v-if="user.birth_date">{{ formattedBDate || 'No data' }}</span>
+          <span>{{ formattedCurrency(user.incomes) || 'No data' }}</span>
+          <span>{{ formattedCurrency(user.expenses) || 'No data' }}</span>
+          <span>{{ formattedCurrency(user.debts) || 'No data' }}</span>
+          <span>{{ formattedCurrency(user.network) || 'No data' }}</span>
 	</div>
       </div>
       <button type="button" class="close-button" @click="cancelFullData">Close</button>
@@ -86,7 +87,8 @@ export default {
   },
   computed: {
     formattedFullname() {
-      return `${this.user.name} ${this.user.last_name}`;
+      const fullname = `${this.user.name} ${this.user.last_name}`;
+      return fullname.trim() ? fullname : 'No data';
     },
     formattedNetwork() {
       return this.formattedCurrency(this.user.network || 0);
@@ -99,6 +101,9 @@ export default {
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
+    userRole() {
+      return this.user.is_staff ? 'Admin' : 'User';
+    }
   },
   methods: {
     formattedCurrency(amount) {
@@ -196,6 +201,14 @@ export default {
 
 .user-bday {
     color: #BF9F00;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.user-role {
+    color: #FFA500;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;

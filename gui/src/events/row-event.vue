@@ -5,7 +5,7 @@
     </div>
     <div class="event-details">
       <h4>{{ formattedCategories }}</h4>
-      <p class="event-description">{{ event.description }}</p>
+      <p class="event-description">{{ formattedDescription }}</p>
       <span class="event-date">{{ formattedDate }}</span>
       <span :class="typeClass">{{ event.type }}</span>
     </div>
@@ -25,6 +25,14 @@ export default {
     },
   },
   computed: {
+    formattedDescription() {
+      if (this.event.type === 'Debt') {
+	const creditor = this.event.debtor_name || "NoCreditor";
+	const description = this.event.description || "No description";
+	return `${creditor}: ${description}`;
+      }
+      return this.event.description || "No description";
+    },
     rowClass() {
       if (this.event.type === 'Income')
         return 'income-row';

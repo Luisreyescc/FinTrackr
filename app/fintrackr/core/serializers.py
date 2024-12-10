@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Sum
 from .models import (
     Users,
     Incomes,
@@ -10,6 +11,46 @@ from .models import (
     DebtCategories,
 )
 from django.contrib.auth import authenticate
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    incomes = serializers.SerializerMethodField()
+    expenses = serializers.SerializerMethodField()
+    debts = serializers.SerializerMethodField()
+    network = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Users
+        fields = [
+            "user_id",
+            "user_name",
+            "email",
+            "name",
+            "last_name",
+            "phone",
+            "curp",
+            "rfc",
+            "birth_date",
+            "incomes",
+            "expenses",
+            "debts",
+            "network",
+            "is_staff"
+        ]
+
+    def get_incomes(self, obj):
+        return Incomes.objects.filter(user=obj).aggregate(total=Sum('amount'))['total'] or 0
+
+    def get_expenses(self, obj):
+        return Expenses.objects.filter(user=obj).aggregate(total=Sum('amount'))['total'] or 0
+
+    def get_debts(self, obj):
+        return Debts.objects.filter(user=obj).aggregate(total=Sum('amount'))['total'] or 0
+
+    def get_network(self, obj):
+        incomes = self.get_incomes(obj)
+        expenses = self.get_expenses(obj)
+        return incomes - expenses
 
 
 class UsersSerializer(serializers.ModelSerializer):
