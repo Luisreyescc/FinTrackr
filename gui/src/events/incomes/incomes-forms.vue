@@ -673,7 +673,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 30px;
+    right: 33px;
     top: 50%;
     transform: translateY(-30%);
     color: white;
@@ -686,16 +686,17 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .icons-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .selected-text {
     font-size: 20px;
     color: white;
 }
+
 .selected-icon {
     font-size: 36px;
     color: white;

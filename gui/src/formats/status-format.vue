@@ -139,12 +139,37 @@ export default {
           type: 'area',
           height: 650,
         },
+	legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+        },
         xaxis: {
+          labels: {
+            style: {
+              colors: '#FFFFFF',
+              fontSize: '18px',
+            },
+          },
           categories: [],
           padding: {
             left: 100,
             right: 100
-          }
+          },
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: '#FFFFFF',
+              fontSize: '18px',
+            },
+          },
+        },
+        tooltip: {
+          theme: 'dark',
         },
         dataLabels: {
           enabled: false
@@ -159,12 +184,44 @@ export default {
         chart: {
           type: 'donut'
         },
+        legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+          position: 'bottom',
+        },
+	dataLabels: {
+          enabled: true,
+          style: {
+            colors: ['#FFFFFF'],
+            fontSize: '18px',
+          },
+        },
         labels: [], // Labels for the donut chart
       }),
       categoriesChartData: [],
       categoriesChartOptions: Object.freeze({
         chart: {
           type: 'donut'
+        },
+        legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+          position: 'bottom',
+        },
+	dataLabels: {
+          enabled: true,
+          style: {
+            colors: ['#FFFFFF'],
+            fontSize: '18px',
+          },
         },
         labels: [], // Labels for the donut chart
       }),
@@ -505,7 +562,7 @@ export default {
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -544,7 +601,7 @@ select {
     align-items: center;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
@@ -581,7 +638,7 @@ select {
     margin-right: 0px;
     padding: 20px;
     width: 400px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
@@ -641,9 +698,10 @@ select {
     align-items: center;
     margin-top: 20px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    border-radius: 20px;
+    background-color: #25262B;
+    border: 2px solid white;
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     width: 100%;
     height: 100%;
     overflow: hidden;

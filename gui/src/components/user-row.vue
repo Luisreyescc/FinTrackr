@@ -184,7 +184,7 @@ export default {
 
 .user-details h4 {
     font-size: 22px;
-    color: #D160DE;
+    color: #4DBEC8;
     font-weight: bold;
 }
 
@@ -207,12 +207,11 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
-    margin-top: 5px;
 }
 
 .user-network {
     font-weight: bold;
-    color: #20C171;
+    color: #7758BF;
     font-size: 20px;
     flex-shrink: 0;
 }
@@ -220,7 +219,7 @@ export default {
 .user-actions {
     display: flex;
     gap: 10px;
-    margin-top: 15px;
+    margin-top: 2px;
 }
 
 .full-button, .delete-button {
