@@ -38,7 +38,7 @@ def user_financial(request):
     for user in users:
         incomes = Incomes.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
         expenses = Expenses.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-        debts = 0  # Assuming you have a model for debts, replace this with the actual calculation
+        debts = Debts.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
         network = incomes - expenses
 
         user_info = {
@@ -71,8 +71,7 @@ def delete_user(request, user_id):
 
         Incomes.objects.filter(user=user).delete()
         Expenses.objects.filter(user=user).delete()
-        # Assuming you have a model for debts, add the deletion here
-        # Debts.objects.filter(user=user).delete()
+        Debts.objects.filter(user=user).delete()
 
         user.delete()
 
