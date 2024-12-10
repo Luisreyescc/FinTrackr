@@ -24,7 +24,7 @@
   <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
   <div v-if="isEditing" class="edit-popup">
     <h3 class="edit-title">Edit Income</h3>
-    <div class="popup-content">
+    <div class="popup-content scrollbar">
       <form @submit.prevent="submitEdit">
         <label>
           Amount:
@@ -563,12 +563,16 @@ export default {
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
     width: 600px;
+    height: 700px;
+    overflow: hidden; 
     z-index: 1000;
 }
 
 .popup-content {
     display: flex;
     flex-direction: column;
+    max-height: 650px;
+    overflow-y: auto;
 }
 
 .overlay {

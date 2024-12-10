@@ -5,7 +5,7 @@
     </div>
     <div class="debt-details">
       <h4>{{ formattedCategories }}</h4>
-      <p class="debt-description">{{ debt.description }}</p>
+      <p class="debt-description">{{ formattedDescription }}</p>
       <span class="debt-date">{{ formattedDate }}</span>
     </div>
     <div class="debt-amount-section">
@@ -36,7 +36,7 @@
   <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
   <div v-if="isEditing" class="edit-popup">
     <h3 class="edit-title">Edit Debt</h3>
-    <div class="popup-content">
+    <div class="popup-content scrollbar">
       <form @submit.prevent="submitEdit">
         <label>
           Amount:
@@ -288,6 +288,11 @@ export default {
       const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
+    },
+    formattedDescription() {
+      const creditor = this.debt.debtor_name || "No Creditor";
+      const description = this.debt.description || "No Description ";
+      return `${creditor}: ${description}`;
     },
     isSubmitEnabled() {
       return this.editDebt.categories && this.editDebt.categories.length > 0 && this.editDebt.icon;
@@ -618,6 +623,7 @@ export default {
 }
 
 .edit-popup {
+    max-height: calc(80vh - 200px);
     position: fixed;
     top: 50%;
     left: 50%;
@@ -627,12 +633,16 @@ export default {
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
     width: 600px;
+    height: 730px;
+    overflow: hidden; 
     z-index: 1000;
 }
 
 .popup-content {
     display: flex;
     flex-direction: column;
+    height: 680px;
+    overflow-y: auto;
 }
 
 .overlay {
