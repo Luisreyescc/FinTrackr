@@ -89,7 +89,8 @@ post_income() {
       description: $description,
       date: $date,
       category: [$category],
-      user: $user
+      user: $user,
+      icon: "fab docker"
     }')
 
   RESPONSE=$(curl -s -X POST $INCOME_URL \
@@ -107,4 +108,3 @@ for i in $(seq 1 $NUM_INCOMES); do
   echo "Posting income $i"
   post_income
 done
-one

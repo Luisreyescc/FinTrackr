@@ -1,12 +1,12 @@
 #!/bin/bash
 
-read -p "enter login url: " login_url
-read -p "enter expenses url: " expenses_url
-read -p "enter user info url: " user_info_url
-read -p "enter username: " username
-read -sp "enter password: " password
+read -p "Enter login url: " login_url
+read -p "Enter expenses url: " expenses_url
+read -p "Enter user info url: " user_info_url
+read -p "Enter username: " username
+read -sp "Enter password: " password
 echo
-read -p "enter the number of expenses to post: " num_expenses
+read -p "Enter the number of expenses to post: " num_expenses
 
 access_token=""
 user_id=""
@@ -16,32 +16,32 @@ login() {
     -H "Content-Type: application/json" \
     -d '{"user_name": "'"$username"'", "password": "'"$password"'"}')
 
-  echo "login response: $response"
+  echo "Login response: $response"
 
   access_token=$(echo $response | jq -r .access)
 
   if [ "$access_token" == "null" ] || [ -z "$access_token" ]; then
-    echo "login failed. invalid response: $response"
+    echo "Login failed. Invalid response: $response"
     exit 1
   fi
 
-  echo "login successful. token obtained: $access_token"
+  echo "Login successful. Token obtained: $access_token"
 }
 
 get_user_id() {
   response=$(curl -s -X GET $user_info_url \
     -H "Authorization: Bearer $access_token")
 
-  echo "user info response: $response"
+  echo "User info response: $response"
 
   user_id=$(echo $response | jq -r '.[0].user_id')
 
   if [ "$user_id" == "null" ] || [ -z "$user_id" ]; then
-    echo "failed to retrieve user id. invalid response: $response"
+    echo "Failed to retrieve user id. invalid response: $response"
     exit 1
   fi
 
-  echo "user id obtained: $user_id"
+  echo "User id obtained: $user_id"
 }
 
 get_random_date() {
@@ -69,7 +69,6 @@ get_random_description() {
 get_random_category() {
   categories=("entretenimiento" "alimentación" "transporte" "educación" "salud" "hogar" "servicios" "otros")
   random_index=$(shuf -i 0-$((${#categories[@]} - 1)) -n 1)
-  # Enviar como array
   echo "[\"${categories[$random_index]}\"]"
 }
 
@@ -90,7 +89,8 @@ post_expense() {
       description: $description,
       date: $date,
       user: $user,
-      category: $category
+      category: $category,
+      icon: "fab docker"
     }')
 
   response=$(curl -s -X POST $expenses_url \
