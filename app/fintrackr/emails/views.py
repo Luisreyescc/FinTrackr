@@ -334,7 +334,7 @@ class IncomeExpensePDFView(APIView):
     # been able to now the exact time and set it
     def periodic_email_task(self, interval, stop_event, user_id):
         sleep_interval = 0.5
-        elapsed_time = 0
+        elapsed_time = interval
 
         while not stop_event.is_set():
             if elapsed_time >= interval:
@@ -369,6 +369,7 @@ class IncomeExpensePDFView(APIView):
                     print(f"Error sending email to {email}: {e}")
 
                 elapsed_time = 0
+            
             time.sleep(sleep_interval)
             elapsed_time += sleep_interval
 
