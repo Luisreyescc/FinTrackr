@@ -439,7 +439,7 @@ export default {
         const token = localStorage.getItem("token");
         const modifiedExpenseData = {
           ...updatedExpense,
-          category: [...updatedExpense.categories], // Aseguramos que sea un array de strings
+          category: [...updatedExpense.categories],
         };
         delete modifiedExpenseData.categories;
 
@@ -539,7 +539,7 @@ export default {
 
         const modifiedExpenseData = {
           amount: updatedDebt.amount,
-          description: updatedDebt.description,
+          description: `${updatedDebt.debtor_name}: ${updatedDebt.description}`,
           user: userId,
           category: updatedDebt.categories,
           date: formattedDate,
