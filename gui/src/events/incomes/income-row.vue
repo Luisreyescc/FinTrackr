@@ -24,8 +24,8 @@
   <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
   <div v-if="isEditing" class="edit-popup">
     <h3 class="edit-title">Edit Income</h3>
-    <div class="popup-content scrollbar">
-      <form @submit.prevent="submitEdit">
+    <div class="popup-content">
+      <form class="forms-content scrollbar" @submit.prevent="submitEdit">
         <label>
           Amount:
           <input
@@ -122,12 +122,12 @@
             <font-awesome-icon :icon="parseIcon(editIncome.icon)"/>
           </span>
         </div>
-
-        <div class="button-group">
-          <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
-          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
-        </div>
       </form>
+      
+      <div class="buttons-group">
+        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
+      </div>
     </div>
   </div>
 </template>
@@ -563,15 +563,19 @@ export default {
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
     width: 600px;
-    height: 700px;
-    overflow: hidden; 
     z-index: 1000;
 }
 
 .popup-content {
     display: flex;
     flex-direction: column;
-    max-height: 650px;
+    padding: 10px;
+}
+
+.forms-content {
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin-bottom: 10px;
     overflow-y: auto;
 }
 
@@ -587,7 +591,7 @@ export default {
 }
 
 .edit-title {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     text-align: center;
     margin-bottom: 20px;
@@ -658,11 +662,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     text-align: left;
 }
 
-.button-group {
+.buttons-group {
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 5px;
 }
 
 .cancel-button {
@@ -670,7 +674,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -682,7 +686,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #25262B;
     border: none;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -893,7 +897,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 26px;
+    right: 23px;
     top: 50%;
     transform: translateY(-30%);
     color: white;
