@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import SendCodeView, ValidateCodeView, ChangePasswordView, IncomeExpensePDFView
-from .pdfView import start_email_task, stop_email_task
 
 urlpatterns = [
     path("send-code/", SendCodeView.as_view(), name="send-code"),
