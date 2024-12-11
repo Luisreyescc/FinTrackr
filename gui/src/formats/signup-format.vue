@@ -120,7 +120,8 @@ export default {
       this.confirmPasswordError = '';
       if (!this.username)
 	this.usernameError = 'Username is required';
-      else if (this.username.length < 3) this.usernameError = 'Username requieres at least 3 characters';
+      else if (this.username.length < 3)
+	this.usernameError = 'Username requieres at least 3 characters';
       if (!this.email)
 	this.emailError = 'Email is required';
       else if (!isEmail(this.email))
