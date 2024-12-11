@@ -14,7 +14,7 @@
 	:type="msg.type" 
 	@close="removeMessage(index)"/>
     </div>
-    <SignUpForm @signUp="signUp" @goToLogin="goToLogin"/>
+    <SignUpForm @sendCode="handleSendCode" @validateCode="handleValidateCode" @signUp="signUp" @goToLogin="goToLogin"/>
   </div>
 </div>
 </template>
@@ -32,7 +32,11 @@ export default {
     MessageAlerts
   },
   data() {
-    return { messages: [] };
+    return { 
+      messages: [],
+      currentStep: 1,
+      username: ""
+    };
   },
   methods: {
     addMessage(text, type = "neutral") {
@@ -45,8 +49,8 @@ export default {
     async handleSendCode({ username, email }) {
       const requestData = { user_name: username, email: email };
       try {
-          const response = await axios.post(
-          "http://localhost:8000/api/send-code/",
+        const response = await axios.post(
+          "http://localhost:8000/api/send-code-sign/",
           requestData,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -63,7 +67,7 @@ export default {
       const requestData = { user_name: this.username, recovery_code: recoveryCode };
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/validate-code/",
+          "http://localhost:8000/api/validate-code-sign/",
           requestData,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -113,7 +117,7 @@ export default {
           } else {
             this.addMessage("There was an issue with your registration. Please try again.", "error");
           }
-	}
+    }
       } else {
         this.addMessage("Please fill in all required fields.", "neutral");
       }

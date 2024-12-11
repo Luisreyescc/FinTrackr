@@ -12,7 +12,8 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import generics, permissions, status
+
 
 from reportlab.graphics.charts.lineplots import LinePlot
 from reportlab.graphics.charts.piecharts import Pie
@@ -25,9 +26,9 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
 
 from core.models import Users, Incomes, Expenses
 from core.serializers import IncomeSerializer, ExpenseSerializer
-from .serializers import SendCodeSerializer, ValidateCodeSerializer, ChangePasswordSerializer
+from .serializers import SendCodeSerializer, ValidateCodeSerializer, ChangePasswordSerializer, RegisterSerializer
 
-
+# Recovery password views
 RECOVERY_CODES = {}
 
 class SendCodeView(APIView):
@@ -95,9 +96,50 @@ class ChangePasswordView(APIView):
             return Response({"error": "No validated recovery code found for user."}, status=status.HTTP_400_BAD_REQUEST)
         logger.error(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
+# Register view
+RECOVERY_CODES_SIGN = {}
+
+class SendCodeSignView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = SendCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            user_name = serializer.validated_data['user_name']
+            email = serializer.validated_data['email']
+            code = str(random.randint(100000, 999999)) 
+            RECOVERY_CODES_SIGN[user_name] = code
+            send_mail(
+                subject="Your recovery code",
+                message=f"Your recovery code is {code}",
+                from_email=None,
+                recipient_list=[email],
+            )
+            return Response({"message": "Recovery code sent successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ValidateCodeSignView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ValidateCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            user_name = serializer.validated_data['user_name']
+            recovery_code = serializer.validated_data['recovery_code']
+            if user_name in RECOVERY_CODES_SIGN and RECOVERY_CODES_SIGN[user_name] == recovery_code:
+                return Response({"message": "Code validated successfully"}, status=status.HTTP_200_OK)
+            return Response({"error": "Invalid recovery code."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RegisterView(generics.CreateAPIView):
+    queryset = Users.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
+
+
+# PDF view
 class UniqueLineChart(Drawing):
     def __init__(self, width=400, height=200, data=None, colors=None, title=""):
         super().__init__(width, height)

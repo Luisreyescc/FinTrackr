@@ -19,7 +19,6 @@ from .models import (
 )
 from .serializers import (
     AdminUserSerializer,
-    RegisterSerializer,
     LoginSerializer,
     UserSerializer,
     UpdateUserSerializer,
@@ -71,12 +70,6 @@ def user_list(request):
     users = Users.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class RegisterView(generics.CreateAPIView):
-    queryset = Users.objects.all()
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = RegisterSerializer
 
 
 class LoginView(APIView):
