@@ -59,7 +59,7 @@ export default {
                   if (responseLog.status === 200) {
             const token = responseLog.data.access;
 
-            await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&unit=months&first=1", {
+            await axios.get("http://localhost:8000/api/pdf/?first=1", {
               headers: { Authorization: `Bearer ${token}` } });
             
             this.addMessage("Login successful", "success");
