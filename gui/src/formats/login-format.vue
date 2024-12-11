@@ -199,13 +199,13 @@ input {
 }
 
 .sign-in-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 15px 30px;
+    border-radius: 3px;
     background-color: white;
     border: 2px solid white;
     margin-bottom: 5px;
     cursor: pointer;
-    color: #333;
+    color: #25262B;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
@@ -229,20 +229,22 @@ input {
 }
 
 .divider span {
-    font-size: 14px;
+    font-size: 16px;
     color: white;
     font-family: "Wix Madefor Display", sans-serif;
     font-weight: bold;
 }
 
 .register-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 15px 30px;
+    border-radius: 3px;
     background-color: #333;
     border: 2px solid #333;
     margin-top: 5px;
     cursor: pointer;
+    background-color: #25262B;
     color: white;
+    border: 2px solid #25262B;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }

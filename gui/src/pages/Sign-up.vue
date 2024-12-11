@@ -42,6 +42,40 @@ export default {
     removeMessage(index) {
       this.messages.splice(index, 1);
     },
+    async handleSendCode({ username, email }) {
+      const requestData = { user_name: username, email: email };
+      try {
+          const response = await axios.post(
+          "http://localhost:8000/api/send-code/",
+          requestData,
+          { headers: { "Content-Type": "application/json" } }
+        );
+        if (response.status === 200) {
+          this.addMessage("Recovery code sent successfully!", "success");
+          this.currentStep = 2;
+          this.username = username;
+        }
+      } catch (error) {
+        this.addMessage("Failed to send recovery code. Please try again.", "error");
+      }
+    },
+    async handleValidateCode({ recoveryCode }, callback) {
+      const requestData = { user_name: this.username, recovery_code: recoveryCode };
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/validate-code/",
+          requestData,
+          { headers: { "Content-Type": "application/json" } }
+        );
+        if (response.status === 200) {
+          this.addMessage("Code validated successfully!", "success");
+          callback(true);
+        }
+      } catch (error) {
+        this.addMessage("Invalid recovery code. Please try again.", "error");
+        callback(false);
+      }
+    },
     async signUp({ username, email, password, password2, admin_user }) {
       if (username && email && password && password2) {
         try {
@@ -51,7 +85,7 @@ export default {
                                                   password: password,
                                                   password2: password2,
                                                   admin_user: admin_user });
-         if (response.status === 201) {
+	  if (response.status === 201) {
             const responseLog = await axios.post("http://localhost:8000/api/login/",
                                                  { user_name: username, password: password },
                                                  { headers: { "Content-Type": "application/json" }});
@@ -99,6 +133,15 @@ export default {
     min-height: 100vh;
     background: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
+    gap: 20px;
+}
+
+.brand-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
 
 .title {
@@ -122,6 +165,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 60px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 

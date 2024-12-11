@@ -2,69 +2,84 @@
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
   <span class="admin-status">New account as: {{ isAdminUser ? 'Admin' : 'User' }}</span>
+
+  <div v-if="currentStep === 1">
+    <div class="username-container">
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
+      <input
+	v-model="username"
+	type="text"
+	id="username"
+	placeholder="Your username"
+	:class="{ 'input-error': usernameError, 'padded-input': true }"
+	@input="validateUser"/>
+    </div>
+    <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+    
+    <div class="email-container">
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
+      <input
+	v-model="email"
+	type="email"
+	id="email"
+	placeholder="Your email"
+	:class="{ 'input-error': emailError, 'padded-input': true }"
+	@input="validateEmail"/>
+    </div>
+    <span v-if="emailError" class="error-message">{{ emailError }}</span>
+    
+    <div class="password-container">
+      <input
+	v-model="password"
+	:type="showPassword ? 'text' : 'password'"
+	id="password"
+	placeholder="Your password"
+	:class="{ 'input-error': passwordError, 'padded-input': true }"
+	@input="clearError('password')"/>
+      <button
+	type="button" 
+	class="show-password-btn" 
+	@click="togglePasswordVisibility"
+	aria-label="Show or Hide Password" >
+	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
+      </button>
+    </div>
+    <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+    
+    <div class="password-container">
+      <input
+	v-model="password2"
+	:type="showConfirmPassword ? 'text': 'password'"
+	id="password2"
+	placeholder="Confirm your password"
+	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+	@input="clearError('password2')"/>
+      <button 
+	type="button" 
+	class="show-password-btn" 
+	@click="toggleConfirmPasswordVisibility"
+	aria-label="Show or Hide Confirm Password">
+	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
+      </button>
+    </div>
+    <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+    <button class="send-code-btn" @click="sendCode">Accept</button>
+  </div>
   
-  <div class="username-container">
-    <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
+  <div v-if="currentStep === 2" class="recovery-container">
+    <font-awesome-icon class="key-icon" :icon="['fas', 'key']" />
     <input
-      v-model="username"
+      v-model="recoveryCode"
       type="text"
-      id="username"
-      placeholder="Your username"
-      :class="{ 'input-error': usernameError, 'padded-input': true }"
-      @input="validateUser"/>
+      id="recovery-code"
+      placeholder="Recovery code"
+      :class="{ 'input-error': keyError, 'padded-input': true }"
+      @input="clearError('recoveryCode')" />
+    <span v-if="keyError" class="error-message">{{ keyError }}</span>
+    <button class="validate-code-btn" @click="validateCode">Validate Code</button>
   </div>
-  <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
   
-  <div class="email-container">
-    <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
-    <input
-      v-model="email"
-      type="email"
-      id="email"
-      placeholder="Your email"
-      :class="{ 'input-error': emailError, 'padded-input': true }"
-      @input="validateEmail"/>
-  </div>
-  <span v-if="emailError" class="error-message">{{ emailError }}</span>
-  
-  <div class="password-container">
-    <input
-      v-model="password"
-      :type="showPassword ? 'text' : 'password'"
-      id="password"
-      placeholder="Your password"
-      :class="{ 'input-error': passwordError, 'padded-input': true }"
-      @input="clearError('password')"/>
-    <button
-      type="button" 
-      class="show-password-btn" 
-      @click="togglePasswordVisibility"
-      aria-label="Show or Hide Password" >
-      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
-    </button>
-  </div>
-  <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-  
-  <div class="password-container">
-    <input
-      v-model="password2"
-      :type="showConfirmPassword ? 'text': 'password'"
-      id="password2"
-      placeholder="Confirm your password"
-      :class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-      @input="clearError('password2')"/>
-    <button 
-      type="button" 
-      class="show-password-btn" 
-      @click="toggleConfirmPasswordVisibility"
-      aria-label="Show or Hide Confirm Password">
-      <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
-    </button>
-  </div>
-  <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
- 
-  <div class="button-group">
-    <button class="accept-btn" @click="emitSignUp">Accept</button>
+  <div class="return-login">
     <div class="divider">
       <span>or return to</span>
     </div>
@@ -88,6 +103,7 @@ export default {
   components: { FontAwesomeIcon },
   data() {
     return {
+      currentStep: 1,
       username: "",
       email: "",
       password: "",
@@ -98,7 +114,10 @@ export default {
       confirmPasswordError: "",
       showPassword: false,
       showConfirmPassword: false,
-      isAdminUser: false
+      isAdminUser: false,
+      recoveryCode: "",
+      keyError: "",
+      codeSent: false,
     };
   },
   methods: {
@@ -112,11 +131,11 @@ export default {
       if (field === 'password2')
 	this.confirmPasswordError = '';
     },
-    emitSignUp() {
-      this.usernameError = '';
-      this.emailError = '';
-      this.passwordError = '';
-      this.confirmPasswordError = '';
+    sendCode() {
+      this.usernameError = "";
+      this.emailError = "";
+      this.passwordError = "";
+      this.confirmPasswordError = "";
       if (!this.username)
 	this.usernameError = 'Username is required';
       else if (this.username.length < 3)
@@ -133,27 +152,38 @@ export default {
 	this.passwordError = 'Passwords don\'t match';
 	this.confirmPasswordError = 'Passwords don\'t match';
       }
-      
-      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
-        this.$emit("signUp",
-                   { username: this.username,
-                     email: this.email,
-                     password: this.password,
-                     password2: this.password2,
-                     admin_user: this.isAdminUser});
+      if (!this.usernameError && !this.emailError) {
+	this.$emit('sendCode', { username: this.username, email: this.email });
+	this.currentStep = 2; // Next state of the page, validate key code
+      }
+    },
+    validateCode() {
+      this.keyError = "";
+      if (!this.recoveryCode)
+	this.keyError = "The recovery code is required";
+      else {
+	this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
+          if (isValid) {
+            this.$emit("signUp",
+                       { username: this.username,
+                         email: this.email,
+                         password: this.password,
+                         password2: this.password2,
+                         admin_user: this.isAdminUser});
+          } else
+            this.keyError = "";
+        });
       }
     },
     validateUsername() {
       this.usernameError = '';
-      if (this.username.length > 0 && this.username.length < 3 || this.username.length > 16) {
+      if (this.username.length > 0 && this.username.length < 3 || this.username.length > 16)
         this.usernameError = 'Username must be 3-16 characters long';
-      }
     },
     validateEmail() {
       this.emailError = '';
-      if (this.email && !isEmail(this.email)) {
+      if (this.email && !isEmail(this.email))
         this.emailError = 'Invalid email format';
-      }
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -176,7 +206,7 @@ export default {
     padding: 20px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    width: 400px;
+    width: 500px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -217,12 +247,16 @@ input {
 .email-container,
 .password-container {
     position: relative;
-    width: 130%;
+    width: 200%;
     color: white;
+    left: -180px;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.password-container {
+    left: -170px;
+}
 .username-container input,
 .email-container input,
 .password-container input{
@@ -261,8 +295,8 @@ input {
 
 .show-password-btn {
     position: absolute;
-    left: 103px;
-    top: 22%;
+    left: 145px;
+    top: 20%;
     background: none;
     border: none;
     color:white;
@@ -274,23 +308,10 @@ input {
     padding-left: 40px;
 }
 
-.button-group {
+.return-login {
     width: 60%;
     display: flex;
-    margin-top: 30px;
     flex-direction: column;
-}
-
-.accept-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-color: white;
-    border: 2px solid white;
-    margin-bottom: 5px;
-    cursor: pointer;
-    color: #333;
-    font-size: 18px;
-    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .divider {
@@ -319,10 +340,10 @@ input {
 }
 
 .login-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-color: #333;
-    border: 2px solid #333;
+    padding: 15px 30px;
+    border-radius: 3px;
+    background-color: #25262B;
+    border: 2px solid #25262B;
     margin-top: 5px;
     margin-bottom: 20px;
     cursor: pointer;
@@ -360,4 +381,60 @@ input {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.recovery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.recovery-container input {
+    width: 75%;
+    margin-bottom: 15px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.recovery-container input::placeholder {
+    color: white;
+    font-size: 18px;
+}
+
+.key-icon {
+    position: absolute;
+    left: 62px;
+    top: 47%;
+    font-size: 18px;
+    color: white;
+    pointer-events: none;
+}
+
+.send-code-btn {
+    padding: 15px 30px;
+    width: 75%;
+    border-radius: 3px;
+    background-color: white;
+    border: 2px solid white;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: #25262B;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.validate-code-btn {
+    padding: 15px 30px;
+    border-radius: 3px;
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
 </style>

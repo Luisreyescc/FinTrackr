@@ -110,7 +110,7 @@ export default {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #3B3B5A;
+    background: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -121,7 +121,7 @@ export default {
     border-radius: 50%;
     z-index: 1000;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(59, 59, 90, 0.1);
-    backdrop-filter: blur(15px);
+    background: rgba(37, 38, 43, 0.1);
+    backdrop-filter: blur(9px);
 }
 </style>

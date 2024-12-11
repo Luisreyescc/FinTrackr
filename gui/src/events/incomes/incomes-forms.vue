@@ -650,7 +650,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     background-color: white;
     color: #25262B;
     border: 2px solid #25262B;
-    
 }
 
 .submit-button:disabled,

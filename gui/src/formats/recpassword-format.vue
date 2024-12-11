@@ -141,16 +141,15 @@ export default {
     validateCode() {
       this.keyError = "";
       if (!this.recoveryCode) {
-      this.keyError = "The recovery code is required";
+	this.keyError = "The recovery code is required";
       } else {
-      this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
-        if (isValid) {
-          this.currentStep = 3;
-        } else {
-          this.keyError = "";
-        }
-      });
-    }
+	this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
+          if (isValid)
+            this.currentStep = 3;
+          else
+            this.keyError = "";
+        });
+      }
     },
     changePassword() {
       this.passwordError = "";
@@ -307,22 +306,22 @@ button {
 }
 
 .send-code-btn {
-    padding: 10px 20px;
+    padding: 15px 30px;
     width: 75%;
-    border-radius: 20px;
+    border-radius: 3px;
     background-color: white;
     border: 2px solid white;
     margin-bottom: 15px;
     cursor: pointer;
-    color: #333;
+    color: #25262B;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 
 .change-password-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 15px 30px;
+    border-radius: 3px;
     background-color: #BF9F00;
     border: 2px solid #BF9F00;
     margin-bottom: 15px;
@@ -366,10 +365,10 @@ button {
 
 .login-btn {
     width: 100%;
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-color: #333;
-    border: 2px solid #333;
+    padding: 15px 30px;
+    border-radius: 3px;
+    background-color: #25262B;
+    border: 2px solid #25262B;
     margin-top: 5px;
     margin-bottom: 20px;
     cursor: pointer;
@@ -379,8 +378,8 @@ button {
 }
 
 .validate-code-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 15px 20px;
+    border-radius: 3px;
     background-color: #BF9F00;
     border: 2px solid #BF9F00;
     margin-bottom: 15px;
