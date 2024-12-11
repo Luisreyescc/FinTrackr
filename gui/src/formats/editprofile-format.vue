@@ -544,7 +544,8 @@ input {
 
 .birth-icon {
     margin-right: -25px;
-    transform: translateX(1040%);
+    margin-botton: 10px;
+    transform: translateX(1030%);
     font-size: 22px;
     color: white;
 }

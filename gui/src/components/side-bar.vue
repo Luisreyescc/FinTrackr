@@ -33,6 +33,11 @@
       <button @click="selectOption('History')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon a"/>Events History</button>
     </div>
+
+    <div v-if="currentPage === 'UsersManagment'" class="menuU-options">
+      <button @click="selectOption('UsersManagment')" class="menu-option">
+	<font-awesome-icon :icon="['fas', 'users']" class="icon a"/>Users List</button>
+    </div>
     
     <div class="divider_bottom"></div>
     
@@ -163,18 +168,27 @@ export default {
 }
 
 .menuH-options, .menuS-options,
-.menuI-options, .bottom-options {
+.menuI-options, .menuU-options,
+.bottom-options {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
 }
 
+.menuH-options {
+    margin-bottom: -25px;
+}
+
 .menuS-options {
-    margin-bottom: 280px;
+    margin-bottom: 253px;
 }
 
 .menuI-options {
-    margin-bottom: 370px;
+    margin-bottom: 343px;
+}
+
+.menuU-options {
+    margin-bottom: 343px;
 }
 
 .menu-option, .bottom-option {

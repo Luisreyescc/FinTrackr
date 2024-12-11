@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     showBanner() {
-      const bannerRoutes = ['/home', '/status', '/history', '/leaderboard', '/edit-profile'];
+      const bannerRoutes = ['/home', '/status', '/history', '/leaderboard', '/edit-profile', '/users'];
       return bannerRoutes.includes(this.$route.path);
     }
   },
@@ -54,6 +54,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    background-color: #25262B;
 }
 
 #app {

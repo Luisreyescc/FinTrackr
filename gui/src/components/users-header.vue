@@ -1,31 +1,26 @@
 <template>
- <div class="history-header">
-   <div class="search-container">
-     <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
-     <input
-       type="text"
-       class="search-bar"
-       placeholder="Search..."
-       v-model="searchQuery"
-       @input="onSearch"/>
-   </div>
-   
-   <FilterDropdown
-     :filterOptions="['Income', 'Expense', 'Debt', 'Category:', 'Amount ==:', 'Description:', 'Date:', 'Amount >=:', 'Amount <=:']"
-     :currentFilter="currentFilter"
-     @filterSelected="applyFilter"/>
-   
-   <button @click="resetFilters" class="reset-button" >
-     <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon"/>
-   </button>
- </div>
+<div class="users-header">
+  <div class="search-container">
+    <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+    <input type="text" class="search-bar" placeholder="Search..." v-model="searchQuery" @input="onSearch"/>
+  </div>
+  
+  <FilterDropdown
+    :filterOptions="['Username:', 'Network ==', 'Birthday:', 'Full Name:', 'Network >=', 'Network <=']"
+    :currentFilter="currentFilter"
+    @filterSelected="applyFilter"/>
+  
+  <button @click="resetFilters" class="reset-button" >
+    <font-awesome-icon :icon="['fas', 'clock-rotate-left']" class="icon"/>
+  </button>
+</div>
 </template>
 
 <script>
 import FilterDropdown from "@/components/filter-dropdown.vue";
   
 export default {
-  name: "HistoryHeader",
+  name: "UsersHeader",
   components: {
     FilterDropdown
   },
@@ -33,7 +28,7 @@ export default {
     return {
       currentFilter: "All",
       searchQuery: ""
-   };
+  };
   },
   methods: {
     applyFilter(filter) {
@@ -53,9 +48,10 @@ export default {
 </script>
 
 <style scoped>
-.history-header {
+.users-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
     padding: 10px 20px;
     background-color: none;

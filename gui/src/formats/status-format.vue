@@ -133,22 +133,48 @@ export default {
       chartData: [],
       totalIncome: 0,
       totalExpense: 0,
+      totalDebt: 0,
       chartOptions: Object.freeze({
         chart: {
           type: 'area',
           height: 650,
         },
+	legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+        },
         xaxis: {
+          labels: {
+            style: {
+              colors: '#FFFFFF',
+              fontSize: '18px',
+            },
+          },
           categories: [],
           padding: {
             left: 100,
             right: 100
-          }
+          },
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: '#FFFFFF',
+              fontSize: '18px',
+            },
+          },
+        },
+        tooltip: {
+          theme: 'dark',
         },
         dataLabels: {
           enabled: false
         },
-        colors: ['#008FFB', '#FAA700'],
+        colors: ['#008FFB', '#FAA700', '#fA4300'],
         stroke: {
           curve: 'straight',
         },
@@ -158,12 +184,44 @@ export default {
         chart: {
           type: 'donut'
         },
+        legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+          position: 'bottom',
+        },
+	dataLabels: {
+          enabled: true,
+          style: {
+            colors: ['#FFFFFF'],
+            fontSize: '18px',
+          },
+        },
         labels: [], // Labels for the donut chart
       }),
       categoriesChartData: [],
       categoriesChartOptions: Object.freeze({
         chart: {
           type: 'donut'
+        },
+        legend: {
+          show: true,
+          fontSize: '18px',
+          fontFamily: 'Wix Madefor Display, sans-serif',
+          labels: {
+            colors: ['#FFFFFF'],
+          },
+          position: 'bottom',
+        },
+	dataLabels: {
+          enabled: true,
+          style: {
+            colors: ['#FFFFFF'],
+            fontSize: '18px',
+          },
         },
         labels: [], // Labels for the donut chart
       }),
@@ -197,12 +255,14 @@ export default {
 
       const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
+      const debtUrl = `http://localhost:8000/api/debts/filtered/?filter=${filter}&date=${date}`;
 
       try {
-	this.loadingGraphics = true;
-        const [incomeResponse, expenseResponse] = await Promise.all([
+        this.loadingGraphics = true;
+        const [incomeResponse, expenseResponse, debtResponse] = await Promise.all([
           axios.get(incomeUrl, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(debtUrl, { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
         const incomeData = incomeResponse.data.incomes.map(item => ({
@@ -213,8 +273,12 @@ export default {
           x: this.formatDate(item.x),
           y: parseFloat(item.y)
         }));
+        const debtData = debtResponse.data.debts.map(item => ({
+          x: this.formatDate(item.x),
+          y: parseFloat(item.y)
+        }));
 
-        const uniqueDates = [...new Set([...incomeData, ...expenseData].map(item => item.x))].sort();
+        const uniqueDates = [...new Set([...incomeData, ...expenseData, ...debtData].map(item => item.x))].sort();
 
         // Populate data for missing dates with y: 0 to ensure continuity
         const fillMissingData = (data, dates) => {
@@ -228,6 +292,7 @@ export default {
         this.chartData = [
           { name: 'Incomes', data: fillMissingData(incomeData, uniqueDates) },
           { name: 'Expenses', data: fillMissingData(expenseData, uniqueDates) },
+          { name: 'Debts', data: fillMissingData(debtData, uniqueDates) },
         ];
 
         // Set xaxis categories based on unique dates from both data sets
@@ -242,9 +307,10 @@ export default {
           }
         };
 
-        // Update total incomes and expenses
+        // Update total incomes, expenses and debts
         this.totalIncome = incomeResponse.data.total_income;
         this.totalExpense = expenseResponse.data.total_expense;
+        this.totalDebt = debtResponse.data.total_debt;
 
         console.log("Chart Data:", this.chartData);
         console.log("Categories:", this.chartOptions.xaxis.categories);
@@ -376,8 +442,8 @@ export default {
       return `<span style="color: #D55C5C;">${amount}</span>`;
     },
     getDebts() {
-      // Placeholder for debts
-      const amount = 0;
+      const amount = this.formatCurrency(this.totalDebt, true);
+
       return `<span style="color: #6092DE;">${amount}</span>`;
     },
     toggleSidebar() {
@@ -496,7 +562,7 @@ export default {
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -535,7 +601,7 @@ select {
     align-items: center;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
@@ -572,7 +638,7 @@ select {
     margin-right: 0px;
     padding: 20px;
     width: 400px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     background-color: #25262B;
     border: 2px solid white;
@@ -632,9 +698,10 @@ select {
     align-items: center;
     margin-top: 20px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    border-radius: 20px;
+    background-color: #25262B;
+    border: 2px solid white;
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     width: 100%;
     height: 100%;
     overflow: hidden;

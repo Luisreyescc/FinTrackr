@@ -1,160 +1,336 @@
 <template>
-<div class="debt-row">
-  <div class="debt-checkbox">
-    <input type="checkbox" :checked="isChecked" @change="toggleDebtChecked" class="checkbox"/>
-  </div>
-  <div class="debt-details">
-    <h4>{{ formattedCategories }}</h4>
-    <p class="debt-description">{{ debt.description }}</p>
-    <span class="debt-date">{{ formattedDate }}</span>
-  </div>
-  <div class="debt-amount-section">
-    <span class="debt-amount">{{ formattedAmount }}</span>
-    <div class="debt-actions">
-      <button class="edit-button" @click="startEdit">
-        <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon"/>
-      </button>
-      <button class="delete-button" @click="deleteDebt">
-	<font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon"/>
-      </button>
+  <div class="debt-row">
+    <div class="debt-checkbox" :class="{ 'checked': debt.is_payed }" @click="markAsPaid">
+      <font-awesome-icon v-if="debt.is_payed" :icon="['fas', 'check']" class="check-icon"/>
+    </div>
+    <div class="debt-details">
+      <h4>{{ formattedCategories }}</h4>
+      <p class="debt-description">{{ formattedDescription }}</p>
+      <span class="debt-date">{{ formattedDate }}</span>
+    </div>
+    <div class="debt-amount-section">
+      <span class="debt-amount">{{ formattedAmount }}</span>
+      <div class="debt-actions">
+        <button class="edit-button" @click="startEdit" :disabled="isChecked">
+          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon"/>
+        </button>
+        <button class="delete-button" @click="deleteDebt">
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
-<div v-if="isEditing" class="edit-popup">
-  <h3 class="edit-title">Edit Debt</h3>
-  <div class="popup-content">
-    <form @submit.prevent="submitEdit">
-      <label>
-        Amount:
-        <input
-          type="text"
-          v-model="editExpense.amount"
-          @input="validateAmount"
-          :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
-          placeholder="Enter amount (e.g., 1000.00)"/>
-      </label>
-      <span v-if="amountError" class="error-message">{{ amountError }}</span>
-      
-      <label>
-        Description:
-        <input
-          type="text"
-          v-model="editDebt.description"
-          @input="validateTextField('description')"
-          :class="{ 'input-error': descriptionError, 'input-valid': !descriptionError && editDebt.description }"
-          placeholder="Enter a description for the debt"/>
-      </label>
-      <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
-      
-      <div class="categories-wrapper">
-	<div class="categories-select" @click="toggleDropdown">
-          Categories
-          <span class="dropdown-icon">
-            <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
-            <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
-          </span>
-	</div>
-	
-	<ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
-          <li v-if="loadingCategories">Loading categories...</li></ul>
-	
-	<div class="selected-categories">
-          <span v-for="(category, index) in expense.categories" :key="index" class="tag">
-            {{ category }}
-            <button @click="removeCategory(index)" class="close-button">
-              <font-awesome-icon :icon="['fas', 'xmark']"/>
-            </button>
-          </span>
-	</div>
-      </div>
-      
-      <label class="date-label">
-        Date:
-      </label>
-      <div class="date-container">
-        <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
-        <input
-          v-model="editDebt.date"
-          type="date"
-          @input="validateDate"
-          class="custom-date-input"
-          :class="{ 'input-error': dateError, 'input-valid': !dateError && editDebt.date }"/>
-      </div>
-      <span v-if="dateError" class="error-message">{{ dateError }}</span>
-      
-      <div class="button-group">
-        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
-	<button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
-      </div>
-    </form>
+  <div v-if="showConfirmPopup" class="overlay" @click="cancelConfirm"></div>
+  <div v-if="showConfirmPopup" class="confirm-popup">
+    <h3 class="warning-title">Warning</h3>
+    <p>Marking a debt as paid is permanent and cannot be undone.</p>
+  <p>Once marked as paid, you will no longer be able to edit it, but you can delete it.</p>
+  <p>Are you sure you want to mark this debt as paid?</p>
+    <div class="buttons-group">
+      <button class="quit-button" @click="cancelConfirm">Cancel</button>
+      <button class="confirm-button" @click="confirmMark">Confirm</button>
+    </div>
   </div>
-</div>
+
+  <div v-if="isEditing" class="overlay" @click="cancelEdit"></div>
+  <div v-if="isEditing" class="edit-popup">
+    <h3 class="edit-title">Edit Debt</h3>
+    <div class="popup-content scrollbar">
+      <form class="forms-content scrollbar" @submit.prevent="submitEdit">
+        <label>
+          Amount:
+          <input
+            type="text"
+            v-model="editDebt.amount"
+            @input="validateAmount"
+            :class="{ 'input-error': amountError, 'input-valid': !amountError && editDebt.amount }"
+            placeholder="Enter amount (e.g., 1000.00)"/>
+        </label>
+        <span v-if="amountError" class="error-message">{{ amountError }}</span>
+
+	<label>
+          Creditor:
+          <input
+            type="text"
+            v-model="editDebt.debtor_name"
+            @input="validateTextField('debtor_name')"
+            :class="{ 'input-error': creditorError, 'input-valid': !creditorError && editDebt.debtor_name }"
+            placeholder="Enter the name of your creditor"/>
+        </label>
+        <span v-if="creditorError" class="error-message">{{ creditorError }}</span>
+	
+        <label>
+          Description:
+          <input
+            type="text"
+            v-model="editDebt.description"
+            @input="validateTextField('description')"
+            :class="{
+                    'input-error': descriptionError,
+                    'input-valid': !descriptionError && editDebt.description }"
+            placeholder="Enter a description for the debt"/>
+        </label>
+        <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+
+        <div class="categories-wrapper">
+          <div class="categories-select" @click="toggleDropdown">
+            Categories
+            <span class="dropdown-icon">
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+            </span>
+          </div>
+
+          <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
+            <li v-if="loadingCategories">Loading categories...</li>
+            <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
+            </li>
+            <li
+              v-for="(category, index) in categoryOptions"
+              :key="index"
+              @click="addCategory(category)">
+              {{ category }}
+            </li>
+          </ul>
+
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="new-category-dialog">
+            <h4>Enter new category</h4>
+            <input
+              type="text"
+              v-model="newCategory"
+              placeholder="New category"
+              :maxlength="18"/>
+            <div class="button-group">
+              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+              <button
+                @click="acceptNewCategory"
+                class="accept-category"
+                :disabled="!isAcceptEnabled">Accept</button>
+            </div>
+          </div>
+
+          <div class="selected-categories">
+            <span v-for="(category, index) in editDebt.categories" :key="index" class="tag">
+              {{ category }}
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
+                <font-awesome-icon :icon="['fas', 'xmark']"/>
+              </button>
+            </span>
+          </div>
+        </div>
+
+        <label class="date-label">
+          Date:
+	</label>
+        <div class="date-container">
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']" />
+          <input
+            v-model="editDebt.date"
+            type="date"
+            @input="validateDate"
+            class="custom-date-input"
+            :class="{
+              'input-error': dateError,
+              'input-valid': !dateError && editDebt.date }"/>
+        </div>
+        <span v-if="dateError" class="error-message">{{ dateError }}</span>
+
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="editDebt.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="editDebt.icon" class="selected-icon">
+            <font-awesome-icon :icon="parseIcon(editDebt.icon)"/>
+          </span>
+        </div>
+      </form>
+	
+      <div class="buttons-group">
+        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import '@/css/scrollbar.css';
-import axios from 'axios';
+import "@/css/scrollbar.css";
+import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "DebtRow",
+  components: {
+    IconDropdown
+  },
   props: {
     debt: {
       type: Object,
       required: true,
-      default: () => ({ categories: [], isChecked: false })
-    }
+      default: () => ({ categories: [] }),
+    },
   },
   data() {
     return {
       isEditing: false,
-      isChecked: this.debt.isChecked,
       editDebt: {
-        ...this.debt, 
-        categories: this.debt.categories || [] 
+        ...this.debt,
+        categories: this.debt.categories || [],
       },
       amountError: "",
       descriptionError: "",
       dateError: "",
+      creditorError: "",
       categoryOptions: [],
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false
+      loadingCategories: false,
+      isChecked: this.debt.isChecked || false,
+      showConfirmPopup: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   computed: {
     formattedAmount() {
-      // This for give the amount format in USD
-      const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
       });
-      return `${formatter.format(this.expense.amount)}`;
+      return `${formatter.format(this.debt.amount)}`;
     },
     formattedCategories() {
-      return this.debt.categories ? this.debt.categories.join(", ") : "No categories";
+      return this.debt.categories
+        ? this.debt.categories.join(", ")
+        : "No categories";
     },
     formattedDate() {
-      // Data format day-MONTH-year
       const date = new Date(this.debt.date);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
+    formattedDescription() {
+      const creditor = this.debt.debtor_name || "No Creditor";
+      const description = this.debt.description || "No Description ";
+      return `${creditor}: ${description}`;
+    },
     isSubmitEnabled() {
-      return this.debt.categories.length > 0;
+      return this.editDebt.categories && this.editDebt.categories.length > 0 && this.editDebt.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
     },
   },
   methods: {
+    cancelConfirm() {
+      this.showConfirmPopup = false;
+    },
+    confirmMark() {
+      this.isChecked = true;
+      this.showConfirmPopup = false;
+      this.$emit("markDebtAsPaid", {
+        ...this.debt,
+        isChecked: true,
+      });
+    },
+    triggerConfirmation() {
+      if (!this.isChecked) {
+        this.showConfirmPopup = true;
+      }
+    },
+    markAsPaid() {
+      if (this.debt.is_payed) return;
+      this.showConfirmPopup = true;
+    },
     startEdit() {
+      if (this.isChecked)
+	return;
       this.isEditing = true;
-      this.editDebt = { ...this.debt };
+      this.editDebt = {
+        ...this.debt,
+        categories: [...this.debt.categories],
+        date: this.formatDateForInput(this.debt.date),
+      };
     },
     cancelEdit() {
       this.isEditing = false;
@@ -165,20 +341,35 @@ export default {
       this.amountError = "";
       this.descriptionError = "";
       this.dateError = "";
+      this.creditorError = "";
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    },
     submitEdit() {
       this.clearErrors();
-      
+
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
+      const isCreditorValid = this.validateTextField("debtor_name");
 
-      if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateDebt", this.editDebt);
+      if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
+        const iconString = Array.isArray(this.editDebt.icon) ? this.editDebt.icon.join(' ') : this.editDebt.icon;
+        const debtData = {
+          ...this.editDebt,
+          icon: iconString,
+        };
+
+        this.$emit('updateDebt', debtData);
         this.isEditing = false;
+        this.fetchCategories();
       }
     },
     async fetchCategories() {
@@ -190,61 +381,37 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get('http://localhost:8000/api/user-categories/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.categoryOptions = response.data.categories;
+        const response = await axios.get(
+          "http://localhost:8000/api/debt-categories/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        this.categoryOptions = response.data.categories || [];
+        this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
         this.loadingCategories = false;
       }
     },
-    async sendNewCategory() {
-      try {
-        const response = await axios.post('http://localhost:8000/api/categories/', { name: this.newCategory.trim() });
-        if (response.status === 201) {
-          // Add new category to the user's categories table if the backend respons with success
-          this.categoryOptions.push(this.newCategory.trim());
-          this.editDebt.categories.push(this.newCategory.trim());
-        } else {
-          console.error("Failed to add category:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error adding new category:", error);
-      }
-    },
-    async acceptNewCategory() {
+    acceptNewCategory() {
       if (this.newCategory.trim()) {
-        await this.sendNewCategory();
-        this.editDebt.categories.push(this.newCategory);
-        this.showNewCategory = false;
-        this.newCategory = "";
-	this.dropdownOpen = false;
-      }
-    },
-    async toggleDebtChecked(event) {
-      this.isChecked = event.target.checked;
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          return;
+        const newCategory = this.newCategory.trim();
+        if (!this.categoryOptions.includes(newCategory)) {
+          this.categoryOptions.push(newCategory);
         }
-	const response = await axios.patch(
-          `http://localhost:8000/api/debts/${this.expense.id}/`,
-          { is_checked: this.isChecked },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-	console.log("Debt updated:", response.data);
-      } catch (error) {
-        console.error("Error updating debt:", error);
+        if (!this.editDebt.categories.includes(newCategory)) {
+          this.editDebt.categories.push(newCategory);
+        }
+        this.newCategory = "";
+        this.showNewCategory = false;
+        this.dropdownOpen = false;
       }
     },
     addCategory(category) {
       if (!this.editDebt.categories.includes(category)) {
         this.editDebt.categories.push(category);
-	this.newCategory = "";
       }
       this.dropdownOpen = false;
     },
@@ -255,7 +422,9 @@ export default {
     cancelNewCategory() {
       this.showNewCategory = false;
     },
-    removeCategory(index) {
+    removeCategory(index, event) {
+      event.stopPropagation();
+      event.preventDefault();
       this.editDebt.categories.splice(index, 1);
     },
     validateAmount() {
@@ -273,17 +442,22 @@ export default {
     validateTextField(field) {
       this[`${field}Error`] = "";
       if (!this.editDebt[field]) {
-        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] =
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
-      if (this.editDebt[field].length > 180) {
-        this[`${field}Error`] = "Exceeded the maximum character limit of 180";
+      if (this.editDebt[field].length > 120 && field === "creditor") {
+        this[`${field}Error`] = "Exceeded the maximum character limit of 120";
+        return false;
+      }
+      if (this.editDebt[field].length > 120 && field === "description") {
+        this[`${field}Error`] = "Exceeded the maximum character limit of 120";
         return false;
       }
       return true;
     },
     validateDate() {
-      if (!this.editDebt.date) {  // Corrected this line
+      if (!this.editDebt.date) {
         this.dateError = "Date is required";
         return false;
       }
@@ -292,7 +466,17 @@ export default {
     deleteDebt() {
       console.log("Removing debt");
       this.$emit("deleteDebt", this.debt.debt_id);
-    }
+    },
+    formatDateForInput(date) {
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const year = d.getFullYear();
+      return `${year}-${month}-${day}`;
+    },
+    applyIcon(selectedIcon) {
+      this.editDebt.icon = selectedIcon;
+    },
   },
   mounted() {
     this.fetchCategories();
@@ -306,25 +490,37 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background: #25262B;
+    background: #25262b;
     border: 2px solid white;
     border-radius: 20px;
     margin-bottom: 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.checkbox {
-    width: 20px;
-    height: 20px;
-    accent-color: #25262B;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.debt-checkbox {
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    margin-left: 5px;
 }
 
-.checkbox:checked {
-    background-color: #25262B;
+.debt-checkbox.checked {
+    border-color: #4DBEC8;
+    background: #4DBEC8;
 }
+
+.check-icon {
+    color: white;
+    font-size: 36px;
+}
+
 
 .debt-details {
     flex: 1;
@@ -332,9 +528,11 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden;
+    margin-left: 10px;
 }
 
-.debt-details h4, .debt-description {
+.debt-details h4,
+.debt-description {
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -345,7 +543,7 @@ export default {
 
 .debt-details h4 {
     font-size: 22px;
-    color: #6092DE;
+    color: #6092de;
     font-weight: bold;
 }
 
@@ -356,7 +554,7 @@ export default {
 }
 
 .debt-date {
-    color: #BF9F00;
+    color: #bf9f00;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -368,23 +566,23 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     margin-left: 25px;
-    margin-top: 5px;
 }
 
 .debt-amount {
     font-weight: bold;
-    color: #6092DE;
+    color: #6092de;
     font-size: 20px;
     flex-shrink: 0;
 }
 
-.debts-actions {
+.debt-actions {
     display: flex;
     gap: 10px;
     margin-top: 5px;
 }
 
-.edit-button, .delete-button {
+.edit-button,
+.delete-button {
     border-radius: 10px;
     cursor: pointer;
     width: 38px;
@@ -401,11 +599,11 @@ export default {
 
 .edit-button:hover {
     transform: scale(1.1);
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
 }
 
 .delete-button {
-    background-color: #D55C5C;
+    background-color: #d55c5c;
     color: white;
 }
 
@@ -416,7 +614,7 @@ export default {
 
 .edit-icon {
     font-size: 20px;
-    color: #25262B;
+    color: #25262b;
 }
 
 .trash-icon {
@@ -429,7 +627,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #25262B;
+    background: #25262b;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
@@ -440,6 +638,14 @@ export default {
 .popup-content {
     display: flex;
     flex-direction: column;
+    padding: 10px;
+}
+
+.forms-content {
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin-bottom: 10px;
+    overflow-y: auto;
 }
 
 .overlay {
@@ -481,7 +687,7 @@ input {
     outline: none;
     color: white;
     font-size: 18px;
-    background-color: #25262B;
+    background-color: #25262b;
     border-radius: 4px;
     border: 2px solid white;
     transition: background-color 0.3s, border-color 0.3s;
@@ -494,7 +700,7 @@ input::placeholder {
 }
 
 .input-error {
-    border-color: #D55C5C;
+    border-color: #d55c5c;
     outline: none;
 }
 
@@ -518,26 +724,26 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .error-message {
-    color: #D55C5C;
+    color: #d55c5c;
     font-size: 16px;
     margin-top: -10px;
     margin-bottom: 10px;
     text-align: left;
 }
 
-.button-group {
+.buttons-group {
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 5px;
 }
 
 .cancel-button {
-    background-color: #25262B;
+    background-color: #25262b;
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -546,10 +752,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .submit-button {
     background-color: white;
-    color: #25262B;
+    color: #25262b;
     border: none;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -581,7 +787,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 115px;
     font-size: 18px;
     font-weight: bold;
-    color: #25262B;
+    color: #25262b;
     background-color: white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
@@ -596,7 +802,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     height: 16px;
     margin-left: 16px;
     transform: translateY(-3px);
-    color: #25262B;
+    color: #25262b;
 }
 
 .categories-dropdown {
@@ -604,7 +810,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     top: 80%;
     left: 0;
     right: 0;
-    border: 1px solid #3F4049;
+    border: 1px solid #3f4049;
     border-radius: 12px;
     background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -621,7 +827,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition:	background-color 0.3s, color 0.3s;
     text-align: left;
     color: white;
     font-weight: bold;
@@ -630,7 +836,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li:hover {
     background-color: white;
     border-radius: 12px;
-    color: #25262B;
+    color: #25262b;
     font-weight: bold;
 }
 
@@ -647,7 +853,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     border-radius: 16px;
     padding: 8px 20px;
     font-weight: bold;
-    color: #25262B;
+    color: #25262b;
     background-color: white;
     border: 1px solid white;
 }
@@ -662,7 +868,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .close-button .gg-close {
     font-size: 18px;
-    color: #25262B;
+    color: #25262b;
 }
 
 .new-category-dialog {
@@ -683,7 +889,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .new-category-dialog h4 {
     margin-top: 15px;
     font-size: 22px;
-    color: #25262B;
+    color: #25262b;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -693,17 +899,17 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     margin-bottom: 2px;
     border: none;
     outline: none;
-    color: #25262B;
+    color: #25262b;
     font-size: 18px;
     background-color: white;
     border-radius: 4px;
-    border: 2px solid #25262B;
-    transition: background-color 0.3s, border-color 0.3s;
+    border: 2px solid #25262b;
+    transition:	background-color 0.3s,border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-    color: #25262B;
+    color: #25262b;
 }
 
 .new-category-dialog .button-group {
@@ -724,14 +930,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-category {
-    background-color: #25262B;
+    background-color: #25262b;
     color: white;
 }
 
 .accept-category {
     background-color: white;
-    color: #25262B;
-    border: 2px solid #25262B;
+    color: #25262b;
+    border: 2px solid #25262b;
 }
 
 .submit-button:disabled,
@@ -755,7 +961,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     left: 0px;
     position: relative;
     display: inline-block;
-    width: 100%; 
+    width: 100%;
 }
 
 .birth-icon {
@@ -770,5 +976,78 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.confirm-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #25262b;
+    border-radius: 12px;
+    padding: 20px;
+    width: 650px;
+    z-index: 1100;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.warning-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: white;
+}
+
+.confirm-popup p {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.buttons-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.quit-button, .confirm-button {
+    padding: 15px 30px;
+    margin-top: 30px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.quit-button {
+    background-color: #25262B;
+    color: white;
+    border: 2px solid white;
+}
+
+.confirm-button {
+    background-color: white;
+    color: #25262B;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

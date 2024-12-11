@@ -1,11 +1,11 @@
 <template>
   <div :class="rowClass">
     <div class="event-icon">
-      <font-awesome-icon :icon="icon" class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(event.icon)" class="row-icon"/>
     </div>
     <div class="event-details">
       <h4>{{ formattedCategories }}</h4>
-      <p class="event-description">{{ event.description }}</p>
+      <p class="event-description">{{ formattedDescription }}</p>
       <span class="event-date">{{ formattedDate }}</span>
       <span :class="typeClass">{{ event.type }}</span>
     </div>
@@ -25,6 +25,14 @@ export default {
     },
   },
   computed: {
+    formattedDescription() {
+      if (this.event.type === 'Debt') {
+	const creditor = this.event.debtor_name || "NoCreditor";
+	const description = this.event.description || "No description";
+	return `${creditor}: ${description}`;
+      }
+      return this.event.description || "No description";
+    },
     rowClass() {
       if (this.event.type === 'Income')
         return 'income-row';
@@ -32,14 +40,6 @@ export default {
         return 'expense-row';
 
       return 'debt-row';
-    },
-    icon() {
-      if (this.event.type === 'Income')
-        return ['fas', 'circle-dollar-to-slot'];
-      if (this.event.type === 'Expense')
-        return ['fas', 'money-bill-transfer'];
-
-      return ['fas', 'hand-holding-dollar'];
     },
     amountClass() {
       if (this.event.type === 'Income')
@@ -66,7 +66,9 @@ export default {
       return `${sign}${formatter.format(this.event.amount)}`;
     },
     formattedCategories() {
-      return this.event.categories ? this.event.categories.join(', ') : 'No categories';
+      return this.event.categories
+        ? this.event.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)).join(', ')
+        : 'No categories';
     },
     formattedDate() {
       const date = new Date(this.event.date);
@@ -76,6 +78,14 @@ export default {
       return `${year}-${month}-${day}`;
     }
   },
+  methods: {
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    }
+  }
 };
 </script>
 
@@ -155,15 +165,21 @@ export default {
 }
 
 .income-amount {
+    font-weight: bold;
     color: #20C171;
+    font-size: 20px;
 }
 
 .expense-amount {
+    font-weight: bold;
     color: #D55C5C;
+    font-size: 20px;
 }
 
 .debt-amount {
+    font-weight: bold;
     color: #6092DE;
+    font-size: 20px;
 }
 
 .income-type {

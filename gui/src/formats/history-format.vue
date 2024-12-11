@@ -86,7 +86,7 @@ export default {
 
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
-        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [null, query];
+        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [query, query];
 
         if (filterValue) {
           if (filterType === 'amount ==') {
@@ -119,6 +119,12 @@ export default {
             events = events.filter(event => event.categories.some(category => category.toLowerCase().startsWith(filterValue.toLowerCase())));
           } else if (filterType === 'description') {
             events = events.filter(event => event.description.toLowerCase().includes(filterValue.toLowerCase()));
+          } else if (filterType === 'income') {
+            events = events.filter(event => event.type.toLowerCase() === 'income');
+          } else if (filterType === 'expense') {
+            events = events.filter(event => event.type.toLowerCase() === 'expense');
+          } else if (filterType === 'debt') {
+            events = events.filter(event => event.type.toLowerCase() === 'debt');
           } else {
             // Global search
             const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
@@ -165,7 +171,8 @@ export default {
         const incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
-          type: 'Income' // Add type field
+          type: 'Income', // Add type field
+          categories: income.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...incomes);
       } catch (error) {
@@ -188,7 +195,8 @@ export default {
         const expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
-          type: 'Expense' // Add type field
+          type: 'Expense', // Add type field
+          categories: expense.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...expenses);
       } catch (error) {
@@ -211,7 +219,8 @@ export default {
         const debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
-          type: 'Debt' // Add type field
+          type: 'Debt', // Add type field
+          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         this.event.push(...debts);
       } catch (error) {

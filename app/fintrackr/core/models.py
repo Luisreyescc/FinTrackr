@@ -67,9 +67,10 @@ class Categories(models.Model):
 class Incomes(models.Model):
     income_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
+    icon = models.CharField(max_length=50, null=True, blank=True)
 
 
 class IncomeCategories(models.Model):
@@ -80,11 +81,28 @@ class IncomeCategories(models.Model):
 class Expenses(models.Model):
     expense_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     date = models.DateField()
+    icon = models.CharField(max_length=50, null=True, blank=True)
 
 
 class ExpenseCategories(models.Model):
     expense = models.ForeignKey(Expenses, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+
+
+class Debts(models.Model):
+    debt_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    debtor_name = models.CharField(max_length=255, default="Unknown")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    description = models.TextField(null=True, blank=True)
+    date = models.DateField()
+    is_payed = models.BooleanField(default=False)
+    icon = models.CharField(max_length=50, null=True, blank=True)
+
+
+class DebtCategories(models.Model):
+    debt = models.ForeignKey(Debts, on_delete=models.CASCADE)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)

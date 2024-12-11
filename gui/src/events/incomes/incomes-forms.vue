@@ -1,8 +1,8 @@
 <template>
   <div class="form-container">
     <h3 class="form-title">New Income Data</h3>
-    <div class="form-content scrollbar">
-      <form @submit.prevent="submitForm">
+    <div class="form-content">
+      <form class="forms-content scrollbar" @submit.prevent="submitForm">
         <label>
           Amount:
           <input
@@ -86,12 +86,23 @@
             :class="{ 'input-error': dateError, 'input-valid': !dateError && income.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
-    
-        <div class="button-group">
-          <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
-          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+	
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="income.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="income.icon" class="selected-icon">
+            <font-awesome-icon :icon="income.icon"/>
+          </span>
         </div>
       </form>
+      
+      <div class="button-group">
+        <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
+      </div>
     </div>
   </div>
 </template>
@@ -99,12 +110,16 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "IncomesForm",
+  components: {
+    IconDropdown
+  },
   data() {
     return {
-      income: { amount: "", categories: [], description: "", date: "" },
+      income: { amount: "", categories: [], description: "", date: "", icon: "" },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -112,7 +127,81 @@ export default {
       dropdownOpen: false,
       showNewCategory: false,
       newCategory: "",
-      loadingCategories: false
+      loadingCategories: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   methods: {
@@ -124,9 +213,15 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit('submitForm', { ...this.income });
+        // Convert icon array to string
+        const iconString = this.income.icon.join(' ');
+        // New form to send income data
+        const incomeData = { ...this.income, icon: iconString };
+
+        this.$emit('submitForm', incomeData);
         this.$emit("closeForm");
         this.resetForm();
+        this.fetchCategories();
       }
     },
     toggleDropdown() {
@@ -236,11 +331,14 @@ export default {
       }
       return true;
     },
+    applyIcon(selectedIcon) {
+      this.income.icon = selectedIcon;
+    },
   },
   computed: {
     isSubmitEnabled() {
-      return this.income.categories.length > 0;
-    },
+      return this.income.categories.length > 0 && this.income.icon;
+    }, 
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
     },
@@ -263,15 +361,21 @@ export default {
     font-size: 32px;
     font-weight: bold;
     text-align: left;
-    margin-bottom: 40px;
+    margin-bottom: 5px;
     color: white;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .form-content {
-    max-height: calc(80vh - 200px);
+    display: flex;
+    flex-direction: column;
     padding: 10px;
-    margin: 0;
+}
+
+.forms-content {
+    max-height: calc(70vh - 190px);
+    padding: 10px;
+    margin-bottom: 5px;
     overflow-y: auto;
 }
 
@@ -341,7 +445,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .button-group {
     display: flex;
     gap: 10px;
-    margin-top: 60px;
+    margin-top: 10px;
     justify-content: space-between;
 }
 
@@ -350,7 +454,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -362,7 +466,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #25262B;
     border: none;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -377,7 +481,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     background-color: #f8f9fa;
 }
 
-.categories-wrapper {
+.categories-wrapper, .icons-wrapper {
     position: relative;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -575,7 +679,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .birth-icon {
     position: absolute;
-    right: 30px;
+    right: 32px;
     top: 50%;
     transform: translateY(-30%);
     color: white;
@@ -585,5 +689,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.icons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

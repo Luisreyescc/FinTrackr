@@ -1,9 +1,7 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon
-        :icon="['fas', 'money-bill-transfer']"
-        class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(expense.icon)" class="row-icon"/>
     </div>
     <div class="expense-details">
       <h4>{{ formattedCategories }}</h4>
@@ -27,7 +25,7 @@
   <div v-if="isEditing" class="edit-popup">
     <h3 class="edit-title">Edit Expense</h3>
     <div class="popup-content">
-      <form @submit.prevent="submitEdit">
+      <form class="forms-content scrollbar" @submit.prevent="submitEdit">
         <label>
           Amount:
           <input
@@ -56,9 +54,7 @@
           <div class="categories-select" @click="toggleDropdown">
             Categories
             <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
               <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
             </span>
           </div>
@@ -71,13 +67,11 @@
             <li
               v-for="(category, index) in categoryOptions"
               :key="index"
-              @click="addCategory(category)">
-              {{ category }}
               @click="addCategory(category)">{{ category }}
             </li>
           </ul>
 
-          <div v-if="showNewCategory" @click="cancelNewCategory"></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
@@ -93,18 +87,17 @@
                 :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
+        </div>
 
           <div class="selected-categories">
-            <span
-              v-for="(category, index) in editExpense.categories" :key="index" class="tag">
+            <span v-for="(category, index) in editExpense.categories" :key="index" class="tag">
               {{ category }}
               <button type="button" @click="removeCategory(index, $event)" class="close-button">
                 <font-awesome-icon :icon="['fas', 'xmark']"/>
               </button>
             </span>
           </div>
-        </div>
-
+	
         <label class="date-label">
           Date:
         </label>
@@ -115,17 +108,26 @@
             type="date"
             @input="validateDate"
             class="custom-date-input"
-            :class="{
-              'input-error': dateError,
-              'input-valid': !dateError && editExpense.date }"/>
+            :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
-        <div class="button-group">
-          <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
-          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
+	<div class="icons-wrapper">
+          <IconDropdown
+            :iconOptions="iconOptions"
+            :currentIcon="editExpense.icon"
+            @iconSelected="applyIcon" />
+          <span class="selected-text">Selected Icon: </span>
+          <span v-if="editExpense.icon" class="selected-icon">
+            <font-awesome-icon :icon="parseIcon(editExpense.icon)"/>
+          </span>
         </div>
       </form>
+      
+      <div class="buttons-group">
+        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
+      </div>
     </div>
   </div>
 </template>
@@ -133,9 +135,13 @@
 <script>
 import "@/css/scrollbar.css";
 import axios from "axios";
+import IconDropdown from "@/components/icon-dropdown.vue";
 
 export default {
   name: "ExpenseRow",
+  components: {
+    IconDropdown
+  },
   props: {
     expense: {
       type: Object,
@@ -158,6 +164,80 @@ export default {
       showNewCategory: false,
       newCategory: "",
       loadingCategories: false,
+      iconOptions: [
+        ['fas', 'circle-dollar-to-slot'],
+        ['fas', 'money-bill-transfer'],
+        ['fas', 'piggy-bank'],
+        ['fas', 'hand-holding-dollar'],
+	['fas', 'credit-card'],
+	['fas', 'handshake'],
+	['fas', 'sack-dollar'],
+	['fas', 'comments-dollar'],
+	['fas', 'store'],
+	['fas', 'shop'],
+	['fas', 'cart-shopping'],
+	['fas', 'bag-shopping'],
+	['fas', 'suitcase-medical'],
+	['fas', 'heart-pulse'],
+	['fas', 'stethoscope'],
+	['fas', 'syringe'],
+	['fas', 'pills'],
+	['fas', 'tooth'],
+	['fas', 'hospital'],
+	['fas', 'hand-holding-medical'],
+	['fas', 'house-chimney'],
+	['fas', 'gift'],
+	['fas', 'heart'],
+	['fas', 'dumbbell'],
+	['fas', 'burger'],
+	['fas', 'pizza-slice'],
+	['fas', 'hotdog'],
+	['fas', 'ice-cream'],
+	['fas', 'utensils'],
+	['fas', 'bowl-food'],
+	['fas', 'drumstick-bite'],
+	['fas', 'shrimp'],
+	['fas', 'cake-candles'],
+	['fas', 'mug-hot'],
+	['fas', 'champagne-glasses'],
+	['fas', 'martini-glass-citrus'],
+	['fas', 'ferry'],
+	['fas', 'car'],
+	['fas', 'train-subway'],
+	['fas', 'plane-departure'],
+	['fas', 'hotel'],
+	['fas', 'school'],
+	['fas', 'building'],
+	['fas', 'umbrella-beach'],
+	['fas', 'gas-pump'],
+	['fas', 'shirt'],
+	['fas', 'film'],
+	['fas', 'ticket'],
+	['fas', 'gamepad'],
+	['fas', 'mobile'],
+	['fas', 'tv'],
+	['fas', 'headphones-simple'],
+	['fas', 'microphone'],
+	['fas', 'video'],
+	['fas', 'camera-retro'],
+	['fas', 'music'],
+	['fas', 'futbol'],
+	['fas', 'person-swimming'],
+	['fas', 'basketball'],
+	['fas', 'bicycle'],
+	['fab', 'youtube'],
+	['fab', 'twitch'],
+	['fab', 'steam'],
+	['fab', 'spotify'],
+	['fab', 'apple'],
+	['fab', 'android'],
+	['fab', 'xbox'],
+	['fab', 'playstation'],
+	['fab', 'docker'],
+	['fab', 'linux'],
+	['fab', 'gitlab'],
+	['fab', 'github']
+      ],
     };
   },
   computed: {
@@ -178,16 +258,12 @@ export default {
       // Data format day-MONTH-year
       const date = new Date(this.expense.date);
       const day = String(date.getDate()).padStart(2, "0");
-      const month = date
-        .toLocaleString("en-US", { month: "short" })
-        .toUpperCase();
+      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return (
-        this.editExpense.categories && this.editExpense.categories.length > 0
-      );
+      return this.editExpense.categories && this.editExpense.categories.length > 0 && this.editExpense.icon;
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -215,6 +291,12 @@ export default {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
+    parseIcon(iconString) {
+      if (typeof iconString === 'string') {
+        return iconString.split(' ');
+      }
+      return iconString;
+    },
     submitEdit() {
       this.clearErrors();
 
@@ -223,11 +305,15 @@ export default {
       const isDateValid = this.validateDate();
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
-        this.$emit("updateExpense", {
+        const iconString = Array.isArray(this.editExpense.icon) ? this.editExpense.icon.join(' ') : this.editExpense.icon;
+        const expenseData = {
           ...this.editExpense,
           categories: [...this.editExpense.categories],
-        });
+          icon: iconString
+        };
+        this.$emit('updateExpense', expenseData);
         this.isEditing = false;
+        this.fetchCategories();
       }
     },
     async fetchCategories() {
@@ -301,8 +387,7 @@ export default {
       this[`${field}Error`] = "";
       if (!this.editExpense[field]) {
         // Corrected this line
-        this[`${field}Error`] =
-          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editExpense[field].length > 180) {
@@ -329,6 +414,9 @@ export default {
       const day = String(d.getDate()).padStart(2, "0");
       const year = d.getFullYear();
       return `${year}-${month}-${day}`;
+    },
+    applyIcon(selectedIcon) {
+      this.editExpense.icon = selectedIcon;
     },
   },
   mounted() {
@@ -468,6 +556,7 @@ export default {
 }
 
 .edit-popup {
+    overflow: hidden;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -477,12 +566,21 @@ export default {
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
     width: 600px;
+    overflow: hidden; 
     z-index: 1000;
 }
 
 .popup-content {
     display: flex;
     flex-direction: column;
+    padding: 10px;
+}
+
+.forms-content {
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin-bottom: 10px;
+    overflow-y: auto;
 }
 
 .overlay {
@@ -568,11 +666,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     text-align: left;
 }
 
-.button-group {
+.buttons-group {
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 5px;
 }
 
 .cancel-button {
@@ -580,7 +678,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -592,7 +690,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #25262B;
     border: none;
     padding: 15px 35px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -813,5 +911,21 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+
+.icons-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.selected-text {
+    font-size: 20px;
+    color: white;
+}
+.selected-icon {
+    font-size: 36px;
+    color: white;
 }
 </style>

@@ -79,6 +79,7 @@
                   v-for="(debt, index) in filteredDebts"
                   :key="index"
                   :debt="debt"
+                  @markDebtAsPaid="handleMarkDebtAsPaid"
                   @updateDebt="handleDebtUpdate"
                   @deleteDebt="handleDebtDelete"/>
               </div>
@@ -230,6 +231,7 @@ export default {
         this.incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
+          categories: income.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.incomes);
       } catch (error) {
@@ -255,6 +257,7 @@ export default {
         this.expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
+          categories: expense.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.expenses);
       } catch (error) {
@@ -277,6 +280,7 @@ export default {
         this.debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
+          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         }));
         console.log(this.debts);
       } catch (error) {
@@ -293,11 +297,10 @@ export default {
         const modifiedIncomeData = {
           ...incomeData,
           user: userId,
-          category: incomeData.categories,
+          category: incomeData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
         };
         delete modifiedIncomeData.categories;
 
-	
         const response = await axios.post(
           "http://localhost:8000/api/incomes/",
           modifiedIncomeData,
@@ -306,7 +309,7 @@ export default {
         this.incomes.unshift(response.data);
         this.showForm = false;
         this.fetchIncomes();
-        this.addMessage("New income added succesfully.", "success");
+        this.addMessage("New income added successfully.", "success");
       } catch (error) {
         console.error("Error submitting income:", error);
         this.addMessage("There was an error while adding the income.", "error");
@@ -319,7 +322,7 @@ export default {
         const modifiedExpenseData = {
           ...expenseData,
           user: userId,
-          category: expenseData.categories,
+          category: expenseData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
         };
         delete modifiedExpenseData.categories;
 
@@ -332,7 +335,7 @@ export default {
         this.expenses.push(response.data);
         this.showForm = false;
         this.fetchExpenses();
-        this.addMessage("New expense added succesfully.", "success");
+        this.addMessage("New expense added successfully.", "success");
       } catch (error) {
         console.error(
           "Error submitting expense:",
@@ -345,34 +348,32 @@ export default {
       }
     },
     async handleDebtSubmission(debtData) {
-      try {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("user_id") ?? 1;
-        const modifiedDebtData = {
-          ...debtData,
-          user: userId,
-          category: debtData.categories,
-        };
-        delete modifiedDebtData.categories;
-
-        const response = await axios.post(
-          "http://localhost:8000/api/debts/",
-          modifiedDebtData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
-        this.debts.push(response.data);
-        this.showForm = false;
-        this.fetchDebts();
-        this.addMessage("New debt added succesfully.", "success");
-      } catch (error) {
-        console.error(
-          "Error submitting debt:",
-          error.response?.data || error.message,
-        );
-        this.addMessage("There was an error while adding the debt.", "error");
-      }
-    },
+  try {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id") ?? 1;
+    const modifiedDebtData = {
+      ...debtData,
+      user: userId,
+      category: debtData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
+    };
+    delete modifiedDebtData.categories;
+    const response = await axios.post(
+      "http://localhost:8000/api/debts/",
+      modifiedDebtData,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    this.debts.push(response.data);
+    this.showForm = false;
+    this.fetchDebts();
+    this.addMessage("New debt added successfully.", "success");
+  } catch (error) {
+    console.error(
+      "Error submitting debt:",
+      error.response?.data || error.message,
+    );
+    this.addMessage("There was an error while adding the debt.", "error");
+  }
+},
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
@@ -438,7 +439,7 @@ export default {
         const token = localStorage.getItem("token");
         const modifiedExpenseData = {
           ...updatedExpense,
-          category: [...updatedExpense.categories], // Aseguramos que sea un array de strings
+          category: [...updatedExpense.categories],
         };
         delete modifiedExpenseData.categories;
 
@@ -527,6 +528,49 @@ export default {
           "There was an error while saving the debt changes.",
           "error",
         );
+      }
+    },
+    async handleMarkDebtAsPaid(updatedDebt) {
+      try {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("user_id") ?? 1;
+
+        const formattedDate = moment(updatedDebt.date, "YYYY-MMM-DD").format("YYYY-MM-DD");
+
+        const modifiedExpenseData = {
+          amount: updatedDebt.amount,
+          description: `${updatedDebt.debtor_name}: ${updatedDebt.description}`,
+          user: userId,
+          category: updatedDebt.categories,
+          date: formattedDate,
+          icon: updatedDebt.icon,
+        };
+        delete modifiedExpenseData.categories;
+
+        await axios.post(
+          "http://localhost:8000/api/expenses/",
+          modifiedExpenseData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const debtResponse = await axios.put(
+          `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
+          { is_payed: true },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (debtResponse.status === 200) {
+          const debtIndex = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
+          if (debtIndex !== -1) {
+            this.debts[debtIndex].is_payed = true;
+          }
+
+          this.addMessage(`Debt "${updatedDebt.description}" marked as paid and added as an expense.`, "success");
+        }
+
+        this.fetchExpenses();
+      } catch (error) {
+        this.addMessage("There was an error marking the debt as paid.", "error");
       }
     },
     async handleDebtDelete(debtId) {
