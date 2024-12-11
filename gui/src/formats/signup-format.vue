@@ -1,7 +1,7 @@
 <template>    
 <div class="signup-form">
   <h2 class="form-title">Sign Up</h2>
-  <span class="admin-status">New account as: {{ isAdminUser ? 'Admin' : 'User' }}</span>
+  <span class="admin-status">Your account is set as {{ isAdminUser ? 'Admin' : 'User' }}</span>
 
   <div v-if="currentStep === 1">
     <div class="username-container">
@@ -76,7 +76,10 @@
       :class="{ 'input-error': keyError, 'padded-input': true }"
       @input="clearError('recoveryCode')" />
     <span v-if="keyError" class="error-message">{{ keyError }}</span>
-    <button class="validate-code-btn" @click="validateCode">Validate Code</button>
+    <div class="code-buttons">
+      <button class="resend-code-btn" @click="sendCode">Resend Code</button>
+      <button class="validate-code-btn" @click="validateCode">Validate Code</button>
+    </div>
   </div>
   
   <div class="return-login">
@@ -88,7 +91,7 @@
 
   <div class="admin-toggle-container">
     <button class="admin-toggle-btn" @click="toggleAdminUser">
-      {{ isAdminUser ? ' Change to Casual User' : 'Change to Admin User' }}
+      {{ isAdminUser ? ' Change new account to User' : 'Change new account to Admin' }}
     </button>
   </div>
 </div>
@@ -420,21 +423,42 @@ input {
     border-radius: 3px;
     background-color: white;
     border: 2px solid white;
-    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-bottom: 10px;
     cursor: pointer;
     color: #25262B;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.code-buttons{
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+.resend-code-btn,
 .validate-code-btn {
     padding: 15px 30px;
     border-radius: 3px;
-    background-color: #BF9F00;
-    border: 2px solid #BF9F00;
     cursor: pointer;
     color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.resend-code-btn {
+    background-color: #D131C6;
+    border: 2px solid #D131C6;
+}
+
+.validate-code-btn {
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
+}
+
+button:hover {
+  opacity: 0.9;
 }
 </style>

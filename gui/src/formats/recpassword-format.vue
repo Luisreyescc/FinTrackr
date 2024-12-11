@@ -1,22 +1,21 @@
 <template>
 <div class="recovery-form">
   <h2 class="form-title">Recovery Password</h2>
-  <!-- We define the Recovery pages in state-->
   <div v-if="currentStep === 1">
     <div class="username-container">    
-      <font-awesome-icon class="user-icon" :icon="['fas', 'user']" />
+      <font-awesome-icon class="user-icon" :icon="['fas', 'user']"/>
       <input
 	v-model="username"
 	type="text"
 	id="username"
 	placeholder="Username"
 	:class="{ 'input-error': usernameError, 'padded-input': true }"
-	@input="clearError('username')" />
+	@input="clearError('username')"/>
     </div>
     <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
     
     <div class="email-container">
-      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']" />
+      <font-awesome-icon class="email-icon" :icon="['fas', 'envelope']"/>
       <input
 	v-model="email"
 	type="email"
@@ -30,18 +29,20 @@
   </div>
   
   <div v-if="currentStep === 2" class="recovery-container">
-    <font-awesome-icon class="key-icon" :icon="['fas', 'key']" />
+    <font-awesome-icon class="key-icon" :icon="['fas', 'key']"/>
     <input
       v-model="recoveryCode"
       type="text"
       id="recovery-code"
       placeholder="Recovery code"
       :class="{ 'input-error': keyError, 'padded-input': true }"
-      @input="clearError('recoveryCode')" />
+      @input="clearError('recoveryCode')"/>
     <span v-if="keyError" class="error-message">{{ keyError }}</span>
-    <button class="validate-code-btn" @click="validateCode">Validate Code</button>
+    <div class="code-buttons">
+      <button class="resend-code-btn" @click="sendCode">Resend Code</button>
+      <button class="validate-code-btn" @click="validateCode">Validate Code</button>
+    </div>
   </div>
-  
   
   <div v-if="currentStep === 3">
     <div class="password-container">
@@ -51,12 +52,12 @@
 	id="password"
 	placeholder="New password"
 	:class="{ 'input-error': passwordError, 'padded-input': true }"
-	@input="clearError('password')" />
+	@input="clearError('password')"/>
       <button
 	type="button" 
 	class="show-password-btn" 
 	@click="togglePasswordVisibility"
-	aria-label="Show or Hide Password" >
+	aria-label="Show or Hide Password">
 	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
       </button>
     </div>
@@ -69,7 +70,7 @@
 	id="password2"
 	placeholder="Confirm new password"
 	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
-	@input="clearError('password2')" />
+	@input="clearError('password2')"/>
       <button 
 	type="button" 
 	class="show-password-btn" 
@@ -163,9 +164,8 @@ export default {
 	this.passwordError = 'Passwords don\'t match';
 	this.confirmPasswordError = 'Passwords don\'t match';
       }
-      if (!this.passwordError && !this.confirmPasswordError) {
+      if (!this.passwordError && !this.confirmPasswordError)
         this.$emit("changePassword", { password: this.password });
-      }
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -377,16 +377,32 @@ button {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
+.code-buttons{
+    margin-left: 22px;
+    width: 90%;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.resend-code-btn,
 .validate-code-btn {
-    padding: 15px 20px;
+    padding: 13px 15px;
     border-radius: 3px;
-    background-color: #BF9F00;
-    border: 2px solid #BF9F00;
-    margin-bottom: 15px;
     cursor: pointer;
     color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
+}
+
+.resend-code-btn {
+    background-color: #D131C6;
+    border: 2px solid #D131C6;
+}
+
+.validate-code-btn {
+    background-color: #BF9F00;
+    border: 2px solid #BF9F00;
 }
 
 button:hover {
