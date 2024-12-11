@@ -39,7 +39,7 @@
       @input="clearError('recoveryCode')"/>
     <span v-if="keyError" class="error-message">{{ keyError }}</span>
     <div class="code-buttons">
-      <button class="resend-code-btn" @click="sendCode">Resend Code</button>
+      <button class="resend-code-btn" @click="resendCode">Resend Code</button>
       <button class="validate-code-btn" @click="validateCode">Validate Code</button>
     </div>
   </div>
@@ -94,6 +94,7 @@
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import axios from 'axios';
 
 export default {
   name: 'RecoveryForm',
@@ -127,7 +128,7 @@ export default {
       if (field === 'password2')
 	this.confirmPasswordError = "";
     },
-    sendCode() {
+    async sendCode() {
       this.usernameError = "";
       this.emailError = "";
       if (!this.username)
@@ -135,8 +136,27 @@ export default {
       if (!this.email)
 	this.emailError = "Email is required.";
       if (!this.usernameError && !this.emailError) {
+        try {
+          const response = await axios.post("http://localhost:8000/api/check-user-email-association/", {
+            user_name: this.username,
+            email: this.email
+          });
+          
+          if (response.status === 200) {
 	this.$emit('sendCode', { username: this.username, email: this.email });
 	this.currentStep = 2; // Next state of the page, validate key code
+      }
+        } catch (error) {
+          if (error.response && error.response.data && error.response.data.error) {
+            if (error.response.data.error.includes("Username")) {
+              this.usernameError = error.response.data.error;
+            } else if (error.response.data.error.includes("Email")) {
+              this.emailError = error.response.data.error;
+            }
+          } else {
+            this.$emit('addMessage', "There was an issue checking user-email association. Please try again.", "error");
+          }
+        }
       }
     },
     validateCode() {
@@ -172,6 +192,9 @@ export default {
     },
     toggleConfirmPasswordVisibility() {
       this.showConfirmPassword = !this.showConfirmPassword;
+    },
+    resendCode() {
+      this.$emit('sendCode', { username: this.username, email: this.email });
     }
 }
 };

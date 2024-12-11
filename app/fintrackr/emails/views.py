@@ -31,6 +31,19 @@ from .serializers import SendCodeSerializer, ValidateCodeSerializer, ChangePassw
 # Recovery password views
 RECOVERY_CODES = {}
 
+class CheckUserEmailAssociationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user_name = request.data.get("user_name")
+        email = request.data.get("email")
+        
+        try:
+            user = Users.objects.get(user_name=user_name, email=email)
+            return Response({"message": "Username and email are associated."}, status=status.HTTP_200_OK)
+        except Users.DoesNotExist:
+            return Response({"error": "Username and email are not associated."}, status=status.HTTP_400_BAD_REQUEST)
+
 class SendCodeView(APIView):
     permission_classes = [AllowAny]
 
@@ -100,6 +113,21 @@ class ChangePasswordView(APIView):
 
 # Register view
 RECOVERY_CODES_SIGN = {}
+
+class CheckAvailabilityView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user_name = request.data.get("user_name")
+        email = request.data.get("email")
+        
+        if Users.objects.filter(user_name=user_name).exists():
+            return Response({"error": "Username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Users.objects.filter(email=email).exists():
+            return Response({"error": "Email is already in use."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Username and email are available."}, status=status.HTTP_200_OK)
 
 class SendCodeSignView(APIView):
     permission_classes = [AllowAny]
