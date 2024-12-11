@@ -301,7 +301,7 @@ export default {
     padding: 15px 60px;
     background-color: #25262B;
     border: 2px solid white;
-    border-radius: 30px;
+    border-radius: 3px;
     color: white;
     cursor: pointer;
     font-size: 20px;
@@ -310,6 +310,6 @@ export default {
 }
 
 .confirm-button:hover {
-    background:  #237242;
+    opacity: 0.8;;
 }
 </style>

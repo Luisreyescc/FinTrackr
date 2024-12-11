@@ -7,12 +7,12 @@
     <div class="user-details">
       <h4>{{ user.user_name }}</h4>
       <p class="user-fullname">{{ formattedFullname }}</p>
-      <span v-if="user.birth_date" class="user-bday">{{ formattedBDate }}</span>
-      <span class="user-role">{{ userRole }}</span>
+      <p v-if="user.birth_date" class="user-bday">{{ formattedBDate }}</p>
+      <p class="user-role">{{ userRole }}</p>
     </div>
     
     <div class="user-actions-section">
-      <span class="user-network">{{ formattedNetwork }}</span>
+      <p class="user-network">{{ formattedNetwork }}</p>
       <div class="user-actions">
         <button class="full-button" @click="showFullData">
           <font-awesome-icon :icon="['fas', 'circle-info']" class="data-icon" />
@@ -201,8 +201,14 @@ export default {
 
 .user-details h4 {
     font-size: 22px;
+    margin-bottom: 5px;
     color: #4DBEC8;
     font-weight: bold;
+}
+
+.user-details p {
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .user-fullname {
@@ -220,7 +226,7 @@ export default {
 }
 
 .user-role {
-    color: #FFA500;
+    color: #6092DE;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -342,7 +348,6 @@ label {
 
 span {
     display: block;
-    margin-bottom: 20px;
     font-weight: bold;
     font-size: 24px;
     color: white;

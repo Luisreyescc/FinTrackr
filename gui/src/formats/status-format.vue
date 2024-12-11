@@ -143,14 +143,10 @@ export default {
           show: true,
           fontSize: '18px',
           fontFamily: 'Wix Madefor Display, sans-serif',
-          labels: {
-            colors: ['#FFFFFF'],
-          },
         },
         xaxis: {
           labels: {
             style: {
-              colors: '#FFFFFF',
               fontSize: '18px',
             },
           },
@@ -163,7 +159,6 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#FFFFFF',
               fontSize: '18px',
             },
           },
@@ -188,15 +183,11 @@ export default {
           show: true,
           fontSize: '18px',
           fontFamily: 'Wix Madefor Display, sans-serif',
-          labels: {
-            colors: ['#FFFFFF'],
-          },
           position: 'bottom',
         },
 	dataLabels: {
           enabled: true,
           style: {
-            colors: ['#FFFFFF'],
             fontSize: '18px',
           },
         },
@@ -211,15 +202,11 @@ export default {
           show: true,
           fontSize: '18px',
           fontFamily: 'Wix Madefor Display, sans-serif',
-          labels: {
-            colors: ['#FFFFFF'],
-          },
           position: 'bottom',
         },
 	dataLabels: {
           enabled: true,
           style: {
-            colors: ['#FFFFFF'],
             fontSize: '18px',
           },
         },
@@ -603,7 +590,7 @@ select {
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    background-color: #25262B;
+    background-color: white;
     border: 2px solid white;
     width: 100%;
     overflow: hidden;
@@ -699,7 +686,7 @@ select {
     margin-top: 20px;
     padding: 20px;
     border-radius: 20px;
-    background-color: #25262B;
+    background-color: white;
     border: 2px solid white;
     box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     width: 100%;

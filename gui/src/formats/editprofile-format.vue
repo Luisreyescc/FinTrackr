@@ -556,7 +556,7 @@ input {
     color: white;
     border: none;
     padding: 15px 40px;
-    border-radius: 20px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -595,7 +595,7 @@ input {
     background-color: #25262B;
     border: 2px solid #BF9F00;
     color: #BF9F00;
-    border-radius: 20px;
+    border-radius: 3px;
     padding: 12px 20px;
     font-size: 16px;
     font-weight: bold;
