@@ -4,19 +4,29 @@ FinTrackr is a web application designed to help users manage their personal fina
 
 ## Features
 
-- **Income and Expense Tracking** 💵: Register monthly incomes and expenses with descriptions.
-- **Customizable Categories** 🏷️: Categorize transactions using tags like _Food_, _Transport_, _Housing_.
-- **Multi-Income Support** 💰: Manage multiple income sources with different payment schedules.
-- **Visual Reports** 📈: View expenses and incomes through graphs (pie charts, line charts, etc.) for various time frames (daily, weekly, monthly, annual).
-- **Debt Management** 🧾: Record debts owed to others and track repayment status.
-- **Historical Data Retrieval** 🗓️: Consult historical expenses by category within specified date ranges.
-- **Automated Email Reports** ✉️: Receive periodic emails (configurable frequency) with PDF attachments containing detailed income and expense reports along with balance summaries.
-- **Multi-User Support** 👥: Users can register and log in to access their personal financial data securely.
-- **Admin Interface** 🛠️: Administrative panel for managing users.
+- **Income and Expense Tracking** 💵:
+    Register monthly incomes and expenses with descriptions.
+- **Customizable Categories** 🏷️:
+    Categorize transactions using tags like _Food_, _Transport_, _Housing_.
+- **Multi-Income Support** 💰:
+    Manage multiple income sources with different payment schedules.
+- **Visual Reports** 📈:
+    View expenses and incomes through graphs (pie charts, line charts, etc.) for various time frames (daily, weekly, monthly, annual).
+- **Debt Management** 🧾:
+    Record debts owed to others and track repayment status.
+- **Historical Data Retrieval** 🗓️:
+    Consult historical expenses by category within specified date ranges.
+- **Automated Email Reports** ✉️:
+    Receive periodic emails (configurable frequency) with PDF attachments containing detailed income and expense reports along with balance summaries.
+- **Multi-User Support** 👥:
+    Users can register and log in to access their personal financial data securely, for signup you must use a real email account.
+- **Admin Interface** 🛠️:
+    Administrative panel for managing users, for signup you must use a real email account.
 
 ## Technologies Used
 
 - **Frontend**: [Vue.js](https://vuejs.org/).
+- **Status Graphics**: [ApexCharts.js](https://apexcharts.com/).
 - **Backend**: [Django](https://www.djangoproject.com/).
 - **Database**: [MySQL](https://www.mysql.com/).
 - **PDF Generation**: Programmatic PDF generation using [ReportLab](https://www.reportlab.com/opensource/).
@@ -29,6 +39,11 @@ FinTrackr is a web application designed to help users manage their personal fina
 
 - **Docker** and **Docker Compose** installed on your machine.
 - A Linux operating system or environment (the application is fully compatible with Linux without the need for emulation).
+
+ **Oficial Docker website to know more about how to install docker**
+```
+https://docs.docker.com/engine/install/
+```
 
 ### Setup Steps
 
@@ -55,21 +70,30 @@ FinTrackr is a web application designed to help users manage their personal fina
 
 ### Registration and Authentication
 
-- **Sign Up** 📝: Register a new account by providing your email and password.
-- **Login** 🔐: Access your account using your credentials.
+- **Sign Up** 📝:
+    Register a new account by providing your email and password.
+- **Login** 🔐:
+    Access your account using your credentials.
 
 ### Managing Finances
 
-- **Add Incomes/Expenses** 💰: Register new incomes and expenses with descriptions, amounts, dates, and categories.
-- **Create Categories** 🏷️: Add new custom categories to categorize your transactions effectively.
-- **Track Debts** 📄: Record debts owed and monitor repayment status.
-- **View Reports** 📊: Access the dashboard to view visual reports of your financial data over different time periods.
-- **Configure Email Reports** ✉️: Set up periodic email reports and configure the frequency.
+- **Add Incomes/Expenses** 💰:
+    Register new incomes and expenses with descriptions, amounts, dates, and categories.
+- **Create Categories** 🏷️:
+    Add new custom categories to categorize your transactions effectively.
+- **Track Debts** 📄:
+    Record debts owed and monitor repayment status.
+- **View Reports** 📊:
+    Access the dashboard to view visual reports of your financial data over different time periods.
+- **Configure Email Reports** ✉️:
+    Set up periodic email reports and configure the frequency.
 
 ### Administrative Tasks
 
-- **Admin Access** 🛠️: Log in to the admin interface to manage users and view aggregated reports.
-- **User Management** 👥: View registered users and their activity.
+- **Admin Access** 🛠️:
+    Log in to the admin interface to manage users and view aggregated reports.
+- **User Management** 👥:
+    View registered users and their activity.
 
 ## Contributing
 
@@ -89,8 +113,8 @@ For any questions or support, please contact 📧 <fintracker0@gmail.com>
 
 ## Contributors
 
-- [Luis Reyes](https://github.com/Luisreyescc)
-- [Ianluck Rojo](https://github.com/Jeanluck-Rop)
-- [Isaac Escobar](https://github.com/IsaacEscobar09)
-- [David Bernabé](https://github.com/David-Brnb)
-- [Gabriel Zárate](https://github.com/GABOZG-004)
+- [Bernabé David](https://github.com/David-Brnb)
+- [Escobar Isaac](https://github.com/IsaacEscobar09)
+- [Reyes Luis](https://github.com/Luisreyescc)
+- [Rojo Ianluck](https://github.com/Jeanluck-Rop)
+- [Zárate Gabriel](https://github.com/GABOZG-004)
