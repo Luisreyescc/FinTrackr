@@ -118,12 +118,12 @@
   <div v-if="showPasswordFields">
     <div class="password-container">
       <input
-        v-model="formData.newPassword"
+        v-model="formData.new_password"
         :type="showNewPassword ? 'text' : 'password'"
         id="new_password"
         placeholder="New password"
         :class="{ 'input-error': newPasswordError }"
-	@input="clearError('newPassword')"/>
+        @input="clearError('new_password')"/>
       <button
         type="button"
         class="show-password-btn"
@@ -135,12 +135,12 @@
     
     <div class="password-container">
       <input
-        v-model="formData.confirmPassword"
+        v-model="formData.confirm_password"
         :type="showConfirmPassword ? 'text' : 'password'"
         id="confirm_password"
         placeholder="Confirm new password"
         :class="{ 'input-error': confirmPasswordError }"
-	@input="clearError('confirmPassword')"/>
+        @input="clearError('confirm_password')"/>
       <button
         type="button"
         class="show-password-btn"
@@ -252,17 +252,14 @@ export default {
       this.confirmPasswordError = "";
       
       if (this.showPasswordFields) {
-	if (!this.formData.newPassword)
-	this.newPasswordError = "New password is required.";
-	if (!this.formData.confirmPassword)
-	this.confirmPasswordError = "Confirm password is required.";
-	if (this.formData.newPassword
-            && this.formData.confirmPassword
-            && this.formData.newPassword
-            !== this.formData.confirmPassword) {
-	this.newPasswordError = "Passwords don't match.";
-	this.confirmPasswordError = "Passwords don't match.";
-	}
+        if (!this.formData.new_password)
+          this.newPasswordError = "New password is required.";
+        if (!this.formData.confirm_password)
+          this.confirmPasswordError = "Confirm password is required.";
+        if (this.formData.new_password && this.formData.confirm_password && this.formData.new_password !== this.formData.confirm_password) {
+          this.newPasswordError = "Passwords don't match.";
+          this.confirmPasswordError = "Passwords don't match.";
+        }
       }
     },
     handleCurpInput(event) {
@@ -294,8 +291,8 @@ export default {
     togglePasswordFields() {
       this.showPasswordFields = !this.showPasswordFields;
       if (!this.showPasswordFields) {
-        this.formData.newPassword = "";
-        this.formData.confirmPassword = "";
+        this.formData.new_password = "";
+        this.formData.confirm_password = "";
       }
     },
     saveProfile() {
@@ -307,9 +304,9 @@ export default {
 
       if (this.passwordError || this.usernameError
           || this.emailError ||  this.curpError
-          || this.rfcError ||this.phoneError
+          || this.rfcError || this.phoneError
           || this.newPasswordError || this.confirmPasswordError)
-	return;
+        return;
       
       const sanitizedData = Object.fromEntries(
         Object.entries(this.formData).map(([key, value]) => [key, value || null ]),

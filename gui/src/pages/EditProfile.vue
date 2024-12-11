@@ -87,9 +87,12 @@ export default {
         rfc: profileData.rfc,
         birth_date: profileData.birth_date,
         password: profileData.password,
-        new_password: profileData.new_password,
-        confirm_password: profileData.confirm_password,
       };
+
+      if (profileData.new_password && profileData.confirm_password) {
+        dataToSend.new_password = profileData.new_password;
+        dataToSend.confirm_password = profileData.confirm_password;
+      }
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -108,13 +111,13 @@ export default {
         );
         console.log("API response:", response);
         if (response.status === 200) {
-          this.addMessage("User data updated succesfully.", "success");
+          this.addMessage("User data updated successfully.", "success");
         } else {
           this.addMessage("Failed to save your data.", "error");
         }
       } catch (error) {
         console.error("Update failed:", error);
-        this.addMessage("An error occure while saving your data.", "error");
+        this.addMessage("An error occurred while saving your data.", "error");
       }
     },
     goToHome() {

@@ -94,6 +94,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
+        write_only=True, required=True, style={"input_type": "password"}
+    )
+    new_password = serializers.CharField(
+        write_only=True, required=False, style={"input_type": "password"}
+    )
+    confirm_password = serializers.CharField(
         write_only=True, required=False, style={"input_type": "password"}
     )
 
@@ -109,13 +115,30 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             "rfc",
             "birth_date",
             "password",
+            "new_password",
+            "confirm_password",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
+    def validate(self, data):
+        user = self.instance
+        if not user.check_password(data.get("password")):
+            raise serializers.ValidationError({"password": "Current password is incorrect"})
+        
+        new_password = data.get("new_password")
+        confirm_password = data.get("confirm_password")
+        
+        if new_password or confirm_password:
+            if new_password != confirm_password:
+                raise serializers.ValidationError({"new_password": "New passwords do not match"})
+        
+        return data
+
     def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
-        if password:
-            instance.set_password(password)
+        validated_data.pop("password", None)  # Remove the current password from the validated data
+        new_password = validated_data.pop("new_password", None)
+        if new_password:
+            instance.set_password(new_password)
         return super().update(instance, validated_data)
 
 
