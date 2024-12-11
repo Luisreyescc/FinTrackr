@@ -1,16 +1,21 @@
 <template>
 <div class="signup-page">
-  <img src="@/assets/title.svg" alt="Profile Icon" class="title"/>
-  <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon"/>
-  <div class="message-container">
-    <MessageAlerts
-      v-for="(msg, index) in messages" 
-      :key="msg.id" 
-      :text="msg.text" 
-      :type="msg.type" 
-      @close="removeMessage(index)"/>
+  <div class="brand-section">
+    <img src="@/assets/title.svg" alt="Profile Icon" class="title"/>
+    <P class="slogan">Keep track of your finances safely, quickly and easily</P>
   </div>
-  <SignUpForm @signUp="signUp" @goToLogin="goToLogin"/>
+  <div class="signup-content">
+    <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon"/>
+    <div class="message-container">
+      <MessageAlerts
+	v-for="(msg, index) in messages" 
+	:key="msg.id" 
+	:text="msg.text" 
+	:type="msg.type" 
+	@close="removeMessage(index)"/>
+    </div>
+    <SignUpForm @signUp="signUp" @goToLogin="goToLogin"/>
+  </div>
 </div>
 </template>
 
@@ -89,7 +94,6 @@ export default {
 <style scoped>
 .signup-page {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
@@ -98,13 +102,27 @@ export default {
 }
 
 .title {
-    width: auto;
-    height: 60px;
+    display: flex-start;
+    width: 320px;
+    height: 70px;
     z-index: 1000;
     margin-bottom: 10px;
     border: none;
-    background: rgba(37, 38, 43, 0.1);
-    backdrop-filter: blur(9px);
+    background: #25262B;
+}
+
+.slogan {
+    font-size: 20px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.signup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .profile-icon {

@@ -62,20 +62,19 @@
     </button>
   </div>
   <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-
-  <div class="admin-toggle-container">
-    <button class="admin-toggle-btn" @click="toggleAdminUser">
-      {{ isAdminUser ? ' Change to Casual User' : 'Change to Admin User' }}
-    </button>
-    
-  </div>
-  
+ 
   <div class="button-group">
     <button class="accept-btn" @click="emitSignUp">Accept</button>
     <div class="divider">
       <span>or return to</span>
     </div>
     <button class="login-btn" @click="$emit('goToLogin')">Log-In</button>
+  </div>
+
+  <div class="admin-toggle-container">
+    <button class="admin-toggle-btn" @click="toggleAdminUser">
+      {{ isAdminUser ? ' Change to Casual User' : 'Change to Admin User' }}
+    </button>
   </div>
 </div>
 </template>
@@ -338,27 +337,25 @@ input {
 }
 
 .admin-toggle-container {
-    margin-top: 20px;
     display: flex;
-    flex-direction: column;
     align-items: center;
 }
 
 .admin-toggle-btn {
     background-color: transparent;
-    border: 2px solid #D160DE;
-    color: #D160DE;
+    border: none;
+    color: #319FD1;
     border-radius: 40px;
-    padding: 12px 20px;
     font-size: 16px;
-    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .admin-status {
     margin-top: -10px;
     margin-bottom: 20px;
-    color: #D160DE;
+    color: #319FD1;
     font-size: 20px;
     font-family: "Wix Madefor Display", sans-serif;
 }
