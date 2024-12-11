@@ -6,4 +6,3 @@ django-cors-headers
 djangorestframework-simplejwt
 requests
 reportlab
-pytz

@@ -154,26 +154,18 @@ export default {
       if (!token)
         return console.error("No token found");
       
-      var interval = 1;
       if(this.period.type == "Bimester") {
-        interval = 2;
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=2&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
 
       } else if(this.period.type == "Trimester"){
-        interval = 3;
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=3&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
 
+      } else {
+        await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&unit=months", {
+          headers: { Authorization: `Bearer ${token}` } });
       }
-
-      var hour = this.time.hour
-      if(this.time.amPm == "PM" && hour!=12){
-        hour+=12;
-
-      } else if(this.time.amPm == "AM" && hour == 12){
-        hour=0;
-      }
-
-      await axios.get(`http://localhost:8000/api/pdf/?action=start&interval=${interval}&day=${this.period.day}&hour=${hour}&minute=${this.time.minute}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
       
       this.$emit('closeModal');
 
