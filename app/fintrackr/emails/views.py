@@ -1,6 +1,5 @@
 import random
 import time
-import pytz
 from io import BytesIO
 from datetime import datetime
 from collections import defaultdict
@@ -146,6 +145,16 @@ threads = {}
 class IncomeExpensePDFView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def convert_to_seconds(self, interval, unit):
+        units_in_seconds = {
+            "seconds": 1,
+            "minutes": 60,
+            "hours": 3600,
+            "days": 86400,
+            "months": 2592000,  # Approximate value: 30 days
+        }
+        return interval * units_in_seconds.get(unit, 1)
+    
     def generate_pdf(self, user_id):
         user = Users.objects.get(pk=user_id)
         # Fetch incomes and expenses with categories
@@ -323,16 +332,15 @@ class IncomeExpensePDFView(APIView):
     # the next steps on these code is to make it for one mont and in an specific hour
     # like been able to now if a mont has happend, and if so
     # been able to now the exact time and set it
-    def periodic_email_task(self, stop_event, user_id, first, months, day, hour, minute):
+    def periodic_email_task(self, interval, stop_event, user_id, first):
         sleep_interval = 0.5
+        elapsed_time = interval
+        if(first==1):
+            elapsed_time = 0
         
-        #necesito pasar el intervalo en meses, ese puede ser string, el dia, y la hora. 
-        # necesito pasar el mes actual a los mes como por numero y asi pasar la lista de los meses en los que debo enviar el correo
+
         while not stop_event.is_set():
-            now = datetime.now(pytz.timezone('America/Mexico_City')) # aqui agregamos lo de la hora. y el dia
-            
-            if (now.month in months and now.day == day and now.hour == hour and now.minute == minute and now.second == 00) or (first == 0):
-                first = 1
+            if elapsed_time >= interval:
                 try:
                     # Fetch the latest user data
                     user = Users.objects.get(pk=user_id)
@@ -362,38 +370,33 @@ class IncomeExpensePDFView(APIView):
                     break
                 except Exception as e:
                     print(f"Error sending email to {email}: {e}")
+
+                elapsed_time = 0
             
             time.sleep(sleep_interval)
+            elapsed_time += sleep_interval
 
     def start_email_task(self, request):
         # Get interval and unit from query parameters
-        interval = int(request.GET.get("interval", 1))
+        interval = int(request.GET.get("interval", 60))  # Default interval: 60 seconds
+        unit = request.GET.get("unit", "seconds")  # Default unit: seconds
         first = int(request.GET.get("first", 0))
-        day = int(request.GET.get("day", 0))
-        hour = int(request.GET.get("hour", 0))
-        minute = int(request.GET.get("minute", 0))
         user_id = request.user.id
+
+        interval_in_seconds = self.convert_to_seconds(interval, unit)
 
         if user_id in threads:
             threads[user_id]["stop_event"].set()
             threads[user_id]["thread"].join(timeout=1) 
             del threads[user_id]
 
-        months = []
-        current_month = datetime.now(pytz.timezone('America/Mexico_City')).month
-        while len(months) < 12 // interval:
-            months.append(current_month)
-            current_month = (current_month + interval - 1) % 12 + 1
-
-        print(months)
-
         stop_event = Event()
-        thread = Thread(target=self.periodic_email_task, args=(stop_event, user_id, first, months, day, hour, minute))
+        thread = Thread(target=self.periodic_email_task, args=(interval_in_seconds, stop_event, user_id, first))
         thread.daemon = True
         thread.start()
 
         threads[user_id] = {"thread": thread, "stop_event": stop_event}
-        return JsonResponse({"message": f"Periodic email task started successfully for {interval} {day} : {hour}.{minute}."})
+        return JsonResponse({"message": f"Periodic email task started successfully for {interval} {unit}."})
     
     def stop_email_task(self, request):
         user_id = request.user.id

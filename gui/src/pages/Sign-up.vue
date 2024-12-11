@@ -41,30 +41,24 @@ export default {
     async signUp({ username, email, password, password2, admin_user }) {
       if (username && email && password && password2) {
         try {
-          const response = await apiClient.post("register/", {
-            user_name: username,
-            email: email,
-            password: password,
-            password2: password2,
-          });
-
-        // 
-
-          if (response.status === 201) {
-            
-            const responseLog = await axios.post(
-            "http://localhost:8000/api/login/", { user_name: username, password: password },
-            { headers: { "Content-Type": "application/json" } } );
-                  console.log(responseLog.data);
-                  if (responseLog.status === 200) {
-            const token = responseLog.data.access;
-
-            await axios.get("http://localhost:8000/api/pdf/?first=1", {
-              headers: { Authorization: `Bearer ${token}` } });
-            
-            this.addMessage("Login successful", "success");
-                  } else {
-            this.addMessage("Invalid username or password. Please try again.", "error");
+          const response = await apiClient.post("register/",
+						{ user_name: username,
+                                                  email: email,
+                                                  password: password,
+                                                  password2: password2,
+                                                  admin_user: admin_user });
+         if (response.status === 201) {
+            const responseLog = await axios.post("http://localhost:8000/api/login/",
+                                                 { user_name: username, password: password },
+                                                 { headers: { "Content-Type": "application/json" }});
+            console.log(responseLog.data);
+            if (responseLog.status === 200) {
+              const token = responseLog.data.access;
+              await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&unit=months&first=1",
+                              { headers: { Authorization: `Bearer ${token}` } });
+              this.addMessage("Login successful", "success");
+            } else {
+              this.addMessage("Invalid username or password. Please try again.", "error");
             }
             this.addMessage("User registered successfully! Redirecting to login...", "success");
             setTimeout(() => { this.$router.push("/login") }, 2500);
