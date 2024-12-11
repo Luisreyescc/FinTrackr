@@ -85,7 +85,7 @@ export default {
                                                   password: password,
                                                   password2: password2,
                                                   admin_user: admin_user });
-	  if (response.status === 201) {
+         if (response.status === 201) {
             const responseLog = await axios.post("http://localhost:8000/api/login/",
                                                  { user_name: username, password: password },
                                                  { headers: { "Content-Type": "application/json" }});
