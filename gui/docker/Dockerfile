@@ -4,7 +4,7 @@ WORKDIR /gui
 
 COPY package*.json ./
 
-RUN npm install vuex@next vue-router axios apexcharts vue3-apexcharts moment
+RUN npm install vuex@next vue-router axios apexcharts vue3-apexcharts moment jwt-decode
 
 RUN npm install --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-brands-svg-icons @fortawesome/vue-fontawesome
 

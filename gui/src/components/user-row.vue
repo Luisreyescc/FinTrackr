@@ -17,7 +17,7 @@
         <button class="full-button" @click="showFullData">
           <font-awesome-icon :icon="['fas', 'circle-info']" class="data-icon" />
         </button>
-        <button class="delete-button" @click="showDeleteWarning">
+        <button v-if="!isCurrentUser" class="delete-button" @click="showDeleteWarning">
           <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
         </button>
       </div>
@@ -70,6 +70,7 @@
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   name: 'UserRow',
@@ -82,10 +83,14 @@ export default {
   data() {
     return {
       isFullData: false,
-      showDeletePopup: false
+      showDeletePopup: false,
+      currentUserId: null
     };
   },
   computed: {
+    isCurrentUser() {
+      return this.user.user_id === this.currentUserId;
+    },
     formattedFullname() {
       const fullname = `${this.user.name} ${this.user.last_name}`;
       return fullname.trim() ? fullname : 'No data';
@@ -137,6 +142,13 @@ export default {
       }
     }
   },
+  created() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      this.currentUserId = decodedToken.user_id;
+    }
+  }
 };
 </script>
 
