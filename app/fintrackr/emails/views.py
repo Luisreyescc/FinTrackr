@@ -59,7 +59,14 @@ class SendCodeView(APIView):
                 RECOVERY_CODES[user.user_name] = code
                 send_mail(
                     subject="Password Recovery Code",
-                    message=f"Your recovery code is {code}",
+                    message=(
+                        f"Hello {user_name},\n\n"
+                        "We received a request to reset your password. Please use the following recovery code to reset your password:\n\n"
+                        f"Recovery Code: {code}\n\n"
+                        "If you did not request a password reset, please ignore this email or contact support.\n\n"
+                        "Best regards,\n"
+                        "The FinTrackr Team"
+                    ),
                     from_email=None,
                     recipient_list=[email],
                 )
@@ -136,17 +143,28 @@ class SendCodeSignView(APIView):
     def post(self, request):
         serializer = SendCodeSerializer(data=request.data)
         if serializer.is_valid():
-            user_name = serializer.validated_data['user_name']
-            email = serializer.validated_data['email']
-            code = str(random.randint(100000, 999999)) 
-            RECOVERY_CODES_SIGN[user_name] = code
-            send_mail(
-                subject="Your recovery code",
-                message=f"Your recovery code is {code}",
-                from_email=None,
-                recipient_list=[email],
-            )
-            return Response({"message": "Recovery code sent successfully"}, status=status.HTTP_200_OK)
+            user_name = serializer.validated_data["user_name"]
+            email = serializer.validated_data["email"]
+            try:
+                code = str(random.randint(100000, 999999)) 
+                RECOVERY_CODES_SIGN[user_name] = code
+                send_mail(
+                    subject="Account Verification Code",
+                    message=(
+                        f"Hello {user_name},\n\n"
+                        "Thank you for signing up for FinTrackr! To complete your registration, please use the following verification code:\n\n"
+                        f"Verification Code: {code}\n\n"
+                        "Enter this code in the application to verify your account and start using FinTrackr.\n\n"
+                        "If you did not sign up for a FinTrackr account, please ignore this email or contact our support team.\n\n"
+                        "Best regards,\n"
+                        "The FinTrackr Team"
+                    ),
+                    from_email=None,
+                    recipient_list=[email],
+                )
+                return Response({"message": "Verification code sent successfully."}, status=status.HTTP_200_OK)
+            except Users.DoesNotExist:
+                return Response({"error": "User with provided details not found."}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ValidateCodeSignView(APIView):
@@ -167,6 +185,24 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        send_mail(
+            subject="Welcome to FinTrackr",
+            message=(
+                "Welcome to FinTrackr!\n\n"
+                "We're excited to have you on board. FinTrackr is your go-to solution for managing your finances safely, quickly, and easily. "
+                "With our platform, you can keep track of your income and expenses and gain insights into your spending habits.\n\n"
+                "Here are some features you can start exploring:\n"
+                "- Track your income and expenses\n"
+                "- Generate detailed financial reports\n"
+                "Thank you for choosing FinTrackr. We're here to help you achieve your financial goals!\n\n"
+                "Best regards,\n"
+                "The FinTrackr Team"
+            ),
+            from_email=None,
+            recipient_list=[user.email],
+        )
 
 # PDF view
 class UniqueLineChart(Drawing):
@@ -423,7 +459,14 @@ class IncomeExpensePDFView(APIView):
 
                     email_message = EmailMessage(
                         subject="Periodic Income and Expense Report",
-                        body="Hello,\n\nPlease find attached your income and expense report.\n\nBest regards.",
+                        body=(
+                            f"Hello {user.user_name},\n\n"
+                            "Attached is your periodic income and expense report. This report provides a detailed overview of your financial activities, "
+                            "including a breakdown of your incomes and expenses by category, as well as visual charts to help you understand your financial trends.\n\n"
+                            "If you have any questions or need further assistance, please do not hesitate to contact our support team.\n\n"
+                            "Best regards,\n"
+                            "The FinTrackr Team"
+                        ),
                         from_email=None,
                         to=[email],
                     )

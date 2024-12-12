@@ -72,7 +72,7 @@ export default {
           { headers: { "Content-Type": "application/json" } }
         );
         if (response.status === 200) {
-          this.addMessage("Code validated successfully to your email adress!", "success");
+          this.addMessage("Code validated successfully to your email address!", "success");
           callback(true);
         }
       } catch (error) {

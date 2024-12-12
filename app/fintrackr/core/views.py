@@ -53,7 +53,15 @@ def delete_user(request, user_id):
 
         send_mail(
             subject="User Account Deleted",
-            message=f"Dear {user_name},\n\nYour user account has been removed. Thank you for using our service.\n\nBest regards,\nYour trusted website",
+            message=(
+                f"Dear {user_name},\n\n"
+                "We wanted to inform you that your user account has been successfully deleted from our system. "
+                "All your data, including incomes, expenses, and debts, have been removed.\n\n"
+                "If you have any questions or need further assistance, please do not hesitate to contact our support team.\n\n"
+                "Thank you for using FinTrackr.\n\n"
+                "Best regards,\n"
+                "The FinTrackr Team"
+            ),
             from_email=None,
             recipient_list=[email],
         )
