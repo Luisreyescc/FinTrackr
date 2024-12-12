@@ -1,7 +1,7 @@
 <template>
   <div class="income-row">
     <div class="income-icon">
-      <font-awesome-icon :icon="parseIcon(income.icon)" class="row-icon"/>
+      <font-awesome-icon :icon="parseIcon(income.icon)" class="row-icon" />
     </div>
     <div class="income-details">
       <h4>{{ formattedCategories }}</h4>
@@ -12,7 +12,10 @@
       <span class="income-amount">{{ formattedAmount }}</span>
       <div class="income-actions">
         <button class="edit-button" @click="startEdit">
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon" />
+          <font-awesome-icon
+            :icon="['fas', 'pen-to-square']"
+            class="edit-icon"
+          />
         </button>
         <button class="delete-button" @click="deleteIncome">
           <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
@@ -32,8 +35,12 @@
             type="text"
             v-model="editIncome.amount"
             @input="validateAmount"
-            :class="{ 'input-error': amountError, 'input-valid': !amountError && editIncome.amount }"
-            placeholder="Enter amount (e.g., 1000.00)"/>
+            :class="{
+              'input-error': amountError,
+              'input-valid': !amountError && editIncome.amount,
+            }"
+            placeholder="Enter amount (e.g., 1000.00)"
+          />
         </label>
         <span v-if="amountError" class="error-message">{{ amountError }}</span>
 
@@ -41,45 +48,73 @@
           <div class="categories-select" @click="toggleDropdown">
             Sources
             <span class="dropdown-icon">
-              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
-              <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
+              <font-awesome-icon
+                v-if="!dropdownOpen"
+                :icon="['fas', 'angle-right']"
+              />
+              <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
             </span>
           </div>
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New source
+            <li
+              v-else
+              @click="showNewCategoryDialog"
+              style="color: #bf9f00; font-weight: bold"
+            >
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New
+              source
             </li>
             <li
               v-for="(category, index) in categoryOptions"
               :key="index"
-              @click="addCategory(category)">{{ category }}
+              @click="addCategory(category)"
+            >
+              {{ category }}
             </li>
           </ul>
 
-          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
+          <div
+            v-if="showNewCategory"
+            class="overlay"
+            @click="cancelNewCategory"
+          ></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
             <input
               type="text"
               v-model="newCategory"
               placeholder="New category"
-              :maxlength="18" />
+              :maxlength="18"
+            />
             <div class="button-group">
-              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+              <button @click="cancelNewCategory" class="cancel-category">
+                Cancel
+              </button>
               <button
                 @click="acceptNewCategory"
                 class="accept-category"
-                :disabled="!isAcceptEnabled">Accept</button>
+                :disabled="!isAcceptEnabled"
+              >
+                Accept
+              </button>
             </div>
           </div>
         </div>
 
         <div class="selected-categories">
-          <span v-for="(category, index) in editIncome.categories" :key="index" class="tag">
+          <span
+            v-for="(category, index) in editIncome.categories"
+            :key="index"
+            class="tag"
+          >
             {{ category }}
-            <button type="button" @click="removeCategory(index, $event)" class="close-button">
+            <button
+              type="button"
+              @click="removeCategory(index, $event)"
+              class="close-button"
+            >
               <font-awesome-icon :icon="['fas', 'xmark']" />
             </button>
           </span>
@@ -93,41 +128,55 @@
             @input="validateTextField('description')"
             :class="{
               'input-error': descriptionError,
-              'input-valid': !descriptionError && editIncome.description }"
-            placeholder="Enter a description for the income"/>
+              'input-valid': !descriptionError && editIncome.description,
+            }"
+            placeholder="Enter a description for the income"
+          />
         </label>
-        <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
+        <span v-if="descriptionError" class="error-message">{{
+          descriptionError
+        }}</span>
 
-        <label class="date-label">
-          Date:
-        </label>
+        <label class="date-label"> Date: </label>
         <div class="date-container">
-          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']" />
           <input
             v-model="editIncome.date"
             type="date"
             @input="validateDate"
             class="custom-date-input"
-            :class="{ 'input-error': dateError, 'input-valid': !dateError && editIncome.date }"/>
-            </div>
-	<span v-if="dateError" class="error-message">{{ dateError }}</span>
+            :class="{
+              'input-error': dateError,
+              'input-valid': !dateError && editIncome.date,
+            }"
+          />
+        </div>
+        <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
-	<div class="icons-wrapper">
+        <div class="icons-wrapper">
           <IconDropdown
             :iconOptions="iconOptions"
             :currentIcon="editIncome.icon"
-            @iconSelected="applyIcon" />
+            @iconSelected="applyIcon"
+          />
           <span class="selected-text">Selected Icon: </span>
           <span v-if="editIncome.icon" class="selected-icon">
-            <font-awesome-icon :icon="parseIcon(editIncome.icon)"/>
+            <font-awesome-icon :icon="parseIcon(editIncome.icon)" />
           </span>
         </div>
+        <div class="buttons-group">
+          <button type="button" class="cancel-button" @click="cancelEdit">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="submit-button"
+            :disabled="!isSubmitEnabled"
+          >
+            Save
+          </button>
+        </div>
       </form>
-      
-      <div class="buttons-group">
-        <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
-        <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
-      </div>
     </div>
   </div>
 </template>
@@ -140,7 +189,7 @@ import IconDropdown from "@/components/icon-dropdown.vue";
 export default {
   name: "IncomeRow",
   components: {
-    IconDropdown
+    IconDropdown,
   },
   props: {
     income: {
@@ -154,7 +203,7 @@ export default {
       isEditing: false,
       editIncome: {
         ...this.income,
-        categories: this.income.categories || []
+        categories: this.income.categories || [],
       },
       amountError: "",
       descriptionError: "",
@@ -165,78 +214,78 @@ export default {
       newCategory: "",
       loadingCategories: false,
       iconOptions: [
-        ['fas', 'circle-dollar-to-slot'],
-        ['fas', 'money-bill-transfer'],
-        ['fas', 'piggy-bank'],
-        ['fas', 'hand-holding-dollar'],
-	['fas', 'credit-card'],
-	['fas', 'handshake'],
-	['fas', 'sack-dollar'],
-	['fas', 'comments-dollar'],
-	['fas', 'store'],
-	['fas', 'shop'],
-	['fas', 'cart-shopping'],
-	['fas', 'bag-shopping'],
-	['fas', 'suitcase-medical'],
-	['fas', 'heart-pulse'],
-	['fas', 'stethoscope'],
-	['fas', 'syringe'],
-	['fas', 'pills'],
-	['fas', 'tooth'],
-	['fas', 'hospital'],
-	['fas', 'hand-holding-medical'],
-	['fas', 'house-chimney'],
-	['fas', 'gift'],
-	['fas', 'heart'],
-	['fas', 'dumbbell'],
-	['fas', 'burger'],
-	['fas', 'pizza-slice'],
-	['fas', 'hotdog'],
-	['fas', 'ice-cream'],
-	['fas', 'utensils'],
-	['fas', 'bowl-food'],
-	['fas', 'drumstick-bite'],
-	['fas', 'shrimp'],
-	['fas', 'cake-candles'],
-	['fas', 'mug-hot'],
-	['fas', 'champagne-glasses'],
-	['fas', 'martini-glass-citrus'],
-	['fas', 'ferry'],
-	['fas', 'car'],
-	['fas', 'train-subway'],
-	['fas', 'plane-departure'],
-	['fas', 'hotel'],
-	['fas', 'school'],
-	['fas', 'building'],
-	['fas', 'umbrella-beach'],
-	['fas', 'gas-pump'],
-	['fas', 'shirt'],
-	['fas', 'film'],
-	['fas', 'ticket'],
-	['fas', 'gamepad'],
-	['fas', 'mobile'],
-	['fas', 'tv'],
-	['fas', 'headphones-simple'],
-	['fas', 'microphone'],
-	['fas', 'video'],
-	['fas', 'camera-retro'],
-	['fas', 'music'],
-	['fas', 'futbol'],
-	['fas', 'person-swimming'],
-	['fas', 'basketball'],
-	['fas', 'bicycle'],
-	['fab', 'youtube'],
-	['fab', 'twitch'],
-	['fab', 'steam'],
-	['fab', 'spotify'],
-	['fab', 'apple'],
-	['fab', 'android'],
-	['fab', 'xbox'],
-	['fab', 'playstation'],
-	['fab', 'docker'],
-	['fab', 'linux'],
-	['fab', 'gitlab'],
-	['fab', 'github']
+        ["fas", "circle-dollar-to-slot"],
+        ["fas", "money-bill-transfer"],
+        ["fas", "piggy-bank"],
+        ["fas", "hand-holding-dollar"],
+        ["fas", "credit-card"],
+        ["fas", "handshake"],
+        ["fas", "sack-dollar"],
+        ["fas", "comments-dollar"],
+        ["fas", "store"],
+        ["fas", "shop"],
+        ["fas", "cart-shopping"],
+        ["fas", "bag-shopping"],
+        ["fas", "suitcase-medical"],
+        ["fas", "heart-pulse"],
+        ["fas", "stethoscope"],
+        ["fas", "syringe"],
+        ["fas", "pills"],
+        ["fas", "tooth"],
+        ["fas", "hospital"],
+        ["fas", "hand-holding-medical"],
+        ["fas", "house-chimney"],
+        ["fas", "gift"],
+        ["fas", "heart"],
+        ["fas", "dumbbell"],
+        ["fas", "burger"],
+        ["fas", "pizza-slice"],
+        ["fas", "hotdog"],
+        ["fas", "ice-cream"],
+        ["fas", "utensils"],
+        ["fas", "bowl-food"],
+        ["fas", "drumstick-bite"],
+        ["fas", "shrimp"],
+        ["fas", "cake-candles"],
+        ["fas", "mug-hot"],
+        ["fas", "champagne-glasses"],
+        ["fas", "martini-glass-citrus"],
+        ["fas", "ferry"],
+        ["fas", "car"],
+        ["fas", "train-subway"],
+        ["fas", "plane-departure"],
+        ["fas", "hotel"],
+        ["fas", "school"],
+        ["fas", "building"],
+        ["fas", "umbrella-beach"],
+        ["fas", "gas-pump"],
+        ["fas", "shirt"],
+        ["fas", "film"],
+        ["fas", "ticket"],
+        ["fas", "gamepad"],
+        ["fas", "mobile"],
+        ["fas", "tv"],
+        ["fas", "headphones-simple"],
+        ["fas", "microphone"],
+        ["fas", "video"],
+        ["fas", "camera-retro"],
+        ["fas", "music"],
+        ["fas", "futbol"],
+        ["fas", "person-swimming"],
+        ["fas", "basketball"],
+        ["fas", "bicycle"],
+        ["fab", "youtube"],
+        ["fab", "twitch"],
+        ["fab", "steam"],
+        ["fab", "spotify"],
+        ["fab", "apple"],
+        ["fab", "android"],
+        ["fab", "xbox"],
+        ["fab", "playstation"],
+        ["fab", "docker"],
+        ["fab", "linux"],
+        ["fab", "gitlab"],
+        ["fab", "github"],
       ],
     };
   },
@@ -250,18 +299,26 @@ export default {
       return `+ ${formatter.format(this.income.amount)}`;
     },
     formattedCategories() {
-      return this.income.categories ? this.income.categories.join(", ") : "No categories";
+      return this.income.categories
+        ? this.income.categories.join(", ")
+        : "No categories";
     },
     formattedDate() {
       // Data format year-MONTH-day
       const date = new Date(this.income.date);
       const day = String(date.getDate()).padStart(2, "0");
-      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
+      const month = date
+        .toLocaleString("en-US", { month: "short" })
+        .toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return this.editIncome.categories && this.editIncome.categories.length > 0 && this.editIncome.icon;
+      return (
+        this.editIncome.categories &&
+        this.editIncome.categories.length > 0 &&
+        this.editIncome.icon
+      );
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -273,7 +330,7 @@ export default {
       this.editIncome = {
         ...this.income,
         categories: [...this.income.categories],
-        date: this.formatDateForInput(this.income.date) // Format the date for input
+        date: this.formatDateForInput(this.income.date), // Format the date for input
       };
     },
     cancelEdit() {
@@ -290,8 +347,8 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     parseIcon(iconString) {
-      if (typeof iconString === 'string') {
-        return iconString.split(' ');
+      if (typeof iconString === "string") {
+        return iconString.split(" ");
       }
       return iconString;
     },
@@ -304,14 +361,16 @@ export default {
 
       if (isAmountValid && isDescriptionValid && isDateValid) {
         // Convert icon array to string
-        const iconString = Array.isArray(this.editIncome.icon) ? this.editIncome.icon.join(' ') : this.editIncome.icon;
+        const iconString = Array.isArray(this.editIncome.icon)
+          ? this.editIncome.icon.join(" ")
+          : this.editIncome.icon;
         const incomeData = {
           ...this.editIncome,
           categories: [...this.editIncome.categories],
-          icon: iconString
+          icon: iconString,
         };
-        
-        this.$emit('updateIncome', incomeData);
+
+        this.$emit("updateIncome", incomeData);
         this.isEditing = false;
         this.fetchCategories();
       }
@@ -387,7 +446,8 @@ export default {
     validateTextField(field) {
       this[`${field}Error`] = "";
       if (!this.editIncome[field]) {
-        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] =
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editIncome[field].length > 180) {
@@ -409,8 +469,8 @@ export default {
     },
     formatDateForInput(date) {
       const d = new Date(date);
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
       const year = d.getFullYear();
       return `${year}-${month}-${day}`;
     },
@@ -426,502 +486,512 @@ export default {
 
 <style scoped>
 .income-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-    background: #25262B;
-    border: 2px solid white;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    box-shadow: -2px 0 8px  rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: #25262b;
+  border: 2px solid white;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  box-shadow: -2px 0 8px rgba(255, 255, 255, 0.1);
 }
 
 .income-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    background: #25262B;
-    border: 2px solid white;
-    margin-right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: #25262b;
+  border: 2px solid white;
+  margin-right: 14px;
 }
 
 .row-icon {
-    font-size: 40px;
-    color: white;
+  font-size: 40px;
+  color: white;
 }
 
 .income-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
 }
 
-.income-details h4, .income-description {
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 420px;
-    margin-left: 10px;
+.income-details h4,
+.income-description {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+  margin-left: 10px;
 }
 
 .income-details h4 {
-    font-size: 22px;
-    color: #20C171;
-    font-weight: bold;
+  font-size: 22px;
+  color: #20c171;
+  font-weight: bold;
 }
 
 .income-description {
-    color: white;
-    font-weight: bold;
-    font-size: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .income-date {
-    color: #BF9F00;
-    font-weight: bold;
-    font-size: 18px;
-    margin-left: 10px;
-    white-space: nowrap;
+  color: #bf9f00;
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: 10px;
+  white-space: nowrap;
 }
 
 .income-amount-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-left: 25px;
-    margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 25px;
+  margin-top: 5px;
 }
 
 .income-amount {
-    font-weight: bold;
-    color: #20C171;
-    font-size: 20px;
-    flex-shrink: 0;
+  font-weight: bold;
+  color: #20c171;
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
 .income-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-.edit-button, .delete-button {
-    border-radius: 10px;
-    cursor: pointer;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    transition: transform 0.2s, background-color 0.2s;
+.edit-button,
+.delete-button {
+  border-radius: 10px;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
 }
 
 .edit-button {
-    background-color: white;
+  background-color: white;
 }
 
 .edit-button:hover {
-    transform: scale(1.1);
-    background-color: #F2F2F2;
+  transform: scale(1.1);
+  background-color: #f2f2f2;
 }
 
 .delete-button {
-    background-color: #D55C5C;
-    color: white;
+  background-color: #d55c5c;
+  color: white;
 }
 
 .delete-button:hover {
-    transform: scale(1.1);
-    background-color: darkred;
+  transform: scale(1.1);
+  background-color: darkred;
 }
 
 .edit-icon {
-    font-size: 20px;
-    color: #25262B;
+  font-size: 20px;
+  color: #25262b;
 }
 
 .trash-icon {
-    font-size: 20px;
-    color: white;
+  font-size: 20px;
+  color: white;
 }
 
 .edit-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #25262B;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    width: 600px;
-    z-index: 1000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #25262b;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  width: 600px;
+  z-index: 1000;
 }
 
 .popup-content {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
 }
 
 .forms-content {
-    max-height: calc(80vh - 200px);
-    padding: 10px;
-    margin-bottom: 10px;
-    overflow-y: auto;
+  max-height: calc(80vh - 200px);
+  padding: 10px;
+  margin-bottom: 10px;
+  overflow-y: auto;
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(59, 59, 90, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(59, 59, 90, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
 }
 
 .edit-title {
-    font-size: 32px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-    font-family: "Wix Madefor Display", sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 24px;
-    color: white;
-    text-align: left;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 24px;
+  color: white;
+  text-align: left;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-    width: 93%;
-    padding: 20px;
-    margin-top: 10px;
-    margin-bottom: 2px;
-    border: none;
-    outline: none;
-    color: white;
-    font-size: 18px;
-    background-color: #25262B;
-    border-radius: 4px;
-    border: 2px solid white;
-    transition: background-color 0.3s, border-color 0.3s;
-    font-family: "Wix Madefor Display", sans-serif;
+  width: 93%;
+  padding: 20px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 18px;
+  background-color: #25262b;
+  border-radius: 4px;
+  border: 2px solid white;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input::placeholder {
-    color: white;
-    font-size: 16px;
+  color: white;
+  font-size: 16px;
 }
 
 .input-error {
-    border-color: #D55C5C;
-    outline: none;
+  border-color: #d55c5c;
+  outline: none;
 }
 
 .input-valid {
-    outline: none;
+  outline: none;
 }
 
 input[type="date"] {
-    color: white;
-    font-size: 16px;
-    font-family: "Wix Madefor Display", sans-serif;
+  color: white;
+  font-size: 16px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-    color: white;
-    cursor: pointer;
+  color: white;
+  cursor: pointer;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator:hover {
-    color: white;
+  color: white;
 }
 
 .error-message {
-    color: #D55C5C;
-    font-size: 16px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    text-align: left;
+  color: #d55c5c;
+  font-size: 16px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: left;
 }
 
 .buttons-group {
-    display: flex;
-    gap: 10px;
-    justify-content: space-between;
-    margin-top: 5px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 5px;
 }
 
 .cancel-button {
-    background-color: #25262B;
-    color: white;
-    border: 2px solid white;
-    padding: 15px 35px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: "Wix Madefor Display", sans-serif;
+  background-color: #25262b;
+  color: white;
+  border: 2px solid white;
+  padding: 15px 35px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .submit-button {
-    background-color: white;
-    color: #25262B;
-    border: none;
-    padding: 15px 35px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: "Wix Madefor Display", sans-serif;
+  background-color: white;
+  color: #25262b;
+  border: none;
+  padding: 15px 35px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-button:hover {
-    background-color: #333;
+  background-color: #333;
 }
 
 .submit-button:hover {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 .categories-wrapper {
-    position: relative;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    font-family: "Wix Madefor Display", sans-serif;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .categories-select {
-    padding: 15px 30px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: 85px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #25262B;
-    background-color: white;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s;
+  padding: 15px 30px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 85px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #25262b;
+  background-color: white;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
 }
 
 .categories-select:hover {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 .dropdown-icon {
-    width: 16px;
-    height: 16px;
-    margin-left: 16px;
-    transform: translateY(-3px);
-    color: #25262B;
+  width: 16px;
+  height: 16px;
+  margin-left: 16px;
+  transform: translateY(-3px);
+  color: #25262b;
 }
 
 .categories-dropdown {
-    position: absolute;
-    top: 80%;
-    left: 0;
-    right: 0;
-    border: 1px solid #3F4049;
-    border-radius: 12px;
-    background-color: #404149;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 0;
-    list-style: none;
-    z-index: 1000;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 160px;
-    max-width: 250px;
-    animation: fadeIn 0.2s ease-out;
+  position: absolute;
+  top: 80%;
+  left: 0;
+  right: 0;
+  border: 1px solid #3f4049;
+  border-radius: 12px;
+  background-color: #404149;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  list-style: none;
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 160px;
+  max-width: 250px;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .categories-dropdown li {
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    text-align: left;
-    color: white;
-    font-weight: bold;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  text-align: left;
+  color: white;
+  font-weight: bold;
 }
 
 .categories-dropdown li:hover {
-    background-color: white;
-    border-radius: 12px;
-    color: #25262B;
-    font-weight: bold;
+  background-color: white;
+  border-radius: 12px;
+  color: #25262b;
+  font-weight: bold;
 }
 
 .selected-categories {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    gap: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 5px;
 }
 
 .tag {
-    display: flex;
-    align-items: center;
-    border-radius: 16px;
-    padding: 8px 20px;
-    font-weight: bold;
-    color: #25262B;
-    background-color: white;
-    border: 1px solid white;
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  padding: 8px 20px;
+  font-weight: bold;
+  color: #25262b;
+  background-color: white;
+  border: 1px solid white;
 }
 
 .close-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-top: 2px;
-    margin-right: -15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 2px;
+  margin-right: -15px;
 }
 
 .close-button .gg-close {
-    font-size: 18px;
-    color: #25262B;
+  font-size: 18px;
+  color: #25262b;
 }
 
 .new-category-dialog {
-    position: fixed;
-    background: white;
-    border: 1px solid white;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1100;
-    width: 400px;
-    height: 230px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: fixed;
+  background: white;
+  border: 1px solid white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1100;
+  width: 400px;
+  height: 230px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .new-category-dialog h4 {
-    margin-top: 15px;
-    font-size: 22px;
-    color: #25262B;
-    font-family: "Wix Madefor Display", sans-serif;
+  margin-top: 15px;
+  font-size: 22px;
+  color: #25262b;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input {
-    width: 90%;
-    padding: 14px;
-    margin-bottom: 2px;
-    border: none;
-    outline: none;
-    color: #25262B;
-    font-size: 18px;
-    background-color: white;
-    border-radius: 4px;
-    border: 2px solid #25262B;
-    transition: background-color 0.3s, border-color 0.3s;
-    font-family: "Wix Madefor Display", sans-serif;
+  width: 90%;
+  padding: 14px;
+  margin-bottom: 2px;
+  border: none;
+  outline: none;
+  color: #25262b;
+  font-size: 18px;
+  background-color: white;
+  border-radius: 4px;
+  border: 2px solid #25262b;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-    color: #25262B;
+  color: #25262b;
 }
 
 .new-category-dialog .button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
 }
 
 .cancel-category,
 .accept-category {
-    padding: 15px 30px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: "Wix Madefor Display", sans-serif;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-category {
-    background-color: #25262B;
-    color: white;
+  background-color: #25262b;
+  color: white;
 }
 
 .accept-category {
-    background-color: white;
-    color: #25262B;
-    border: 2px solid #25262B;
+  background-color: white;
+  color: #25262b;
+  border: 2px solid #25262b;
 }
 
 .submit-button:disabled,
 .accept-category:disabled {
-    background-color: #f8f9fa;
-    cursor: not-allowed;
-    opacity: 0.7;
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .date-label {
-    display: block;
-    margin-bottom: 5px;
-    margin-top: 15px;
-    font-weight: bold;
-    color: white;
-    text-align: left;
-    font-family: "Wix Madefor Display", sans-serif;
+  display: block;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  font-weight: bold;
+  color: white;
+  text-align: left;
+  font-family: "Wix Madefor Display", sans-serif;
 }
 
 .date-container {
-    left: 0px;
-    position: relative;
-    display: inline-block;
-    width: 100%; 
+  left: 0px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
 
 .birth-icon {
-    position: absolute;
-    right: 23px;
-    top: 50%;
-    transform: translateY(-30%);
-    color: white;
-    pointer-events: none;
+  position: absolute;
+  right: 23px;
+  top: 50%;
+  transform: translateY(-30%);
+  color: white;
+  pointer-events: none;
 }
 
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
-    opacity: 0;
-    cursor: pointer;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .icons-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .selected-text {
-    font-size: 20px;
-    color: white;
+  font-size: 20px;
+  color: white;
 }
 .selected-icon {
-    font-size: 36px;
-    color: white;
+  font-size: 36px;
+  color: white;
 }
 </style>
