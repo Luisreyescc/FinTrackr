@@ -72,7 +72,7 @@
       v-model="recoveryCode"
       type="text"
       id="recovery-code"
-      placeholder="Recovery code"
+      placeholder="Verification code"
       :class="{ 'input-error': keyError, 'padded-input': true }"
       @input="clearError('recoveryCode')" />
     <span v-if="keyError" class="error-message">{{ keyError }}</span>
