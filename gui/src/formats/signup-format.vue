@@ -127,7 +127,7 @@ export default {
   methods: {
     clearError(field) {
       if (field === 'username')
-	this.usernameError = '';
+  this.usernameError = '';
       if (field === 'email')
 	this.emailError = '';
       if (field === 'password')
@@ -156,28 +156,28 @@ export default {
 	this.passwordError = 'Passwords don\'t match';
 	this.confirmPasswordError = 'Passwords don\'t match';
       }
-      if (!this.usernameError && !this.emailError) {
-    try {
-      const response = await axios.post("http://localhost:8000/api/check-availability/", {
-        user_name: this.username,
-        email: this.email
-      });
-      
-      if (response.status === 200) {
-	this.$emit('sendCode', { username: this.username, email: this.email });
-	this.currentStep = 2; // Next state of the page, validate key code
-      }
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.error) {
-        if (error.response.data.error.includes("Username")) {
-          this.usernameError = error.response.data.error;
-        } else if (error.response.data.error.includes("Email")) {
-          this.emailError = error.response.data.error;
+      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
+        try {
+          const response = await axios.post("http://localhost:8000/api/check-availability/", {
+            user_name: this.username,
+            email: this.email
+          });
+          
+          if (response.status === 200) {
+            this.$emit('sendCode', { username: this.username, email: this.email });
+            this.currentStep = 2; // Next state of the page, validate key code
+          }
+        } catch (error) {
+          if (error.response && error.response.data && error.response.data.error) {
+            if (error.response.data.error.includes("Username")) {
+              this.usernameError = error.response.data.error;
+            } else if (error.response.data.error.includes("Email")) {
+              this.emailError = error.response.data.error;
+            }
+          } else {
+            this.$emit('addMessage', "There was an issue checking availability. Please try again.", "error");
+          }
         }
-      } else {
-        this.$emit('addMessage', "There was an issue checking availability. Please try again.", "error");
-      }
-    }
       }
     },
     validateCode() {
