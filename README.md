@@ -30,7 +30,7 @@ FinTrackr is a web application designed to help users manage their personal fina
 - **Backend**: [Django](https://www.djangoproject.com/).
 - **Database**: [MySQL](https://www.mysql.com/).
 - **PDF Generation**: Programmatic PDF generation using [ReportLab](https://www.reportlab.com/opensource/).
-- **Password Recovery**: Secure password recovery process through email verification.
+- **Email Service**: Django SMTP email integration for sending recovery codes and periodic reports.
 - **Docker**: Containerization using [Docker](https://www.docker.com/) for easy setup and deployment.
 
 ## Installation
