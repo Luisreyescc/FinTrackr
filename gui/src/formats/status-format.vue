@@ -67,7 +67,7 @@
       
     <div v-if="selectedContent === 'Categories'" class="section">
       <div class="header">
-        <h2 class="section-title">Pie Charts</h2>
+        <h2 class="section-title">Categories Charts Incomes/Expenses </h2>
         <div class="section-filter">
           <h3>Status date:</h3>
           <input id="end-date" type="date" class="date-input" v-model="selectedDate"/>

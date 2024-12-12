@@ -26,7 +26,7 @@
       <button @click="selectOption('Account')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-area']" class="icon a"/>Account Status</button>
       <button @click="selectOption('Categories')" class="menu-option">
-	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Pie Charts</button>
+	<font-awesome-icon :icon="['fas', 'chart-pie']" class="icon a"/>Donut Charts</button>
     </div>
 
     <div v-if="currentPage === 'History'" class="menuI-options">

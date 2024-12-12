@@ -350,6 +350,7 @@ span {
     display: block;
     font-weight: bold;
     font-size: 24px;
+    margin-bottom: 20px;
     color: white;
     text-align: right;
     font-family: "Wix Madefor Display", sans-serif;

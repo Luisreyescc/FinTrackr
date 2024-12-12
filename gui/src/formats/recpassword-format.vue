@@ -51,13 +51,12 @@
 	:type="showPassword ? 'text' : 'password'"
 	id="password"
 	placeholder="New password"
-	:class="{ 'input-error': passwordError, 'padded-input': true }"
+	:class="{ 'input-error': passwordError }"
 	@input="clearError('password')"/>
       <button
 	type="button" 
 	class="show-password-btn" 
-	@click="togglePasswordVisibility"
-	aria-label="Show or Hide Password">
+	@click="togglePasswordVisibility">
 	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
       </button>
     </div>
@@ -69,23 +68,22 @@
 	:type="showConfirmPassword ? 'text': 'password'"
 	id="password2"
 	placeholder="Confirm new password"
-	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
+	:class="{ 'input-error': confirmPasswordError }"
 	@input="clearError('password2')"/>
       <button 
 	type="button" 
 	class="show-password-btn" 
-	@click="toggleConfirmPasswordVisibility"
-	aria-label="Show or Hide Confirm Password">
+	@click="toggleConfirmPasswordVisibility">
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
       </button>
     </div>
     <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-      <button class="change-password-btn" @click="changePassword">Change Password</button>
+    <button class="change-password-btn" @click="changePassword">Change Password</button>
   </div>
 
   <div class="return-login">
     <div class="divider">
-	<span>or return to</span>
+      <span>or return to</span>
     </div>
     <button class="login-btn" @click="$emit('goToLogin')">Log-in</button>
   </div>
@@ -101,7 +99,7 @@ export default {
   components: { FontAwesomeIcon },
   data() {
     return {
-      currentStep: 1,
+      currentStep: 3,
       username: "",
       email: "",
       recoveryCode: "",
@@ -196,7 +194,7 @@ export default {
     resendCode() {
       this.$emit('sendCode', { username: this.username, email: this.email });
     }
-}
+  }
 };
 </script>
 
@@ -246,8 +244,7 @@ input {
 }
 
 .username-container,
-.email-container,
-.password-container {
+.email-container {
     position: relative;
     width: 130%;
     color: white;
@@ -267,8 +264,7 @@ input {
 
 .username-container input,
 .email-container input,
-.recovery-container input,
-.password-container input{
+.recovery-container input {
     color: white;
     font-size: 18px;
     font-family: "Wix Madefor Display", sans-serif;
@@ -303,17 +299,6 @@ input {
     pointer-events: none;
 }
 
-.show-password-btn {
-    position: absolute;
-    left: 50px;
-    top: -10%;
-    background: none;
-    border: none;
-    color:white;
-    cursor: pointer;
-    font-size: 20px;
-}
-
 .padded-input {
     padding-left: 40px;
 }
@@ -341,9 +326,8 @@ button {
     font-family: "Wix Madefor Display", sans-serif;
 }
 
-
 .change-password-btn {
-    padding: 15px 30px;
+    padding: 15px 20px;
     border-radius: 3px;
     background-color: #BF9F00;
     border: 2px solid #BF9F00;
@@ -430,5 +414,41 @@ button {
 
 button:hover {
   opacity: 0.9;
+}
+
+.password-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    width: 100%;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.password-container input {
+    flex: 1;
+    padding-left: 40px;
+    padding-right: 40px;
+    color: white;
+    font-size: 18px;
+    font-family: "Wix Madefor Display", sans-serif;
+}
+
+.show-password-btn {
+    position: absolute;
+    left: 5px;
+    top: 2%;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+    width: auto; 
+    height: auto;
+    line-height: 1; 
 }
 </style>

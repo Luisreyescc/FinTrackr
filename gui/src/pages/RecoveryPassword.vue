@@ -55,7 +55,7 @@ export default {
           { headers: { "Content-Type": "application/json" } }
         );
         if (response.status === 200) {
-          this.addMessage("Recovery code sent successfully!", "success");
+          this.addMessage("Recovery code sent successfully to your email adress!", "success");
           this.currentStep = 2;
           this.username = username;
         }

@@ -283,6 +283,7 @@ input {
 .password-container {
     left: -170px;
 }
+
 .username-container input,
 .email-container input,
 .password-container input{

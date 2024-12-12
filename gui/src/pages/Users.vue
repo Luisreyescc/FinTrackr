@@ -64,6 +64,7 @@ export default {
       this.isSidebarVisible = false;
     },
     async fetchUsers() {
+      this.filteredUsers = this.users;
       try {
         this.loadingUsers = true;
         const response = await axios.get("http://localhost:8000/api/admin/financial-summary/", {
