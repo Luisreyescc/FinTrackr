@@ -33,6 +33,7 @@
 
 <script>
 import axios from 'axios';
+import moment from 'moment';
 import UsersHeader from '@/components/users-header.vue';
 import UserRow from '@/components/user-row.vue';
 import SideBar from '@/components/side-bar.vue';
@@ -50,10 +51,69 @@ export default {
       isSidebarVisible: false,
       selectedContent: 'UsersManagment',
       users: [],
-      filteredUsers: [],
       searchQuery: '',
       loadingUsers: false
     };
+  },
+  computed: {
+    filteredUsers() {
+      let users = this.users;
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [query, query];
+
+        if (filterValue) {
+          if (filterType === 'network ==') {
+            users = users.filter(user => user.network.toString().startsWith(filterValue));
+          } else if (filterType === 'network >=') {
+            const network = parseFloat(filterValue);
+            users = users.filter(user => user.network >= network);
+          } else if (filterType === 'network <=') {
+            const network = parseFloat(filterValue);
+            users = users.filter(user => user.network <= network);
+          } else if (filterType === 'birthday') {
+            const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY", "MM", "MMM"];
+            users = users.filter(user => {
+              return dateFormats.some(format => {
+                const userBirthDate = moment(user.birth_date, "YYYY-MM-DD");
+                const filterDate = moment(filterValue, format);
+                if (filterValue.length === 2 || filterValue.length === 3) {
+                  return userBirthDate.isSame(filterDate, 'month');
+                } else if (filterValue.length === 4) {
+                  return userBirthDate.isSame(filterDate, 'year');
+                } else if (filterValue.length === 7 || filterValue.length === 8) {
+                  return userBirthDate.isSame(filterDate, 'month');
+                } else {
+                  return userBirthDate.isSame(filterDate, 'day');
+                }
+              });
+            });
+          } else if (filterType === 'username') {
+            users = users.filter(user => user.user_name.toLowerCase().includes(filterValue.toLowerCase()));
+          } else if (filterType === 'full name') {
+            users = users.filter(user => {
+              const fullName = `${user.name} ${user.last_name}`.toLowerCase();
+              return fullName.includes(filterValue.toLowerCase());
+            });
+          } else {
+            // Global search
+            const network = parseFloat(filterValue);
+            users = users.filter(user => {
+              const fullName = `${user.name} ${user.last_name}`.toLowerCase();
+              return (
+                user.user_name.toLowerCase().includes(filterValue) ||
+                user.email.toLowerCase().includes(filterValue) ||
+                fullName.includes(filterValue) ||
+                (!isNaN(network) && user.network === network)
+              );
+            });
+          }
+        }
+      }
+
+      return users;
+    }
   },
   methods: {
     toggleSidebar() {
@@ -64,37 +124,23 @@ export default {
       this.isSidebarVisible = false;
     },
     async fetchUsers() {
-      this.filteredUsers = this.users;
       try {
         this.loadingUsers = true;
         const response = await axios.get("http://localhost:8000/api/admin/financial-summary/", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         this.users = response.data;
-        this.filteredUsers = this.users;
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
         this.loadingUsers = false;
       }
     },
-    searchUsers(query) {
-      this.searchQuery = query;
-      this.filteredUsers = this.users.filter(user => 
-        user.user_name.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase())
-      );
-    },
-    resetFilters() {
-      this.searchQuery = '';
-      this.filteredUsers = this.users;
-    },
     handleResetClick() {
-      this.resetFilters();
+      this.searchQuery = "";
     },
     handleSearch(query) {
       this.searchQuery = query;
-      this.searchUsers(query);
     }
   },
   created() {

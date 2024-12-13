@@ -6,7 +6,7 @@
   </div>
   
   <FilterDropdown
-    :filterOptions="['Username:', 'Network ==', 'Birthday:', 'Full Name:', 'Network >=', 'Network <=']"
+    :filterOptions="['Username:', 'Network ==:', 'Birthday:', 'Full Name:', 'Network >=:', 'Network <=:']"
     :currentFilter="currentFilter"
     @filterSelected="applyFilter"/>
   

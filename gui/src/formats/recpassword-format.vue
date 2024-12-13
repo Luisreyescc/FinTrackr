@@ -101,7 +101,7 @@ export default {
   components: { FontAwesomeIcon },
   data() {
     return {
-      currentStep: 3,
+      currentStep: 1,
       username: "",
       email: "",
       recoveryCode: "",
