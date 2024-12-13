@@ -2,7 +2,7 @@ import random
 import time
 import pytz
 from io import BytesIO
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 from threading import Event, Thread
 
@@ -263,24 +263,35 @@ class IncomeExpensePDFView(APIView):
         return interval * units_in_seconds.get(unit, 1)
     
     def generate_pdf(self, user_id):
+        # Calculate the start and end date for the last month
+        now = datetime.now()
+        one_month_ago = now - timedelta(days=30)
+
         user = Users.objects.get(pk=user_id)
-        # Fetch incomes and expenses with categories
-        incomes = Incomes.objects.filter(user = user)
+
+        # Fetch incomes and expenses with categories for the last month
+        incomes = Incomes.objects.filter(user = user, date__gte=one_month_ago)
         serialized_incomes = IncomeSerializer(incomes, many=True).data
 
-        expenses = Expenses.objects.filter(user=user)
+        expenses = Expenses.objects.filter(user=user, date__gte=one_month_ago)
         serialized_expenses = ExpenseSerializer(expenses, many=True).data 
+
+        # Calculate the sum of all incomes manually
+        total_income = sum(float(income["amount"]) for income in serialized_incomes)
+
+        # Calculate the sum of all expenses manually
+        total_expense = sum(float(expense["amount"]) for expense in serialized_expenses)
 
         # Aggregated data for line charts
         incomes_grouped_by_date = (
-            Incomes.objects.filter(user=user)
+            Incomes.objects.filter(user=user, date__gte=one_month_ago)
             .values("date")
             .annotate(total_amount=Sum("amount"))
             .order_by("date")
         )
 
         expenses_grouped_by_date = (
-            Expenses.objects.filter(user=user)
+            Expenses.objects.filter(user=user, date__gte=one_month_ago)
             .values("date")
             .annotate(total_amount=Sum("amount"))
             .order_by("date")
@@ -292,30 +303,70 @@ class IncomeExpensePDFView(APIView):
         income_pie_data = defaultdict(float)  # Default to 0 for aggregation
         expense_pie_data = defaultdict(float)
 
-        # Process incomes
-        for income in serialized_incomes:
-            categories = income["categories"] or ["Uncategorized"]  
-            categories = sorted(categories)
-            concatenated_categories = ", ".join(categories)
+        if serialized_incomes: 
+            # Process incomes
+            for income in serialized_incomes:
+                categories = income["categories"] or ["Uncategorized"]  
+                categories = sorted(categories)
+                concatenated_categories = ", ".join(categories)
 
-            #update data
-            income_table_data.append([income["date"], concatenated_categories, float(income["amount"])])
-            income_pie_data[concatenated_categories] += float(income["amount"])
-
-        # Process expenses, i threat the expenses categories as a single string
-        for expense in serialized_expenses:
-            categories = expense["categories"] or ["Uncategorized"]  
-            categories = sorted(categories)
-            concatenated_categories = ", ".join(categories)
-
-            #updating data
-            expense_table_data.append([expense["date"], concatenated_categories, float(expense["amount"])])
-            expense_pie_data[concatenated_categories] += float(expense["amount"])
+                #update data
+                income_table_data.append([income["date"], concatenated_categories, float(income["amount"])])
+                income_pie_data[concatenated_categories] += float(income["amount"])
         
+        else:
+            income_table_data.append(["No data available", "-", "-"])
+
+        if serialized_expenses:
+            # Process expenses, i threat the expenses categories as a single string
+            for expense in serialized_expenses:
+                categories = expense["categories"] or ["Uncategorized"]  
+                categories = sorted(categories)
+                concatenated_categories = ", ".join(categories)
+
+                #updating data
+                expense_table_data.append([expense["date"], concatenated_categories, float(expense["amount"])])
+                expense_pie_data[concatenated_categories] += float(expense["amount"])
+        
+        else:
+            expense_table_data.append(["No data available", "-", "-"])
 
         # Prepare line chart data
-        income_line_data = [(income["date"].toordinal(), float(income["total_amount"])) for income in incomes_grouped_by_date]
-        expense_line_data = [(expense["date"].toordinal(), float(expense["total_amount"])) for expense in expenses_grouped_by_date]
+        income_line_data = []
+        for income in incomes_grouped_by_date:
+            try:
+                date_ordinal = income["date"].toordinal()
+                income_line_data.append((date_ordinal, float(income["total_amount"])))
+            except (ValueError, TypeError):
+                continue  # Skip invalid or missing dates
+
+        expense_line_data = []
+        for expense in expenses_grouped_by_date:
+            try:
+                date_ordinal = expense["date"].toordinal()
+                expense_line_data.append((date_ordinal, float(expense["total_amount"])))
+            except (ValueError, TypeError):
+                continue  # Skip invalid or missing dates
+
+        # Handle empty line data
+        if not income_line_data:
+            income_line_data = [(datetime.now().toordinal(), 0.1)]  
+
+        if not expense_line_data:
+            expense_line_data = [(datetime.now().toordinal(), 0.1)]  
+
+        # Handle single-point data
+        if len(income_line_data) == 1:
+            single_point = income_line_data[0]
+            income_line_data.append((single_point[0] + 1, single_point[1]))  # Add a dummy point
+
+        if len(expense_line_data) == 1:
+            single_point = expense_line_data[0]
+            expense_line_data.append((single_point[0] + 1, single_point[1]))  # Add a dummy point
+
+        # Debug output
+        print("Final Income Line Data:", income_line_data)
+        print("Final Expense Line Data:", expense_line_data)
 
         # Create the PDF response
         response = HttpResponse(content_type="application/pdf")
@@ -431,6 +482,38 @@ class IncomeExpensePDFView(APIView):
 
         # Append the table to the elements
         elements.append(chart_table)
+        elements.append(Spacer(1, 0.5 * inch))
+        elements.append(Spacer(1, 0.5 * inch))
+        
+        # Create tables for total incomes, total expenses, and balance
+        total_income_table = Table([[f"Total incomes: {total_income}"]], colWidths=[500])  # Set table width explicitly
+        total_income_table.setStyle(
+            TableStyle([
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),  # Align content to the left
+                ("TEXTCOLOR", (0, 0), (-1, -1), colors.black)  # Optional: Set text color
+            ])
+        )
+
+        total_expense_table = Table([[f"Total expenses: {total_expense}"]], colWidths=[500])
+        total_expense_table.setStyle(
+            TableStyle([
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("TEXTCOLOR", (0, 0), (-1, -1), colors.black)
+            ])
+        )
+
+        balance_table = Table([[f"Balance: {total_income - total_expense}"]], colWidths=[500])
+        balance_table.setStyle(
+            TableStyle([
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("TEXTCOLOR", (0, 0), (-1, -1), colors.black)
+            ])
+        )
+
+        # Add tables to elements
+        elements.append(total_income_table)
+        elements.append(total_expense_table)
+        elements.append(balance_table)
 
         # Build and return the PDF
         doc.build(elements)
@@ -442,7 +525,7 @@ class IncomeExpensePDFView(APIView):
         
 
         while not stop_event.is_set():
-            now = datetime.now(pytz.timezone('America/Mexico_City')) # aqui agregamos lo de la hora. y el dia
+            now = datetime.now(pytz.timezone('America/Mexico_City'))  # Here we fix the hour and the date for our country;
             
             if (now.month in months and now.day == day and now.hour == hour and now.minute == minute and now.second == 00) or (first == 0):
                 first = 1
