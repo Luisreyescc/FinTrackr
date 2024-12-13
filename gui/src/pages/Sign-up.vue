@@ -53,7 +53,7 @@ export default {
                                           requestData,
                                           { headers: { "Content-Type": "application/json" }});
         if (response.status === 200) {
-          this.addMessage("Recovery code sent successfully!", "success");
+          this.addMessage("Verification code sent successfully to your email address!", "success");
           this.currentStep = 2;
           this.username = username;
         }
@@ -68,7 +68,7 @@ export default {
                                           requestData,
                                           { headers: { "Content-Type": "application/json" }});
         if (response.status === 200) {
-          this.addMessage("Code validated successfully to your email address!", "success");
+          this.addMessage("Code validated successfully!", "success");
           callback(true);
         }
       } catch (error) {

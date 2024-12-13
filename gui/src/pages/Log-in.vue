@@ -57,7 +57,7 @@ export default {
             this.addMessage("Invalid username or password. Please try again.", "error");
         } catch (error) {
           console.error("Login failed:", error);
-          this.addMessage("Login failed. Please try again.", "error");
+          this.addMessage("Password or Email incorrect. Please try again.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");
