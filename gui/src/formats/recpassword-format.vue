@@ -51,12 +51,13 @@
 	:type="showPassword ? 'text' : 'password'"
 	id="password"
 	placeholder="New password"
-	:class="{ 'input-error': passwordError }"
+	:class="{ 'input-error': passwordError, 'padded-input': true }"
 	@input="clearError('password')"/>
       <button
 	type="button" 
 	class="show-password-btn" 
-	@click="togglePasswordVisibility">
+	@click="togglePasswordVisibility"
+	aria-label="Show or Hide Password">
 	<span :class="{ 'gg-eye': true, 'gg-eye-alt': showPassword }"></span>
       </button>
     </div>
@@ -68,12 +69,13 @@
 	:type="showConfirmPassword ? 'text': 'password'"
 	id="password2"
 	placeholder="Confirm new password"
-	:class="{ 'input-error': confirmPasswordError }"
+	:class="{ 'input-error': confirmPasswordError, 'padded-input': true }"
 	@input="clearError('password2')"/>
       <button 
 	type="button" 
 	class="show-password-btn" 
-	@click="toggleConfirmPasswordVisibility">
+	@click="toggleConfirmPasswordVisibility"
+	aria-label="Show or Hide Confirm Password">
       <span :class="{ 'gg-eye': true, 'gg-eye-alt': showConfirmPassword }"></span>
       </button>
     </div>
@@ -99,7 +101,7 @@ export default {
   components: { FontAwesomeIcon },
   data() {
     return {
-      currentStep: 1,
+      currentStep: 3,
       username: "",
       email: "",
       recoveryCode: "",
@@ -111,6 +113,8 @@ export default {
       keyError: "",
       passwordError: "",
       confirmPasswordError: "",
+      showPassword: false,
+      showConfirmPassword: false,
     };
   },
   methods: {
@@ -449,6 +453,5 @@ button:hover {
     padding: 0;
     width: auto; 
     height: auto;
-    line-height: 1; 
 }
 </style>
