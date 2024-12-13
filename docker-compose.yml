@@ -15,6 +15,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - DEBUG=1
+    command: /bin/sh -c "python /app/fintrackr/manage.py migrate && python /app/fintrackr/manage.py runserver 0.0.0.0:8000"
 
   frontend:
     build:
