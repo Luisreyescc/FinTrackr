@@ -90,8 +90,7 @@ export default {
 
         if (filterValue) {
           if (filterType === 'amount ==') {
-            const amount = parseFloat(filterValue);
-            events = events.filter(event => Math.abs(event.amount) === amount);
+            events = events.filter(event => event.amount.toString().startsWith(filterValue));
           } else if (filterType === 'amount >=') {
             const amount = parseFloat(filterValue);
             events = events.filter(event => event.amount >= amount);
