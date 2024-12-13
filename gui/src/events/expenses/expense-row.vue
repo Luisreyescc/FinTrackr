@@ -1,7 +1,7 @@
 <template>
   <div class="expense-row">
     <div class="expense-icon">
-      <font-awesome-icon :icon="parseIcon(expense.icon)" class="row-icon" />
+      <font-awesome-icon :icon="parseIcon(expense.icon)" class="row-icon"/>
     </div>
     <div class="expense-details">
       <h4>{{ formattedCategories }}</h4>
@@ -12,13 +12,10 @@
       <span class="expense-amount">{{ formattedAmount }}</span>
       <div class="expense-actions">
         <button class="edit-button" @click="startEdit">
-          <font-awesome-icon
-            :icon="['fas', 'pen-to-square']"
-            class="edit-icon"
-          />
+          <font-awesome-icon :icon="['fas', 'pen-to-square']" class="edit-icon"/>
         </button>
         <button class="delete-button" @click="deleteExpense">
-          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon"/>
         </button>
       </div>
     </div>
@@ -35,12 +32,8 @@
             type="text"
             v-model="editExpense.amount"
             @input="validateAmount"
-            :class="{
-              'input-error': amountError,
-              'input-valid': !amountError && editExpense.amount,
-            }"
-            placeholder="Enter amount (e.g., 1000.00)"
-          />
+            :class="{ 'input-error': amountError, 'input-valid': !amountError && editExpense.amount }"
+            placeholder="Enter amount (e.g., 1000.00)"/>
         </label>
         <span v-if="amountError" class="error-message">{{ amountError }}</span>
 
@@ -51,130 +44,73 @@
             v-model="editExpense.description"
             @input="validateTextField('description')"
             :class="{
-              'input-error': descriptionError,
-              'input-valid': !descriptionError && editExpense.description,
-            }"
-            placeholder="Enter a description for the expense"
-          />
+                    'input-error': descriptionError,
+                    'input-valid': !descriptionError && editExpense.description }"
+            placeholder="Enter a description for the expense"/>
         </label>
-        <span v-if="descriptionError" class="error-message">{{
-          descriptionError
-        }}</span>
+        <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
 
         <div class="categories-wrapper">
           <div class="categories-select" @click="toggleDropdown">
             Categories
             <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"
-              />
-              <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
             </span>
           </div>
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li
-              v-else
-              @click="showNewCategoryDialog"
-              style="color: #bf9f00; font-weight: bold"
-            >
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New
-              category
+            <li v-else @click="showNewCategoryDialog" style="color: #bf9f00; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New category
             </li>
-            <li
-              v-for="(category, index) in categoryOptions"
-              :key="index"
-              @click="addCategory(category)"
-            >
+            <li v-for="(category, index) in categoryOptions" :key="index" @click="addCategory(category)">
               {{ category }}
             </li>
           </ul>
 
-          <div
-            v-if="showNewCategory"
-            class="overlay"
-            @click="cancelNewCategory"
-          ></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
-            <input
-              type="text"
-              v-model="newCategory"
-              placeholder="New category"
-              :maxlength="18"
-            />
+            <input type="text" v-model="newCategory" placeholder="New category" :maxlength="18"/>
             <div class="button-group">
-              <button @click="cancelNewCategory" class="cancel-category">
-                Cancel
-              </button>
-              <button
-                @click="acceptNewCategory"
-                class="accept-category"
-                :disabled="!isAcceptEnabled"
-              >
-                Accept
-              </button>
+              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+              <button @click="acceptNewCategory" class="accept-category" :disabled="!isAcceptEnabled">Accept</button>
             </div>
           </div>
         </div>
 
         <div class="selected-categories">
-          <span
-            v-for="(category, index) in editExpense.categories"
-            :key="index"
-            class="tag"
-          >
+          <span v-for="(category, index) in editExpense.categories" :key="index" class="tag">
             {{ category }}
-            <button
-              type="button"
-              @click="removeCategory(index, $event)"
-              class="close-button"
-            >
-              <font-awesome-icon :icon="['fas', 'xmark']" />
+            <button type="button" @click="removeCategory(index, $event)" class="close-button">
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
         </div>
-
+	
         <label class="date-label"> Date: </label>
         <div class="date-container">
-          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']" />
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
           <input
             v-model="editExpense.date"
             type="date"
             @input="validateDate"
             class="custom-date-input"
-            :class="{
-              'input-error': dateError,
-              'input-valid': !dateError && editExpense.date,
-            }"
-          />
+            :class="{ 'input-error': dateError, 'input-valid': !dateError && editExpense.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
         <div class="icons-wrapper">
-          <IconDropdown
-            :iconOptions="iconOptions"
-            :currentIcon="editExpense.icon"
-            @iconSelected="applyIcon"
-          />
+          <IconDropdown :iconOptions="iconOptions" :currentIcon="editExpense.icon" @iconSelected="applyIcon"/>
           <span class="selected-text">Selected Icon: </span>
           <span v-if="editExpense.icon" class="selected-icon">
-            <font-awesome-icon :icon="parseIcon(editExpense.icon)" />
+            <font-awesome-icon :icon="parseIcon(editExpense.icon)"/>
           </span>
         </div>
         <div class="buttons-group">
-          <button type="button" class="cancel-button" @click="cancelEdit">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="submit-button"
-            :disabled="!isSubmitEnabled"
-          >
-            Save
-          </button>
+          <button type="button" class="cancel-button" @click="cancelEdit">Cancel</button>
+          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Save</button>
         </div>
       </form>
     </div>
@@ -189,22 +125,19 @@ import IconDropdown from "@/components/icon-dropdown.vue";
 export default {
   name: "ExpenseRow",
   components: {
-    IconDropdown,
+    IconDropdown
   },
   props: {
     expense: {
       type: Object,
       required: true,
-      default: () => ({ categories: [] }),
+      default: () => ({ categories: [] })
     },
   },
   data() {
     return {
       isEditing: false,
-      editExpense: {
-        ...this.expense,
-        categories: this.expense.categories || [],
-      },
+      editExpense: { ...this.expense, categories: this.expense.categories || [] },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -285,40 +218,29 @@ export default {
         ["fab", "docker"],
         ["fab", "linux"],
         ["fab", "gitlab"],
-        ["fab", "github"],
-      ],
+        ["fab", "github"]
+      ]
     };
   },
   computed: {
     formattedAmount() {
       // This for give the amount format in USD
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      });
+      const formatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
       return `- ${formatter.format(this.expense.amount)}`;
     },
     formattedCategories() {
-      return this.expense.categories
-        ? this.expense.categories.join(", ")
-        : "No categories";
+      return this.expense.categories ? this.expense.categories.join(", ") : "No categories";
     },
     formattedDate() {
       // Data format day-MONTH-year
       const date = new Date(this.expense.date);
       const day = String(date.getDate()).padStart(2, "0");
-      const month = date
-        .toLocaleString("en-US", { month: "short" })
-        .toUpperCase();
+      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
     isSubmitEnabled() {
-      return (
-        this.editExpense.categories &&
-        this.editExpense.categories.length > 0 &&
-        this.editExpense.icon
-      );
+      return (this.editExpense.categories && this.editExpense.categories.length > 0 && this.editExpense.icon);
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -328,9 +250,9 @@ export default {
     startEdit() {
       this.isEditing = true;
       this.editExpense = {
-        ...this.expense,
-        categories: [...this.expense.categories],
-        date: this.formatDateForInput(this.expense.date),
+	...this.expense,
+	categories: [...this.expense.categories],
+        date: this.formatDateForInput(this.expense.date)
       };
     },
     cancelEdit() {
@@ -347,14 +269,12 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     parseIcon(iconString) {
-      if (typeof iconString === "string") {
+      if (typeof iconString === "string")
         return iconString.split(" ");
-      }
       return iconString;
     },
     submitEdit() {
       this.clearErrors();
-
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
@@ -380,14 +300,10 @@ export default {
           console.error("No token found");
           return;
         }
-
+	
         this.loadingCategories = true;
-        const response = await axios.get(
-          "http://localhost:8000/api/expense-categories/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.get("http://localhost:8000/api/expense-categories/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         this.categoryOptions = response.data.categories || [];
         this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
@@ -399,21 +315,18 @@ export default {
     acceptNewCategory() {
       if (this.newCategory.trim()) {
         const newCategory = this.newCategory.trim();
-        if (!this.categoryOptions.includes(newCategory)) {
+        if (!this.categoryOptions.includes(newCategory))
           this.categoryOptions.push(newCategory);
-        }
-        if (!this.editExpense.categories.includes(newCategory)) {
+        if (!this.editExpense.categories.includes(newCategory))
           this.editExpense.categories.push(newCategory);
-        }
         this.newCategory = "";
         this.showNewCategory = false;
         this.dropdownOpen = false;
       }
     },
     addCategory(category) {
-      if (!this.editExpense.categories.includes(category)) {
+      if (!this.editExpense.categories.includes(category))
         this.editExpense.categories.push(category);
-      }
       this.dropdownOpen = false;
     },
     showNewCategoryDialog() {
@@ -444,8 +357,7 @@ export default {
       this[`${field}Error`] = "";
       if (!this.editExpense[field]) {
         // Corrected this line
-        this[`${field}Error`] =
-          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editExpense[field].length > 180) {
@@ -485,513 +397,505 @@ export default {
 
 <style scoped>
 .expense-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background: #25262b;
-  border: 2px solid white;
-  border-radius: 20px;
-  margin-bottom: 10px;
-  box-shadow: -2px 0 8px rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: #25262B;
+    border: 2px solid white;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    box-shadow: -2px 0 8px rgba(255, 255, 255, 0.1);
 }
 
 .expense-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  background: #25262b;
-  border: 2px solid white;
-  margin-right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #25262B;
+    border: 2px solid white;
+    margin-right: 14px;
 }
 
 .row-icon {
-  font-size: 40px;
-  color: white;
+    font-size: 40px;
+    color: white;
 }
 
 .expense-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
 }
 
 .expense-details h4,
 .expense-description {
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 420px;
-  margin-left: 10px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 420px;
+    margin-left: 10px;
 }
 
 .expense-details h4 {
-  font-size: 22px;
-  color: #d55c5c;
-  font-weight: bold;
+    font-size: 22px;
+    color: #D55C5C;
+    font-weight: bold;
 }
 
 .expense-description {
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .expense-date {
-  color: #bf9f00;
-  font-weight: bold;
-  font-size: 18px;
-  margin-left: 10px;
-  white-space: nowrap;
+    color: #BF9F00;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 .expense-amount-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 25px;
 }
 
 .expense-amount {
-  font-weight: bold;
-  color: #d55c5c;
-  font-size: 20px;
-  flex-shrink: 0;
+    font-weight: bold;
+    color: #D55C5C;
+    font-size: 20px;
+    flex-shrink: 0;
 }
 
 .expense-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 5px;
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
 }
 
 .edit-button,
 .delete-button {
-  border-radius: 10px;
-  cursor: pointer;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  transition:
-    transform 0.2s,
-    background-color 0.2s;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .edit-button {
-  background-color: white;
+    background-color: white;
 }
 
 .edit-button:hover {
-  transform: scale(1.1);
-  background-color: #f2f2f2;
+    transform: scale(1.1);
+    background-color: #F2F2F2;
 }
 
 .delete-button {
-  background-color: #d55c5c;
-  color: white;
+    background-color: #D55C5C;
+    color: white;
 }
 
 .delete-button:hover {
-  transform: scale(1.1);
-  background-color: darkred;
+    transform: scale(1.1);
+    background-color: darkred;
 }
 
 .edit-icon {
-  font-size: 20px;
-  color: #25262b;
+    font-size: 20px;
+    color: #25262B;
 }
 
 .trash-icon {
-  font-size: 20px;
-  color: white;
+    font-size: 20px;
+    color: white;
 }
 
 .edit-popup {
-  overflow: hidden;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #25262b;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  width: 600px;
-  overflow: hidden;
-  z-index: 1000;
+    overflow: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #25262B;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    width: 600px;
+    overflow: hidden;
+    z-index: 1000;
 }
 
 .popup-content {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
 }
 
 .forms-content {
-  max-height: calc(80vh - 200px);
-  padding: 10px;
-  margin-bottom: 10px;
-  overflow-y: auto;
+    max-height: calc(80vh - 200px);
+    padding: 10px;
+    margin-bottom: 10px;
+    overflow-y: auto;
 }
 
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(59, 59, 90, 0.5);
-  backdrop-filter: blur(3px);
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(59, 59, 90, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 
 .edit-title {
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-  color: white;
-  font-family: "Wix Madefor Display", sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 24px;
-  color: white;
-  text-align: left;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input {
-  width: 93%;
-  padding: 20px;
-  margin-top: 10px;
-  margin-bottom: 2px;
-  border: none;
-  outline: none;
-  color: white;
-  font-size: 18px;
-  background-color: #25262b;
-  border-radius: 4px;
-  border: 2px solid white;
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 93%;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 18px;
+    background-color: #25262B;
+    border-radius: 4px;
+    border: 2px solid white;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input::placeholder {
-  color: white;
-  font-size: 16px;
+    color: white;
+    font-size: 16px;
 }
 
 .input-error {
-  border-color: #d55c5c;
-  outline: none;
+    border-color: #D55C5C;
+    outline: none;
 }
 
 .input-valid {
-  outline: none;
+    outline: none;
 }
 
 input[type="date"] {
-  color: white;
-  font-size: 16px;
-  font-family: "Wix Madefor Display", sans-serif;
+    color: white;
+    font-size: 16px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  color: white;
-  cursor: pointer;
+    color: white;
+    cursor: pointer;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  color: white;
+    color: white;
 }
 
 .error-message {
-  color: #d55c5c;
-  font-size: 16px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  text-align: left;
+    color: #D55C5C;
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
 }
 
 .buttons-group {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  margin-top: 5px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 5px;
 }
 
 .cancel-button {
-  background-color: #25262b;
-  color: white;
-  border: 2px solid white;
-  padding: 15px 35px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: #25262B;
+    color: white;
+    border: 2px solid white;
+    padding: 15px 35px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .submit-button {
-  background-color: white;
-  color: #25262b;
-  border: none;
-  padding: 15px 35px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    background-color: white;
+    color: #25262B;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-button:hover {
-  background-color: #333;
+    background-color: #333;
 }
 
 .submit-button:hover {
-  background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .categories-wrapper {
-  position: relative;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-family: "Wix Madefor Display", sans-serif;
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .categories-select {
-  padding: 15px 30px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  width: 115px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #25262b;
-  background-color: white;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s;
+    padding: 15px 30px;
+    border: 1px solid #CCC;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 115px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #25262b;
+    background-color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
 }
 
 .categories-select:hover {
-  background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .dropdown-icon {
-  width: 16px;
-  height: 16px;
-  margin-left: 16px;
-  transform: translateY(-3px);
-  color: #25262b;
+    width: 16px;
+    height: 16px;
+    margin-left: 16px;
+    transform: translateY(-3px);
+    color: #25262B;
 }
 
 .categories-dropdown {
-  position: absolute;
-  top: 80%;
-  left: 0;
-  right: 0;
-  border: 1px solid #3f4049;
-  border-radius: 12px;
-  background-color: #404149;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 0;
-  list-style: none;
-  z-index: 1000;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 160px;
-  max-width: 250px;
-  animation: fadeIn 0.2s ease-out;
+    position: absolute;
+    top: 80%;
+    left: 0;
+    right: 0;
+    border: 1px solid #3F4049;
+    border-radius: 12px;
+    background-color: #404149;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    list-style: none;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 160px;
+    max-width: 250px;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .categories-dropdown li {
-  padding: 10px 20px;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-  text-align: left;
-  color: white;
-  font-weight: bold;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: left;
+    color: white;
+    font-weight: bold;
 }
 
 .categories-dropdown li:hover {
-  background-color: white;
-  border-radius: 12px;
-  color: #25262b;
-  font-weight: bold;
+    background-color: white;
+    border-radius: 12px;
+    color: #25262B;
+    font-weight: bold;
 }
 
 .selected-categories {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    gap: 5px;
 }
 
 .tag {
-  display: flex;
-  align-items: center;
-  border-radius: 16px;
-  padding: 8px 20px;
-  font-weight: bold;
-  color: #25262b;
-  background-color: white;
-  border: 1px solid white;
+    display: flex;
+    align-items: center;
+    border-radius: 16px;
+    padding: 8px 20px;
+    font-weight: bold;
+    color: #25262B;
+    background-color: white;
+    border: 1px solid white;
 }
 
 .close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-top: 2px;
-  margin-right: -15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 2px;
+    margin-right: -15px;
 }
 
 .close-button .gg-close {
-  font-size: 18px;
-  color: #25262b;
+    font-size: 18px;
+    color: #25262B;
 }
 
 .new-category-dialog {
-  position: fixed;
-  background: white;
-  border: 1px solid white;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1100;
-  width: 400px;
-  height: 230px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+    position: fixed;
+    background: white;
+    border: 1px solid white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    width: 400px;
+    height: 230px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .new-category-dialog h4 {
-  margin-top: 15px;
-  font-size: 22px;
-  color: #25262b;
-  font-family: "Wix Madefor Display", sans-serif;
+    margin-top: 15px;
+    font-size: 22px;
+    color: #25262B;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input {
-  width: 90%;
-  padding: 14px;
-  margin-bottom: 2px;
-  border: none;
-  outline: none;
-  color: #25262b;
-  font-size: 18px;
-  background-color: white;
-  border-radius: 4px;
-  border: 2px solid #25262b;
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
-  font-family: "Wix Madefor Display", sans-serif;
+    width: 90%;
+    padding: 14px;
+    margin-bottom: 2px;
+    border: none;
+    outline: none;
+    color: #25262B;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 4px;
+    border: 2px solid #25262B;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-  color: #25262b;
+    color: #25262B;
 }
 
 .new-category-dialog .button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
 }
 
 .cancel-category,
 .accept-category {
-  padding: 15px 30px;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Wix Madefor Display", sans-serif;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .cancel-category {
-  background-color: #25262b;
-  color: white;
+    background-color: #25262B;
+    color: white;
 }
 
 .accept-category {
-  background-color: white;
-  color: #25262b;
-  border: 2px solid #25262b;
+    background-color: white;
+    color: #25262B;
+    border: 2px solid #25262B;
 }
 
 .submit-button:disabled,
 .accept-category:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
-  opacity: 0.7;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .date-label {
-  display: block;
-  margin-bottom: 5px;
-  margin-top: 15px;
-  font-weight: bold;
-  color: white;
-  text-align: left;
-  font-family: "Wix Madefor Display", sans-serif;
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    font-family: "Wix Madefor Display", sans-serif;
 }
 
 .date-container {
-  left: 0px;
-  position: relative;
-  display: inline-block;
-  width: 100%;
+    left: 0px;
+    position: relative;
+    display: inline-block;
+    width: 100%;
 }
 
 .birth-icon {
-  position: absolute;
-  right: 23px;
-  top: 50%;
-  transform: translateY(-30%);
-  color: white;
-  pointer-events: none;
+    position: absolute;
+    right: 23px;
+    top: 50%;
+    transform: translateY(-30%);
+    color: white;
+    pointer-events: none;
 }
 
 .date-container input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  cursor: pointer;
+    opacity: 0;
+    cursor: pointer;
 }
 
 .icons-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .selected-text {
-  font-size: 20px;
-  color: white;
+    font-size: 20px;
+    color: white;
 }
 .selected-icon {
-  font-size: 36px;
-  color: white;
+    font-size: 36px;
+    color: white;
 }
 </style>

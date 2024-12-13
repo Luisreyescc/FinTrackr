@@ -98,7 +98,9 @@ import axios from 'axios';
 
 export default {
   name: 'RecoveryForm',
-  components: { FontAwesomeIcon },
+  components: {
+    FontAwesomeIcon
+  },
   data() {
     return {
       currentStep: 1,
@@ -114,7 +116,7 @@ export default {
       passwordError: "",
       confirmPasswordError: "",
       showPassword: false,
-      showConfirmPassword: false,
+      showConfirmPassword: false
     };
   },
   methods: {
@@ -139,40 +141,35 @@ export default {
 	this.emailError = "Email is required.";
       if (!this.usernameError && !this.emailError) {
         try {
-          const response = await axios.post("http://localhost:8000/api/check-user-email-association/", {
-            user_name: this.username,
-            email: this.email
-          });
-          
+          const response = await axios.post("http://localhost:8000/api/check-user-email-association/",
+                                            { user_name: this.username, email: this.email });
           if (response.status === 200) {
-	this.$emit('sendCode', { username: this.username, email: this.email });
-	this.currentStep = 2; // Next state of the page, validate key code
-      }
+            this.$emit('sendCode', { username: this.username, email: this.email });
+            this.currentStep = 2; // Next state of the page, validate key code
+          }
         } catch (error) {
           if (error.response && error.response.data && error.response.data.error) {
-            if (error.response.data.error.includes("Username")) {
+            if (error.response.data.error.includes("Username"))
               this.usernameError = error.response.data.error;
-            } else if (error.response.data.error.includes("Email")) {
+            else if (error.response.data.error.includes("Email"))
               this.emailError = error.response.data.error;
-            }
-          } else {
-            this.$emit('addMessage', "There was an issue checking user-email association. Please try again.", "error");
-          }
+          } else
+            this.$emit('addMessage', "There was an issue checking user-email. Please try again.", "error");
         }
       }
     },
     validateCode() {
       this.keyError = "";
-      if (!this.recoveryCode) {
+      if (!this.recoveryCode)
 	this.keyError = "The recovery code is required";
-      } else {
-	this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
-          if (isValid)
-            this.currentStep = 3;
-          else
-            this.keyError = "";
-        });
-      }
+      else
+	this.$emit("validateCode",
+                   { recoveryCode: this.recoveryCode }, (isValid) => {
+                     if (isValid)
+                       this.currentStep = 3;
+                     else
+                       this.keyError = "";
+                   });
     },
     changePassword() {
       this.passwordError = "";

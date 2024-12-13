@@ -239,7 +239,6 @@ export default {
 
       const filter = this.currentFilter;
       const date = this.selectedDate;
-
       const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
       const debtUrl = `http://localhost:8000/api/debts/filtered/?filter=${filter}&date=${date}`;
@@ -266,14 +265,10 @@ export default {
         }));
 
         const uniqueDates = [...new Set([...incomeData, ...expenseData, ...debtData].map(item => item.x))].sort();
-
         // Populate data for missing dates with y: 0 to ensure continuity
         const fillMissingData = (data, dates) => {
           const dataMap = Object.fromEntries(data.map(item => [item.x, item.y]));
-          return dates.map(date => ({
-            x: date,
-            y: dataMap[date] || 0
-          }));
+          return dates.map(date => ({ x: date, y: dataMap[date] || 0 }));
         };
 
         this.chartData = [
@@ -316,27 +311,17 @@ export default {
 
       const filter = this.currentFilter;
       const date = this.selectedDate;
-
       const expenseUrl = `http://localhost:8000/api/expenses/filtered/?filter=${filter}&date=${date}`;
 
       try {
 	this.loadingGraphics = true;
-        const response = await axios.get(expenseUrl, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
+        const response = await axios.get(expenseUrl, { headers: { Authorization: `Bearer ${token}` }});
         const data = response.data.categories_summary; // API response
         console.log("Donut Chart Data:", data);
-
         const amounts = data.map(item => item.total_amount);
         const categories = data.map(item => item.category);
-
         this.categoriesChartData = amounts; // Populate series
-        this.categoriesChartOptions = {
-          ...this.categoriesChartOptions,
-          labels: categories // Populate labels
-        };
-
+        this.categoriesChartOptions = { ...this.categoriesChartOptions, labels: categories };
         console.log("Donut Chart Series:", this.categoriesChartData);
         console.log("Donut Chart Labels:", this.categoriesChartOptions.labels);
       } catch (error) {
@@ -354,27 +339,17 @@ export default {
 
       const filter = this.currentFilter;
       const date = this.selectedDate;
-
       const incomeUrl = `http://localhost:8000/api/incomes/filtered/?filter=${filter}&date=${date}`;
 
       try {
 	this.loadingGraphics = true;
-        const response = await axios.get(incomeUrl, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
+        const response = await axios.get(incomeUrl, { headers: { Authorization: `Bearer ${token}` }});
         const data = response.data.categories_summary; // API response
         console.log("Sources Chart Data:", data);
-
         const amounts = data.map(item => item.total_amount);
         const sources = data.map(item => item.category);
-
         this.sourcesChartData = amounts; // Populate series
-        this.sourcesChartOptions = {
-          ...this.sourcesChartOptions,
-          labels: sources // Populate labels
-        };
-
+        this.sourcesChartOptions = { ...this.sourcesChartOptions, labels: sources };
         console.log("Sources Chart Series:", this.sourcesChartData);
         console.log("Sources Chart Labels:", this.sourcesChartOptions.labels);
       } catch (error) {
@@ -403,34 +378,28 @@ export default {
 
       const [integerPart, decimalPart] = formatted.replace('$', '').split('.');
       const sign = amount < 0 ? '-' : '';
-
       return `<span><span class="integer-part">${sign}$</span>${integerPart}<sup class="decimal-part">${decimalPart}</sup></span>`;
     },
     formatCount(count) {
-      if (count > 999999999999999) {
+      if (count > 999999999999999)
         return '999,999,999,999,999';
-      }
       return count.toLocaleString();
     },
     getNetwork() {
       const networkAmount = this.totalIncome - this.totalExpense;
       const amount = this.formatCurrency(networkAmount, networkAmount < 0);
-
       return `<span <span style="color: #BF9F00;">${amount}</span>`;
     },
     getIncomes() {
       const amount = this.formatCurrency(this.totalIncome);
-
       return `<span style="color: #20C171;">${amount}</span>`;
     },
     getExpenses() {
       const amount = this.formatCurrency(this.totalExpense, true);
-
       return `<span style="color: #D55C5C;">${amount}</span>`;
     },
     getDebts() {
       const amount = this.formatCurrency(this.totalDebt, true);
-
       return `<span style="color: #6092DE;">${amount}</span>`;
     },
     toggleSidebar() {
@@ -456,9 +425,8 @@ export default {
       this.fetchDonutChartData();
       this.fetchSourcesChartData();
     } 
-    if (this.selectedContent === "Account") {
+    if (this.selectedContent === "Account")
       this.fetchLineChartData();
-    }
   },
   watch: {
     selectedContent(newValue) {
@@ -470,9 +438,8 @@ export default {
         this.fetchSourcesChartData();
         this.fetchDonutChartData();
       }
-      if (newValue === "Account") {
+      if (newValue === "Account")
         this.fetchLineChartData();
-      }
     },
     selectedDate() {
       this.chartData = [];
@@ -571,7 +538,7 @@ export default {
 select {
     padding: 5px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #DDD;
     font-family: "Wix Madefor Display", sans-serif;
 }
 

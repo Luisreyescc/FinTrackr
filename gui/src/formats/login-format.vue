@@ -51,7 +51,9 @@ import "@/css/eye-alt.css";
 
 export default {
   name: "LoginForm",
-  components: { FontAwesomeIcon },
+  components: {
+    FontAwesomeIcon
+  },
   data() {
     return {
       username: "",
@@ -77,10 +79,7 @@ export default {
 	this.passwordError = "Password is required";
       if (!this.usernameError && !this.passwordError) {
         // Emit an event with username and password data to the parent
-        this.$emit("login", {
-          username: this.username,
-          password: this.password,
-        });
+        this.$emit("login", { username: this.username, password: this.password });
       }
     },
     togglePasswordVisibility() {

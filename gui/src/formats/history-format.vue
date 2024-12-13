@@ -5,7 +5,6 @@
       <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
     </button>
   </div>
-  
   <div class="content-wrapper">
     <div v-if="selectedContent === 'History'" class="main-content">
       <div class="events-container">
@@ -26,7 +25,6 @@
     </div>
   </div>
 </div>
-
 <div class="message-container">
   <MessageAlerts
     v-for="(msg, index) in messages" 
@@ -89,9 +87,9 @@ export default {
         const [filterType, filterValue] = query.includes(':') ? query.split(':').map(s => s.trim()) : [query, query];
 
         if (filterValue) {
-          if (filterType === 'amount ==') {
+          if (filterType === 'amount ==')
             events = events.filter(event => event.amount.toString().startsWith(filterValue));
-          } else if (filterType === 'amount >=') {
+          else if (filterType === 'amount >=') {
             const amount = parseFloat(filterValue);
             events = events.filter(event => event.amount >= amount);
           } else if (filterType === 'amount <=') {
@@ -103,38 +101,37 @@ export default {
               return dateFormats.some(format => {
                 const eventDate = moment(event.date, "YYYY-MMM-DD");
                 const filterDate = moment(filterValue, format);
-                if (filterValue.length === 2 || filterValue.length === 3) {
+                if (filterValue.length === 2 || filterValue.length === 3)
                   return eventDate.isSame(filterDate, 'month');
-                } else if (filterValue.length === 4) {
+		else if (filterValue.length === 4)
                   return eventDate.isSame(filterDate, 'year');
-                } else if (filterValue.length === 7 || filterValue.length === 8) {
+		else if (filterValue.length === 7 || filterValue.length === 8)
                   return eventDate.isSame(filterDate, 'month');
-                } else {
+		else
                   return eventDate.isSame(filterDate, 'day');
-                }
               });
             });
-          } else if (filterType === 'category') {
-            events = events.filter(event => event.categories.some(category => category.toLowerCase().startsWith(filterValue.toLowerCase())));
-          } else if (filterType === 'description') {
+          } else if (filterType === 'category')
+            events = events.filter(event =>
+              event.categories.some(category => category.toLowerCase().startsWith(filterValue.toLowerCase())));
+          else if (filterType === 'description')
             events = events.filter(event => event.description.toLowerCase().includes(filterValue.toLowerCase()));
-          } else if (filterType === 'income') {
+          else if (filterType === 'income')
             events = events.filter(event => event.type.toLowerCase() === 'income');
-          } else if (filterType === 'expense') {
+          else if (filterType === 'expense')
             events = events.filter(event => event.type.toLowerCase() === 'expense');
-          } else if (filterType === 'debt') {
+          else if (filterType === 'debt')
             events = events.filter(event => event.type.toLowerCase() === 'debt');
-          } else {
+          else {
             // Global search
             const dateFormats = ["YYYY-MM-DD", "YYYY-MMM-DD", "YYYY-MM", "YYYY-MMM", "YYYY"];
             const amount = parseFloat(filterValue);
             events = events.filter(event => {
-              return (
-                event.description.toLowerCase().includes(filterValue) ||
-                event.categories.some(category => category.toLowerCase().includes(filterValue)) ||
-                dateFormats.some(format => moment(event.date, "YYYY-MMM-DD").isSame(moment(filterValue, format), 'day')) ||
-                (!isNaN(amount) && Math.abs(event.amount) === amount)
-              );
+              return (event.description.toLowerCase().includes(filterValue) ||
+                      event.categories.some(category => category.toLowerCase().includes(filterValue)) ||
+                      dateFormats.some(format =>
+			moment(event.date, "YYYY-MMM-DD").isSame(moment(filterValue, format), 'day')) ||
+                      (!isNaN(amount) && Math.abs(event.amount) === amount));
             });
           }
         }
@@ -164,9 +161,8 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get('http://localhost:8000/api/incomes/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get('http://localhost:8000/api/incomes/',
+                                         { headers: { Authorization: `Bearer ${token}` }});
         const incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
@@ -188,9 +184,8 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get('http://localhost:8000/api/expenses/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get('http://localhost:8000/api/expenses/',
+                                         { headers: { Authorization: `Bearer ${token}` }});
         const expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
@@ -212,15 +207,13 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get('http://localhost:8000/api/debts/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get('http://localhost:8000/api/debts/',
+                                         { headers: { Authorization: `Bearer ${token}` }});
         const debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
           type: 'Debt', // Add type field
-          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
-        }));
+          categories: debt.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))}));
         this.event.push(...debts);
       } catch (error) {
         console.error('Error fetching debts:', error);

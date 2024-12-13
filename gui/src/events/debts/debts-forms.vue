@@ -482,7 +482,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .submit-button:hover {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .categories-wrapper {
@@ -494,7 +494,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .categories-select {
     padding: 15px 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #CCC;
     border-radius: 3px;
     cursor: pointer;
     display: flex;
@@ -509,7 +509,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .categories-select:hover {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .dropdown-icon {

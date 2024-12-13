@@ -164,7 +164,9 @@ import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "EditProfileForm",
-  components: { FontAwesomeIcon },
+  components: {
+    FontAwesomeIcon
+  },
   props: {
     initialData: {
       type: Object,
@@ -256,7 +258,8 @@ export default {
           this.newPasswordError = "New password is required.";
         if (!this.formData.confirm_password)
           this.confirmPasswordError = "Confirm password is required.";
-        if (this.formData.new_password && this.formData.confirm_password && this.formData.new_password !== this.formData.confirm_password) {
+        if (this.formData.new_password && this.formData.confirm_password
+            && this.formData.new_password !== this.formData.confirm_password) {
           this.newPasswordError = "Passwords don't match.";
           this.confirmPasswordError = "Passwords don't match.";
         }
@@ -302,10 +305,8 @@ export default {
       this.validatePhone();
       this.validatePasswords();
 
-      if (this.passwordError || this.usernameError
-          || this.emailError ||  this.curpError
-          || this.rfcError || this.phoneError
-          || this.newPasswordError || this.confirmPasswordError)
+      if (this.passwordError || this.usernameError || this.emailError || this.curpError
+          || this.rfcError || this.phoneError || this.newPasswordError || this.confirmPasswordError)
         return;
       
       const sanitizedData = Object.fromEntries(
@@ -605,8 +606,8 @@ input {
 }
 
 .change-password-btn.close-btn {
-    background-color: #e53935;
-    border: 2px solid #e53935;
+    background-color: #D55C5C;
+    border: 2px solid #D55C5C;
     border-radius: 3px;
     color: white;
     padding: 3px 8px;

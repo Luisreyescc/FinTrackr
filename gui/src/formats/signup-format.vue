@@ -104,7 +104,9 @@ import axios from "axios";
 
 export default {
   name: "SignUpForm",
-  components: { FontAwesomeIcon },
+  components: {
+    FontAwesomeIcon
+  },
   data() {
     return {
       currentStep: 1,
@@ -121,7 +123,7 @@ export default {
       isAdminUser: false,
       recoveryCode: "",
       keyError: "",
-      codeSent: false,
+      codeSent: false
     };
   },
   methods: {
@@ -158,25 +160,20 @@ export default {
       }
       if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
         try {
-          const response = await axios.post("http://localhost:8000/api/check-availability/", {
-            user_name: this.username,
-            email: this.email
-          });
-          
+          const response = await axios.post("http://localhost:8000/api/check-availability/",
+                                            { user_name: this.username, email: this.email });
           if (response.status === 200) {
             this.$emit('sendCode', { username: this.username, email: this.email });
             this.currentStep = 2; // Next state of the page, validate key code
           }
         } catch (error) {
           if (error.response && error.response.data && error.response.data.error) {
-            if (error.response.data.error.includes("Username")) {
+            if (error.response.data.error.includes("Username"))
               this.usernameError = error.response.data.error;
-            } else if (error.response.data.error.includes("Email")) {
+            else if (error.response.data.error.includes("Email"))
               this.emailError = error.response.data.error;
-            }
-          } else {
+          } else
             this.$emit('addMessage', "There was an issue checking availability. Please try again.", "error");
-          }
         }
       }
     },
@@ -186,14 +183,14 @@ export default {
 	this.keyError = "The recovery code is required";
       else {
 	this.$emit("validateCode", { recoveryCode: this.recoveryCode }, (isValid) => {
-          if (isValid) {
+          if (isValid)
             this.$emit("signUp",
                        { username: this.username,
                          email: this.email,
                          password: this.password,
                          password2: this.password2,
                          admin_user: this.isAdminUser});
-          } else
+          else
             this.keyError = "";
         });
       }

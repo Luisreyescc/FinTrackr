@@ -1,107 +1,107 @@
 <template>
-  <div class="home-form">
-    <div class="sidebar">
-      <button @click="toggleSidebar" class="menu-button">
-        <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
-      </button>
+<div class="home-form">
+  <div class="sidebar">
+    <button @click="toggleSidebar" class="menu-button">
+      <font-awesome-icon :icon="['fas', 'bars']" font-size="38"/>
+    </button>
+  </div>
+  
+  <div class="content-wrapper">
+    <div v-if="selectedContent === 'Incomes'" class="main-content">
+      <div class="incomes-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <SearchBar @search="handleSearch"/>
+          <IncomeButton @click="toggleForm"/>
+        </div>
+        <div class="activity-content">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container scrollbar">
+              <span v-if="loadingEvents">Loading incomes...</span>
+              <IncomeRow
+                v-for="(income, index) in filteredIncomes"
+                :key="index"
+                :income="income"
+                @updateIncome="handleIncomeUpdate"
+                @deleteIncome="handleIncomeDelete"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm"/>
+      </div>
     </div>
     
-    <div class="content-wrapper">
-      <div v-if="selectedContent === 'Incomes'" class="main-content">
-        <div class="incomes-container">
-          <div class="header">
-            <h2 class="section-title">{{ selectedContent }}</h2>
-            <SearchBar @search="handleSearch"/>
-            <IncomeButton @click="toggleForm"/>
-          </div>
-          <div class="activity-content">
-            <h3 class="activity-title">Activity</h3>
-            <div class="activity-section">
-              <div class="list-container scrollbar">
-		<span v-if="loadingEvents">Loading incomes...</span>
-                <IncomeRow
-                  v-for="(income, index) in filteredIncomes"
-                  :key="index"
-                  :income="income"
-                  @updateIncome="handleIncomeUpdate"
-                  @deleteIncome="handleIncomeDelete"/>
-              </div>
+    <div v-if="selectedContent === 'Expenses'" class="main-content">
+      <div class="expenses-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <SearchBar @search="handleSearch" />
+          <ExpenseButton @click="toggleForm"/>
+        </div>
+        <div class="activity-content scrollbar">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container scrollbar">
+              <span v-if="loadingEvents">Loading expenses...</span>
+              <ExpenseRow
+                v-for="(expense, index) in filteredExpenses"
+                :key="index"
+                :expense="expense"
+                @updateExpense="handleExpenseUpdate"
+                @deleteExpense="handleExpenseDelete"/>
             </div>
           </div>
-        </div>
-        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-        <div class="forms-section" v-if="showForm">
-          <IncomesForm @submitForm="handleIncomeSubmission" @closeForm="toggleForm"/>
         </div>
       </div>
-      
-      <div v-if="selectedContent === 'Expenses'" class="main-content">
-        <div class="expenses-container">
-          <div class="header">
-            <h2 class="section-title">{{ selectedContent }}</h2>
-            <SearchBar @search="handleSearch" />
-            <ExpenseButton @click="toggleForm"/>
-          </div>
-          <div class="activity-content scrollbar">
-            <h3 class="activity-title">Activity</h3>
-            <div class="activity-section">
-              <div class="list-container scrollbar">
-		<span v-if="loadingEvents">Loading expenses...</span>
-                <ExpenseRow
-                  v-for="(expense, index) in filteredExpenses"
-                  :key="index"
-                  :expense="expense"
-                  @updateExpense="handleExpenseUpdate"
-                  @deleteExpense="handleExpenseDelete"/>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-        <div class="forms-section" v-if="showForm">
-          <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm"/>
-        </div>
-      </div>
-
-      <div v-if="selectedContent === 'Debts'" class="main-content">
-        <div class="debts-container">
-          <div class="header">
-            <h2 class="section-title">{{ selectedContent }}</h2>
-            <SearchBar @search="handleSearch" />
-            <DebtButton @click="toggleForm"/>
-          </div>
-          <div class="activity-content scrollbar">
-            <h3 class="activity-title">Activity</h3>
-            <div class="activity-section">
-              <div class="list-container scrollbar">
-		<span v-if="loadingEvents">Loading debts...</span>
-                <DebtRow
-                  v-for="(debt, index) in filteredDebts"
-                  :key="index"
-                  :debt="debt"
-                  @markDebtAsPaid="handleMarkDebtAsPaid"
-                  @updateDebt="handleDebtUpdate"
-                  @deleteDebt="handleDebtDelete"/>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="showForm" class="overlay" @click="toggleForm"></div>
-        <div class="forms-section" v-if="showForm">
-          <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm"/>
-        </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <ExpensesForm @submitForm="handleExpenseSubmission" @closeForm="toggleForm"/>
       </div>
     </div>
-
-    <div class="message-container">
-      <MessageAlerts
-        v-for="(msg, index) in messages"
-        :key="msg.id"
-        :text="msg.text"
-        :type="msg.type"
-        @close="removeMessage(index)"/>
+    
+    <div v-if="selectedContent === 'Debts'" class="main-content">
+      <div class="debts-container">
+        <div class="header">
+          <h2 class="section-title">{{ selectedContent }}</h2>
+          <SearchBar @search="handleSearch" />
+          <DebtButton @click="toggleForm"/>
+        </div>
+        <div class="activity-content scrollbar">
+          <h3 class="activity-title">Activity</h3>
+          <div class="activity-section">
+            <div class="list-container scrollbar">
+              <span v-if="loadingEvents">Loading debts...</span>
+              <DebtRow
+                v-for="(debt, index) in filteredDebts"
+                :key="index"
+                :debt="debt"
+                @markDebtAsPaid="handleMarkDebtAsPaid"
+                @updateDebt="handleDebtUpdate"
+                @deleteDebt="handleDebtDelete"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showForm" class="overlay" @click="toggleForm"></div>
+      <div class="forms-section" v-if="showForm">
+        <DebtsForm @submitForm="handleDebtSubmission" @closeForm="toggleForm"/>
+      </div>
     </div>
   </div>
+  
+  <div class="message-container">
+    <MessageAlerts
+      v-for="(msg, index) in messages"
+      :key="msg.id"
+      :text="msg.text"
+      :type="msg.type"
+      @close="removeMessage(index)"/>
+  </div>
+</div>
 </template>
 
 <script>
@@ -190,18 +190,15 @@ export default {
         dateFormats.some(format => {
           const eventDate = moment(event.date, "YYYY-MMM-DD");
           const filterDate = moment(searchQuery, format);
-          if (searchQuery.length === 2 || searchQuery.length === 3) {
+          if (searchQuery.length === 2 || searchQuery.length === 3)
             return eventDate.isSame(filterDate, 'month');
-          }else if (searchQuery.length === 4) {
+          else if (searchQuery.length === 4)
             return eventDate.isSame(filterDate, 'year');
-          } else if (searchQuery.length === 7 || searchQuery.length === 8) {
+          else if (searchQuery.length === 7 || searchQuery.length === 8)
             return eventDate.isSame(filterDate, 'month');
-          } else {
+          else
             return eventDate.isSame(filterDate, 'day');
-          }
-        }) ||
-        (!isNaN(amount) && Math.abs(event.amount) === amount)
-      );
+        }) || (!isNaN(amount) && Math.abs(event.amount) === amount));
     },
     formatDate(date) {
       return moment(date).format("YYYY-MMM-DD");
@@ -226,8 +223,8 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get("http://localhost:8000/api/incomes/", {
-          headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get("http://localhost:8000/api/incomes/",
+                                         { headers: { Authorization: `Bearer ${token}` } });
         this.incomes = response.data.map((income) => ({
           ...income,
           date: this.formatDate(income.date),
@@ -248,12 +245,8 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get(
-          "http://localhost:8000/api/expenses/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.get("http://localhost:8000/api/expenses/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         this.expenses = response.data.map((expense) => ({
           ...expense,
           date: this.formatDate(expense.date),
@@ -274,9 +267,8 @@ export default {
           return console.error("No token found");
 
 	this.loadingEvents = true;
-        const response = await axios.get("http://localhost:8000/api/debts/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get("http://localhost:8000/api/debts/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         this.debts = response.data.map((debt) => ({
           ...debt,
           date: this.formatDate(debt.date),
@@ -297,7 +289,7 @@ export default {
         const modifiedIncomeData = {
           ...incomeData,
           user: userId,
-          category: incomeData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
+          category: incomeData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
         };
         delete modifiedIncomeData.categories;
 
@@ -326,217 +318,141 @@ export default {
         };
         delete modifiedExpenseData.categories;
 
-        const response = await axios.post(
-          "http://localhost:8000/api/expenses/",
-          modifiedExpenseData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
+        const response = await axios.post("http://localhost:8000/api/expenses/",
+                                          modifiedExpenseData, { headers: { Authorization:`Bearer ${token}`}});
+	
         this.expenses.push(response.data);
         this.showForm = false;
         this.fetchExpenses();
         this.addMessage("New expense added successfully.", "success");
       } catch (error) {
-        console.error(
-          "Error submitting expense:",
-          error.response?.data || error.message,
-        );
-        this.addMessage(
-          "There was an error while adding the expense.",
-          "error",
-        );
+        console.error("Error submitting expense:", error.response?.data || error.message);
+        this.addMessage("There was an error while adding the expense.", "error");
       }
     },
     async handleDebtSubmission(debtData) {
-  try {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("user_id") ?? 1;
-    const modifiedDebtData = {
-      ...debtData,
-      user: userId,
-      category: debtData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
-    };
-    delete modifiedDebtData.categories;
-    const response = await axios.post(
-      "http://localhost:8000/api/debts/",
-      modifiedDebtData,
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-    this.debts.push(response.data);
-    this.showForm = false;
-    this.fetchDebts();
-    this.addMessage("New debt added successfully.", "success");
-  } catch (error) {
-    console.error(
-      "Error submitting debt:",
-      error.response?.data || error.message,
-    );
-    this.addMessage("There was an error while adding the debt.", "error");
-  }
-},
+      try {
+	const token = localStorage.getItem("token");
+	const userId = localStorage.getItem("user_id") ?? 1;
+	const modifiedDebtData = {
+          ...debtData,
+          user: userId,
+          category: debtData.categories.map(category => category.charAt(0).toUpperCase() + category.slice(1))
+	};
+	delete modifiedDebtData.categories;
+	const response = await axios.post("http://localhost:8000/api/debts/",
+                                          modifiedDebtData, { headers: { Authorization: `Bearer ${token}` }});
+	this.debts.push(response.data);
+	this.showForm = false;
+	this.fetchDebts();
+	this.addMessage("New debt added successfully.", "success");
+      } catch (error) {
+	console.error("Error submitting debt:", error.response?.data || error.message);
+	this.addMessage("There was an error while adding the debt.", "error");
+      }
+    },
     async handleIncomeUpdate(updatedIncome) {
       try {
         const token = localStorage.getItem("token");
-        const modifiedIncomeData = {
-          ...updatedIncome,
-          category: [...updatedIncome.categories],
-        };
+        const modifiedIncomeData = { ...updatedIncome, category: [...updatedIncome.categories] };
         delete modifiedIncomeData.categories;
-
-        const response = await axios.put(
-          `http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
-          modifiedIncomeData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
+        const response = await axios.put(`http://localhost:8000/api/incomes/${updatedIncome.income_id}/`,
+                                         modifiedIncomeData, { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 200) {
-          const index = this.incomes.findIndex(
-            (income) => income.income_id === updatedIncome.income_id,
-          );
+          const index = this.incomes.findIndex((income) => income.income_id === updatedIncome.income_id);
           if (index !== -1) {
             this.incomes[index] = response.data;
             this.fetchIncomes();
           }
           this.addMessage("Income data edited successfully.", "success");
         }
-
-        this.fetchIncomes();
+	this.fetchIncomes();
       } catch (error) {
         console.error("Error updating income:", error);
-        this.addMessage(
-          "There was an error while saving the income changes.",
-          "error",
-        );
+        this.addMessage("There was an error while saving the income changes.", "error");
       }
     },
     async handleIncomeDelete(incomeId) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(
-          `http://localhost:8000/api/incomes/${incomeId}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.delete(`http://localhost:8000/api/incomes/${incomeId}/`,
+                                            { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 204) {
           console.log("Succes");
           this.fetchIncomes();
-          this.incomes = this.incomes.filter(
-            (income) => income.income_id !== incomeId,
-          );
+          this.incomes = this.incomes.filter((income) => income.income_id !== incomeId);
           this.addMessage("Income deleted successfully.", "success");
         }
       } catch (error) {
         console.error("Error deleting income:", error);
-        this.addMessage(
-          "There was an error while deleting the income.",
-          "error",
-        );
+        this.addMessage("There was an error while deleting the income.", "error");
       }
     },
     async handleExpenseUpdate(updatedExpense) {
       try {
         const token = localStorage.getItem("token");
-        const modifiedExpenseData = {
-          ...updatedExpense,
-          category: [...updatedExpense.categories],
-        };
+        const modifiedExpenseData = { ...updatedExpense, category: [...updatedExpense.categories] };
         delete modifiedExpenseData.categories;
-
-        const response = await axios.put(
-          `http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
-          modifiedExpenseData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
+        const response = await axios.put(`http://localhost:8000/api/expenses/${updatedExpense.expense_id}/`,
+                                         modifiedExpenseData, { headers: { Authorization: `Bearer ${token}`}});
         if (response.status === 200) {
-          const index = this.expenses.findIndex(
-            (expense) => expense.expense_id === updatedExpense.expense_id,
-          );
+          const index = this.expenses.findIndex((expense) => expense.expense_id === updatedExpense.expense_id);
           if (index !== -1) {
             this.expenses[index] = response.data;
             this.fetchExpenses();
           }
           this.addMessage("Expense data edited successfully.", "success");
         }
-
+	
         this.fetchExpenses();
       } catch (error) {
         console.error("Error updating expense:", error);
-        this.addMessage(
-          "There was an error while saving the expense changes.",
-          "error",
-        );
+        this.addMessage("There was an error while saving the expense changes.", "error");
       }
     },
     async handleExpenseDelete(expenseId) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(
-          `http://localhost:8000/api/expenses/${expenseId}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-
+        const response = await axios.delete(`http://localhost:8000/api/expenses/${expenseId}/`,
+                                            { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 204) {
           console.log("Success");
           this.fetchExpenses();
-          this.expenses = this.expenses.filter(
-            (expense) => expense.expense_id !== expenseId,
-          );
+          this.expenses = this.expenses.filter((expense) => expense.expense_id !== expenseId);
           this.addMessage("Expense deleted successfully.", "success");
         }
       } catch (error) {
         console.error("Error deleting expense:", error);
-        this.addMessage(
-          "There was an error while deleting the expense.",
-          "error",
-        );
+        this.addMessage("There was an error while deleting the expense.", "error");
       }
     },
     async handleDebtUpdate(updatedDebt) {
       try {
         const token = localStorage.getItem("token");
-        const modifiedDebtData = {
-          ...updatedDebt,
-          category: updatedDebt.categories,
-        };
+        const modifiedDebtData = { ...updatedDebt, category: updatedDebt.categories };
         delete modifiedDebtData.categories;
-
-        const response = await axios.put(
-          `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
-          modifiedDebtData,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
+        const response = await axios.put(`http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
+                                         modifiedDebtData, { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 200) {
-          const index = this.debts.findIndex(
-            (debt) => debt.debt_id === updatedDebt.debt_id,
-          );
+          const index = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
           if (index !== -1) {
             this.debts[index] = response.data;
             this.fetchDebts();
           }
           this.addMessage("Debt data edited succesfully.", "success");
         }
-
+	
         this.fetchDebts();
       } catch (error) {
         console.error("Error updating debt:", error);
-        this.addMessage(
-          "There was an error while saving the debt changes.",
-          "error",
-        );
+        this.addMessage("There was an error while saving the debt changes.","error");
       }
     },
     async handleMarkDebtAsPaid(updatedDebt) {
       try {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("user_id") ?? 1;
-
         const formattedDate = moment(updatedDebt.date, "YYYY-MMM-DD").format("YYYY-MM-DD");
-
         const modifiedExpenseData = {
           amount: updatedDebt.amount,
           description: `${updatedDebt.debtor_name}: ${updatedDebt.description}`,
@@ -546,28 +462,18 @@ export default {
           icon: updatedDebt.icon,
         };
         delete modifiedExpenseData.categories;
-
-        await axios.post(
-          "http://localhost:8000/api/expenses/",
-          modifiedExpenseData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const debtResponse = await axios.put(
-          `http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
-          { is_payed: true },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
+        await axios.post("http://localhost:8000/api/expenses/",
+                         modifiedExpenseData, { headers: { Authorization: `Bearer ${token}` }});
+        const debtResponse = await axios.put(`http://localhost:8000/api/debts/${updatedDebt.debt_id}/`,
+                                             { is_payed: true }, { headers:{Authorization:`Bearer ${token}`}});
         if (debtResponse.status === 200) {
           const debtIndex = this.debts.findIndex((debt) => debt.debt_id === updatedDebt.debt_id);
-          if (debtIndex !== -1) {
+          if (debtIndex !== -1)
             this.debts[debtIndex].is_payed = true;
-          }
-
-          this.addMessage(`Debt "${updatedDebt.description}" marked as paid and added as an expense.`, "success");
+          this.addMessage(`Debt "${updatedDebt.description}" marked as paid and added as a new expense.`,
+                          "success");
         }
-
+	
         this.fetchExpenses();
       } catch (error) {
         this.addMessage("There was an error marking the debt as paid.", "error");
@@ -576,13 +482,8 @@ export default {
     async handleDebtDelete(debtId) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(
-          `http://localhost:8000/api/debts/${debtId}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-
+        const response = await axios.delete(`http://localhost:8000/api/debts/${debtId}/`,
+                                            { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 204) {
           this.fetchDebts();
           this.debts = this.debts.filter((debt) => debt.debt_id !== debtId);
