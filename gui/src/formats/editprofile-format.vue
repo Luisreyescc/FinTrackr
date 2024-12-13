@@ -21,14 +21,26 @@
     <div class="column">
       <div class="name-container">
 	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']"/>
-        <input v-model="formData.name" type="text" id="name" placeholder="Your name"/>
+        <input
+          v-model="formData.name"
+          type="text"
+          id="name"
+          placeholder="Your name"
+          :class="{ 'input-error': nameError }"/>
       </div>
+      <span v-if="nameError" class="error-message">{{ nameError }}</span>
     </div>
     <div class="column">
       <div class="last-name-container">
 	<font-awesome-icon class="name-icon" :icon="['fas', 'id-card']"/>
-        <input v-model="formData.last_name" type="text" id="last_name" placeholder="Your last name"/>
+        <input
+          v-model="formData.last_name"
+          type="text"
+          id="last_name"
+          placeholder="Your last name"
+          :class="{ 'input-error': lastNameError }"/>
       </div>
+      <span v-if="lastNameError" class="error-message">{{ lastNameError }}</span>
     </div>
   </div>
   
@@ -193,6 +205,8 @@ export default {
       showConfirmPassword: false,
       showPasswordFields: false,
       usernameError: "",
+      nameError: "",
+      lastNameError: "",
       emailError: "",
       curpError: "",
       rfcError: "",
@@ -232,6 +246,20 @@ export default {
       else if (this.formData.user_name.length < 3 || this.formData.user_name.length > 16)
 	this.usernameError = "Username must be between 3 and 16 characters";
     },
+    validateName() {
+      this.nameError = "";
+      if (!this.formData.name)
+        this.nameError = "Name is required";
+      else if (this.formData.name.length > 64)
+	this.nameError = "Name is too long";
+    },
+    validateLastName() {
+      this.lastNameError = "";
+      if (!this.formData.last_name)
+        this.lastNameError = "Last name is required";
+      else if (this.formData.last_name.length > 64)
+	this.lastNameError = "Last name is too long";
+    },
     validateEmail() {
       this.emailError = "";
       if (!this.formData.email)
@@ -243,6 +271,8 @@ export default {
       this.phoneError = "";
       if (this.formData.phone && !/^\d+$/.test(this.formData.phone))
 	this.phoneError = "Only digits accepted";
+      else if (this.formData.phone.length > 15)
+	this.phoneError = "Phone number is too long";
     },
     validateChanges() {
       this.passwordError = "";
@@ -301,12 +331,16 @@ export default {
     saveProfile() {
       this.validateChanges();
       this.validateUser();
+      this.validateName();
+      this.validateLastName();
       this.validateEmail();
       this.validatePhone();
       this.validatePasswords();
 
-      if (this.passwordError || this.usernameError || this.emailError || this.curpError
-          || this.rfcError || this.phoneError || this.newPasswordError || this.confirmPasswordError)
+      if (this.passwordError || this.usernameError || this.nameError
+          || this.lastNameError || this.emailError || this.curpError
+          || this.rfcError || this.phoneError
+          || this.newPasswordError || this.confirmPasswordError)
         return;
       
       const sanitizedData = Object.fromEntries(
@@ -380,7 +414,7 @@ input {
 
 .error-message {
     color: #D55C5C;
-    font-size: 14px;
+    font-size: 18px;
     align-self: center;
     margin-top: -10px;
     margin-bottom: 10px;
