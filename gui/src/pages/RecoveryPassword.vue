@@ -1,7 +1,6 @@
 <template>
 <div class="recovery-password-page">
   <img src="@/assets/profile_white.svg" alt="Profile Icon" class="profile-icon"/>
-
   <div class="message-container">
     <MessageAlerts
       v-for="(msg, index) in messages" 
@@ -10,7 +9,6 @@
       :type="msg.type" 
       @close="removeMessage(index)"/>
   </div>
-  
   <RecoveryForm
     :currentStep="currentStep"
     @sendCode="handleSendCode"

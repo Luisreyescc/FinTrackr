@@ -84,7 +84,7 @@ export default {
     background-color: #25262B;
     border-bottom: 1px solid white;
     padding: 18px;
-    color: #ffffff;
+    color: #FFF;
     width: 100%;
     position: fixed;
     top: 0;
@@ -118,7 +118,7 @@ export default {
 }
 
 .nav-item {
-    color: #ffffff;
+    color: #FFF;
     text-decoration: none;
     font-size: 24px;
     padding: 12px 20px;
@@ -141,7 +141,7 @@ export default {
     width: 25%;
     top: 0;
     left: 0;
-    background: #ffffff;
+    background: #FFF;
     transform: translateY(-110%);
     transition: transform 0.5s;
     z-index: -1;
@@ -177,7 +177,7 @@ export default {
 
 .welcome-message {
     margin-right: 10px;
-    color: #ffffff;
+    color: #FFF;
     font-size: 18px;
 }
 </style>

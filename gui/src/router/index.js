@@ -20,10 +20,7 @@ const routes =  [
   { path: '/edit-profile', name: 'EditProfile', component: EditProfile }
 ];
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes: routes,
-})
+const router = createRouter({ history: createWebHistory(process.env.BASE_URL), routes: routes })
 
 // Global navigation guard
 router.beforeEach((to, from, next) => {
@@ -35,19 +32,16 @@ router.beforeEach((to, from, next) => {
   const isPublicPage = publicPages.includes(to.path);
 
   // If not logged in and trying to access a protected page, redirect to login
-  if (!isLoggedIn && !isPublicPage) {
+  if (!isLoggedIn && !isPublicPage)
     return next('/');
-  }
 
   // If logged in and trying to access a public page, redirect to home
-  if (isLoggedIn && isPublicPage) {
+  if (isLoggedIn && isPublicPage)
     return next('/home');
-  }
 
   // Redirecting Home if not admin
-  if (to.path === '/users' && !isAdmin) {
+  if (to.path === '/users' && !isAdmin)
     return next('/home');
-  }
   
   // If all checks pass, proceed to the requested route
   next();

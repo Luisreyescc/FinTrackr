@@ -2,12 +2,7 @@
  <div class="history-header">
    <div class="search-container">
      <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
-     <input
-       type="text"
-       class="search-bar"
-       placeholder="Search..."
-       v-model="searchQuery"
-       @input="onSearch"/>
+     <input type="text" class="search-bar" placeholder="Search..." v-model="searchQuery" @input="onSearch"/>
    </div>
    
    <FilterDropdown
@@ -23,7 +18,7 @@
 
 <script>
 import FilterDropdown from "@/components/filter-dropdown.vue";
-  
+
 export default {
   name: "HistoryHeader",
   components: {
@@ -33,7 +28,7 @@ export default {
     return {
       currentFilter: "All",
       searchQuery: ""
-   };
+    };
   },
   methods: {
     applyFilter(filter) {

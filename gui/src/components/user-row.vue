@@ -15,10 +15,10 @@
       <p class="user-network">{{ formattedNetwork }}</p>
       <div class="user-actions">
         <button class="full-button" @click="showFullData">
-          <font-awesome-icon :icon="['fas', 'circle-info']" class="data-icon" />
+          <font-awesome-icon :icon="['fas', 'circle-info']" class="data-icon"/>
         </button>
         <button v-if="!isCurrentUser" class="delete-button" @click="showDeleteWarning">
-          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon" />
+          <font-awesome-icon :icon="['fas', 'trash-can']" class="trash-icon"/>
         </button>
       </div>
     </div>
@@ -54,7 +54,7 @@
       </div>
       <button type="button" class="close-button" @click="cancelFullData">Close</button>
     </div>
-
+    
     <div v-if="showDeletePopup" class="overlay" @click="cancelDelete"></div>
     <div v-if="showDeletePopup" class="delete-popup">
       <h3 class="warning-title">Warning</h3>
@@ -78,7 +78,7 @@ export default {
     user: {
       type: Object,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -299,7 +299,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #25262b;
+    background: #25262B;
     border-radius: 12px;
     padding: 20px;
     width: 600px;

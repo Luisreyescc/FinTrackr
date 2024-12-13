@@ -33,129 +33,74 @@
             @input="validateTextField('description')"
             :class="{
               'input-error': descriptionError,
-              'input-valid': !descriptionError && debt.description,
-            }"
-            placeholder="Enter a description for the debt"
-          />
+              'input-valid': !descriptionError && debt.description }"
+            placeholder="Enter a description for the debt"/>
         </label>
-        <span v-if="descriptionError" class="error-message">{{
-          descriptionError
-        }}</span>
+        <span v-if="descriptionError" class="error-message">{{ descriptionError }}</span>
 
         <div class="categories-wrapper">
           <div class="categories-select" @click="toggleDropdown">
             Categories
             <span class="dropdown-icon">
-              <font-awesome-icon
-                v-if="!dropdownOpen"
-                :icon="['fas', 'angle-right']"
-              />
-              <font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+              <font-awesome-icon v-if="!dropdownOpen" :icon="['fas', 'angle-right']"/>
+              <font-awesome-icon v-else :icon="['fas', 'angle-down']"/>
             </span>
           </div>
 
           <ul v-if="dropdownOpen" class="categories-dropdown scrollbar">
             <li v-if="loadingCategories">Loading categories...</li>
-            <li
-              v-else
-              @click="showNewCategoryDialog"
-              style="color: #bf9f00; font-weight: bold"
-            >
-              <font-awesome-icon :icon="['fas', 'plus']" font-size="12" /> New
-              Category
+            <li v-else @click="showNewCategoryDialog" style="color: #BF9F00; font-weight: bold">
+              <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New Category
             </li>
-            <li
-              v-for="(category, index) in categoryOptions"
-              :key="index"
-              @click="addCategory(category)"
-            >
+            <li v-for="(category, index) in categoryOptions" :key="index" @click="addCategory(category)">
               {{ category }}
             </li>
           </ul>
 
-          <div
-            v-if="showNewCategory"
-            class="overlay"
-            @click="cancelNewCategory"
-          ></div>
+          <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
           <div v-if="showNewCategory" class="new-category-dialog">
             <h4>Enter new category</h4>
-            <input
-              type="text"
-              v-model="newCategory"
-              placeholder="New category"
-              :maxlength="18"
-            />
+            <input type="text" v-model="newCategory" placeholder="New category" :maxlength="18"/>
             <div class="button-group">
-              <button @click="cancelNewCategory" class="cancel-category">
-                Cancel
-              </button>
-              <button
-                @click="acceptNewCategory"
-                class="accept-category"
-                :disabled="!isAcceptEnabled"
-              >
+              <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
+              <button @click="acceptNewCategory" class="accept-category" :disabled="!isAcceptEnabled">
                 Accept
               </button>
             </div>
           </div>
 
           <div class="selected-categories">
-            <span
-              v-for="(category, index) in debt.categories"
-              :key="index"
-              class="tag"
-            >
+            <span v-for="(category, index) in debt.categories" :key="index" class="tag">
               {{ category }}
-              <button
-                type="button"
-                @click="removeCategory(index, $event)"
-                class="close-button"
-              >
-                <font-awesome-icon :icon="['fas', 'xmark']" />
+              <button type="button" @click="removeCategory(index, $event)" class="close-button">
+                <font-awesome-icon :icon="['fas', 'xmark']"/>
               </button>
             </span>
           </div>
         </div>
-
+	
         <label class="date-label"> Date: </label>
         <div class="date-container">
-          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']" />
+          <font-awesome-icon class="birth-icon" :icon="['fas', 'calendar']"/>
           <input
             type="date"
             v-model="debt.date"
             @input="validateDate"
             class="custom-date-input"
-            :class="{
-              'input-error': dateError,
-              'input-valid': !dateError && debt.date,
-            }"
-          />
+            :class="{ 'input-error': dateError, 'input-valid': !dateError && debt.date }"/>
         </div>
         <span v-if="dateError" class="error-message">{{ dateError }}</span>
 
         <div class="icons-wrapper">
-          <IconDropdown
-            :iconOptions="iconOptions"
-            :currentIcon="debt.icon"
-            @iconSelected="applyIcon"
-          />
+          <IconDropdown :iconOptions="iconOptions" :currentIcon="debt.icon" @iconSelected="applyIcon"/>
           <span class="selected-text">Selected Icon: </span>
           <span v-if="debt.icon" class="selected-icon">
-            <font-awesome-icon :icon="debt.icon" />
+            <font-awesome-icon :icon="debt.icon"/>
           </span>
         </div>
         <div class="button-group">
-          <button type="button" @click="cancelForm" class="cancel-button">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="submit-button"
-            :disabled="!isSubmitEnabled"
-          >
-            Submit
-          </button>
+          <button type="button" @click="cancelForm" class="cancel-button">Cancel</button>
+          <button type="submit" class="submit-button" :disabled="!isSubmitEnabled">Submit</button>
         </div>
       </form>
     </div>
@@ -170,7 +115,7 @@ import IconDropdown from "@/components/icon-dropdown.vue";
 export default {
   name: "DebtsForm",
   components: {
-    IconDropdown,
+    IconDropdown
   },
   data() {
     return {
@@ -180,7 +125,7 @@ export default {
         categories: [],
         date: "",
         debtor_name: "",
-        icon: "",
+        icon: ""
       },
       amountError: "",
       descriptionError: "",
@@ -263,28 +208,21 @@ export default {
         ["fab", "docker"],
         ["fab", "linux"],
         ["fab", "gitlab"],
-        ["fab", "github"],
-      ],
+        ["fab", "github"]
+      ]
     };
   },
   methods: {
     submitForm() {
       this.clearErrors();
-
       const isAmountValid = this.validateAmount();
       const isDescriptionValid = this.validateTextField("description");
       const isDateValid = this.validateDate();
       const isCreditorValid = this.validateTextField("debtor_name");
 
-      if (
-        isAmountValid &&
-        isDescriptionValid &&
-        isDateValid &&
-        isCreditorValid
-      ) {
+      if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
         const iconString = this.debt.icon.join(" ");
         const debtData = { ...this.debt, icon: iconString, is_payed: false };
-
         this.$emit("submitForm", debtData);
         this.$emit("closeForm");
         this.resetForm();
@@ -303,12 +241,8 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get(
-          "http://localhost:8000/api/debt-categories/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.get("http://localhost:8000/api/debt-categories/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         this.categoryOptions = response.data.categories || [];
         this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
@@ -318,9 +252,8 @@ export default {
       }
     },
     addCategory(category) {
-      if (!this.debt.categories.includes(category)) {
+      if (!this.debt.categories.includes(category))
         this.debt.categories.push(category);
-      }
       this.dropdownOpen = false;
     },
     showNewCategoryDialog() {
@@ -333,12 +266,10 @@ export default {
     acceptNewCategory() {
       if (this.newCategory.trim()) {
         const newCategory = this.newCategory.trim();
-        if (!this.categoryOptions.includes(newCategory)) {
+        if (!this.categoryOptions.includes(newCategory))
           this.categoryOptions.push(newCategory);
-        }
-        if (!this.debt.categories.includes(newCategory)) {
+        if (!this.debt.categories.includes(newCategory))
           this.debt.categories.push(newCategory);
-        }
         this.newCategory = "";
         this.showNewCategory = false;
         this.dropdownOpen = false;
@@ -474,9 +405,7 @@ input {
     background-color: #25262b;
     border-radius: 4px;
     border: 2px solid white;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    transition:	background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -573,7 +502,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 115px;
     font-size: 18px;
     font-weight: bold;
-    color: #25262b;
+    color: #25262B;
     background-color: white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
@@ -588,7 +517,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     height: 16px;
     margin-left: 8px;
     transform: translateY(-3px);
-    color: #25262b;
+    color: #25262B;
 }
 
 .categories-dropdown {
@@ -596,7 +525,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     top: 80%;
     left: 0;
     right: 0;
-    border: 1px solid #3f4049;
+    border: 1px solid #3F4049;
     border-radius: 12px;
     background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -612,9 +541,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition:
-	background-color 0.3s,
-	color 0.3s;
+    transition:	background-color 0.3s, color 0.3s;
     text-align: left;
     color: white;
     font-weight: bold;
@@ -623,7 +550,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li:hover {
     background-color: white;
     border-radius: 12px;
-    color: #25262b;
+    color: #25262B;
     font-weight: bold;
 }
 
@@ -655,7 +582,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .close-button .gg-close {
     font-size: 18px;
-    color: #25262b;
+    color: #25262B;
 }
 
 .new-category-dialog {
@@ -676,7 +603,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .new-category-dialog h4 {
     margin-top: 15px;
     font-size: 22px;
-    color: #25262b;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -687,19 +614,17 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     margin-bottom: 2px;
     border: none;
     outline: none;
-    color: #25262b;
+    color: #25262B;
     font-size: 18px;
     background-color: white;
     border-radius: 4px;
-    border: 2px solid #25262b;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    border: 2px solid #25262B;
+    transition: background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-    color: #25262b;
+    color: #25262B;
 }
 
 .new-category-dialog .button-group {
@@ -720,14 +645,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-category {
-    background-color: #25262b;
+    background-color: #25262B;
     color: white;
 }
 
 .accept-category {
     background-color: white;
-    color: #25262b;
-    border: 2px solid #25262b;
+    color: #25262B;
+    border: 2px solid #25262B;
 }
 
 .submit-button:disabled,

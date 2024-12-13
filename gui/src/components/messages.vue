@@ -91,18 +91,18 @@ export default {
 }
 
 .message-success {
-    background-color: #e0f7e9;
-    color: #2e7d32;
+    background-color: #E0F7E9;
+    color: #2E7D32;
 }
 
 .message-error {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: #FFEBEE;
+    color: #C62828;
 }
 
 .message-neutral {
-    background-color: #e3f2fd;
-    color: #1976d2;
+    background-color: #E3F2FD;
+    color: #1976D2;
 }
 
 .message-content {

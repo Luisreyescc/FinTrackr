@@ -21,7 +21,7 @@
       <button @click="selectOption('Debts')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'credit-card']" class="icon"/> Debts</button>
     </div>
-
+    
     <div v-if="currentPage === 'Status'" class="menuS-options">
       <button @click="selectOption('Account')" class="menu-option">
 	<font-awesome-icon :icon="['fas', 'chart-area']" class="icon a"/>Account Status</button>

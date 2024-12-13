@@ -126,9 +126,8 @@ export default {
     async fetchUsers() {
       try {
         this.loadingUsers = true;
-        const response = await axios.get("http://localhost:8000/api/admin/financial-summary/", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-        });
+        const response = await axios.get("http://localhost:8000/api/admin/financial-summary/",
+                                         {headers:{ Authorization:`Bearer ${localStorage.getItem("token")}`}});
         this.users = response.data;
       } catch (error) {
         console.error("Error fetching users:", error);

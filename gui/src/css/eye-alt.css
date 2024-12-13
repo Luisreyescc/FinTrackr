@@ -9,6 +9,7 @@
   overflow: hidden;
   box-sizing: border-box;
 }
+
 .gg-eye-alt::after,
 .gg-eye-alt::before {
   content: "";
@@ -17,6 +18,7 @@
   position: absolute;
   box-sizing: border-box;
 }
+
 .gg-eye-alt::after {
   top: 2px;
   box-shadow:
@@ -25,6 +27,7 @@
   width: 24px;
   height: 24px;
 }
+
 .gg-eye-alt::before {
   width: 8px;
   height: 8px;

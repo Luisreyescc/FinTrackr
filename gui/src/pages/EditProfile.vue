@@ -50,14 +50,8 @@ export default {
     async fetchUserData() {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:8000/api/profile-details/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+        const response = await axios.get("http://localhost:8000/api/profile-details/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         if (response.status === 200) {
           this.userData = {
             user_name: response.data.user_name || "",
@@ -68,7 +62,7 @@ export default {
             curp: response.data.curp || "",
             rfc: response.data.rfc || "",
             birth_date: response.data.birth_date || "",
-            password: "", // We leave password field empty for security reasons
+            password: "" // We leave password field empty for security reasons
           };
         }
       } catch (error) {
@@ -86,9 +80,9 @@ export default {
         curp: profileData.curp,
         rfc: profileData.rfc,
         birth_date: profileData.birth_date,
-        password: profileData.password,
+        password: profileData.password
       };
-
+      
       if (profileData.new_password && profileData.confirm_password) {
         dataToSend.new_password = profileData.new_password;
         dataToSend.confirm_password = profileData.confirm_password;
@@ -102,19 +96,12 @@ export default {
         const response = await axios.put(
           "http://localhost:8000/api/profile-details/",
           dataToSend,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+          { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }});
         console.log("API response:", response);
-        if (response.status === 200) {
+        if (response.status === 200)
           this.addMessage("User data updated successfully.", "success");
-        } else {
+        else
           this.addMessage("Failed to save your data.", "error");
-        }
       } catch (error) {
         console.error("Update failed:", error);
         this.addMessage("An error occurred while saving your data.", "error");

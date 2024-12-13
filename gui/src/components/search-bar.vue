@@ -6,7 +6,7 @@
   </div>
 </div>
 </template>
-  
+
 <script>
 export default {
   name: "SearchBar",
@@ -14,17 +14,17 @@ export default {
     data: {
       type: Array,
       default: () => []
-      }
+    }
   },
   data() {
     return {
-      searchQuery: "",
+      searchQuery: ""
     };
   },
   methods: {
-      onSearch() {
-        this.$emit('search', this.searchQuery);
-      },
+    onSearch() {
+      this.$emit('search', this.searchQuery);
+    },
   },
 };
 </script>
@@ -35,7 +35,7 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
-    background: #ffffff;
+    background: #FFF;
     border-radius: 50px;
     box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
 }

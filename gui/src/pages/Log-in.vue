@@ -44,7 +44,7 @@ export default {
         try {
           const response = await axios.post("http://localhost:8000/api/login/",
                                             { user_name: username, password: password },
-                                            { headers: { "Content-Type": "application/json" } } );
+                                            { headers: { "Content-Type": "application/json" }});
           console.log(response.data);
           if (response.status === 200) {
             const token = response.data.access;
@@ -53,9 +53,8 @@ export default {
             localStorage.setItem("isAdmin", isAdmin);
             this.addMessage("Login successful", "success");
             this.$emit("login");
-          } else {
+          } else
             this.addMessage("Invalid username or password. Please try again.", "error");
-          }
         } catch (error) {
           console.error("Login failed:", error);
           this.addMessage("Login failed. Please try again.", "error");

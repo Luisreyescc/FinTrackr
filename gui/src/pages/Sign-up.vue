@@ -49,11 +49,9 @@ export default {
     async handleSendCode({ username, email }) {
       const requestData = { user_name: username, email: email };
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/send-code-sign/",
-          requestData,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        const response = await axios.post("http://localhost:8000/api/send-code-sign/",
+                                          requestData,
+                                          { headers: { "Content-Type": "application/json" }});
         if (response.status === 200) {
           this.addMessage("Recovery code sent successfully!", "success");
           this.currentStep = 2;
@@ -66,11 +64,9 @@ export default {
     async handleValidateCode({ recoveryCode }, callback) {
       const requestData = { user_name: this.username, recovery_code: recoveryCode };
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/validate-code-sign/",
-          requestData,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        const response = await axios.post("http://localhost:8000/api/validate-code-sign/",
+                                          requestData,
+                                          { headers: { "Content-Type": "application/json" }});
         if (response.status === 200) {
           this.addMessage("Code validated successfully to your email address!", "success");
           callback(true);
@@ -89,7 +85,7 @@ export default {
                                                   password: password,
                                                   password2: password2,
                                                   admin_user: admin_user });
-         if (response.status === 201) {
+          if (response.status === 201) {
             const responseLog = await axios.post("http://localhost:8000/api/login/",
                                                  { user_name: username, password: password },
                                                  { headers: { "Content-Type": "application/json" }});
@@ -99,14 +95,12 @@ export default {
               await axios.get("http://localhost:8000/api/pdf/?action=start&interval=1&first=1",
                               { headers: { Authorization: `Bearer ${token}` } });
               this.addMessage("Login successful", "success");
-            } else {
+            } else
               this.addMessage("Invalid username or password. Please try again.", "error");
-            }
             this.addMessage("User registered successfully! Redirecting to login...", "success");
             setTimeout(() => { this.$router.push("/login") }, 2500);
-          } else {
+          } else
             this.addMessage(response.data.error || "Registration failed", "error");
-          }
         } catch (error) {
           console.error("Registration error:", error);
           if (error.response && error.response.data) {
@@ -114,13 +108,11 @@ export default {
             for (const key in error.response.data)
               errors.push(`${key}: ${error.response.data[key]}`);
             this.addMessage(errors.join("\n"), "error");
-          } else {
+          } else
             this.addMessage("There was an issue with your registration. Please try again.", "error");
-          }
-    }
-      } else {
+        }
+      } else
         this.addMessage("Please fill in all required fields.", "neutral");
-      }
     },
     goToLogin() {
       this.$router.push("/login");

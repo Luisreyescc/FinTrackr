@@ -18,7 +18,7 @@
 
 <script>
 import FilterDropdown from "@/components/filter-dropdown.vue";
-  
+
 export default {
   name: "UsersHeader",
   components: {
@@ -28,7 +28,7 @@ export default {
     return {
       currentFilter: "All",
       searchQuery: ""
-  };
+    };
   },
   methods: {
     applyFilter(filter) {

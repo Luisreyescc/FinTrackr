@@ -1,9 +1,6 @@
 <template>
 <div class="debt-row">
-  <div
-    class="debt-checkbox"
-    :class="{ checked: debt.is_payed }"
-    @click="markAsPaid">
+  <div class="debt-checkbox" :class="{ checked: debt.is_payed }" @click="markAsPaid">
     <font-awesome-icon v-if="debt.is_payed" :icon="['fas', 'check']" class="check-icon"/>
   </div>
   <div class="debt-details">
@@ -94,10 +91,7 @@
           <li v-else @click="showNewCategoryDialog" style="color: #bf9f00; font-weight: bold">
             <font-awesome-icon :icon="['fas', 'plus']" font-size="12"/> New category
           </li>
-          <li
-            v-for="(category, index) in categoryOptions"
-            :key="index"
-            @click="addCategory(category)">
+          <li v-for="(category, index) in categoryOptions" :key="index" @click="addCategory(category)">
             {{ category }}
           </li>
         </ul>
@@ -105,11 +99,7 @@
         <div v-if="showNewCategory" class="overlay" @click="cancelNewCategory"></div>
         <div v-if="showNewCategory" class="new-category-dialog">
           <h4>Enter new category</h4>
-          <input
-            type="text"
-            v-model="newCategory"
-            placeholder="New category"
-            :maxlength="18"/>
+          <input type="text" v-model="newCategory" placeholder="New category" :maxlength="18"/>
           <div class="button-group">
             <button @click="cancelNewCategory" class="cancel-category">Cancel</button>
             <button @click="acceptNewCategory" class="accept-category" :disabled="!isAcceptEnabled">Accept</button>
@@ -117,13 +107,10 @@
         </div>
 	
         <div class="selected-categories">
-          <span
-            v-for="(category, index) in editDebt.categories"
-            :key="index"
-            class="tag">
+          <span v-for="(category, index) in editDebt.categories" :key="index" class="tag">
             {{ category }}
             <button type="button" @click="removeCategory(index, $event)" class="close-button">
-              <font-awesome-icon :icon="['fas', 'xmark']" />
+              <font-awesome-icon :icon="['fas', 'xmark']"/>
             </button>
           </span>
         </div>
@@ -142,10 +129,7 @@
       <span v-if="dateError" class="error-message">{{ dateError }}</span>
       
       <div class="icons-wrapper">
-        <IconDropdown
-          :iconOptions="iconOptions"
-          :currentIcon="editDebt.icon"
-          @iconSelected="applyIcon"/>
+        <IconDropdown :iconOptions="iconOptions" :currentIcon="editDebt.icon" @iconSelected="applyIcon"/>
         <span class="selected-text">Selected Icon: </span>
         <span v-if="editDebt.icon" class="selected-icon">
           <font-awesome-icon :icon="parseIcon(editDebt.icon)"/>
@@ -168,22 +152,19 @@ import IconDropdown from "@/components/icon-dropdown.vue";
 export default {
   name: "DebtRow",
   components: {
-    IconDropdown,
+    IconDropdown
   },
   props: {
     debt: {
       type: Object,
       required: true,
-      default: () => ({ categories: [] }),
-    },
+      default: () => ({ categories: [] })
+    }
   },
   data() {
     return {
       isEditing: false,
-      editDebt: {
-        ...this.debt,
-        categories: this.debt.categories || [],
-      },
+      editDebt: { ...this.debt, categories: this.debt.categories || [] },
       amountError: "",
       descriptionError: "",
       dateError: "",
@@ -267,29 +248,22 @@ export default {
         ["fab", "docker"],
         ["fab", "linux"],
         ["fab", "gitlab"],
-        ["fab", "github"],
-      ],
+        ["fab", "github"]
+      ]
     };
   },
   computed: {
     formattedAmount() {
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      });
+      const formatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
       return `${formatter.format(this.debt.amount)}`;
     },
     formattedCategories() {
-      return this.debt.categories
-        ? this.debt.categories.join(", ")
-        : "No categories";
+      return this.debt.categories ? this.debt.categories.join(", ") : "No categories";
     },
     formattedDate() {
       const date = new Date(this.debt.date);
       const day = String(date.getDate()).padStart(2, "0");
-      const month = date
-        .toLocaleString("en-US", { month: "short" })
-        .toUpperCase();
+      const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     },
@@ -299,11 +273,7 @@ export default {
       return `${creditor}: ${description}`;
     },
     isSubmitEnabled() {
-      return (
-        this.editDebt.categories &&
-        this.editDebt.categories.length > 0 &&
-        this.editDebt.icon
-      );
+      return (this.editDebt.categories && this.editDebt.categories.length > 0 && this.editDebt.icon);
     },
     isAcceptEnabled() {
       return this.newCategory.trim().length > 0;
@@ -316,27 +286,25 @@ export default {
     confirmMark() {
       this.isChecked = true;
       this.showConfirmPopup = false;
-      this.$emit("markDebtAsPaid", {
-        ...this.debt,
-        isChecked: true,
-      });
+      this.$emit("markDebtAsPaid", { ...this.debt, isChecked: true });
     },
     triggerConfirmation() {
-      if (!this.isChecked) {
+      if (!this.isChecked)
         this.showConfirmPopup = true;
-      }
     },
     markAsPaid() {
-      if (this.debt.is_payed) return;
+      if (this.debt.is_payed)
+	return;
       this.showConfirmPopup = true;
     },
     startEdit() {
-      if (this.isChecked) return;
+      if (this.isChecked)
+	return;
       this.isEditing = true;
       this.editDebt = {
         ...this.debt,
         categories: [...this.debt.categories],
-        date: this.formatDateForInput(this.debt.date),
+        date: this.formatDateForInput(this.debt.date)
       };
     },
     cancelEdit() {
@@ -354,9 +322,9 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
     parseIcon(iconString) {
-      if (typeof iconString === "string") {
+      if (typeof iconString === "string")
         return iconString.split(" ");
-      }
+
       return iconString;
     },
     submitEdit() {
@@ -367,20 +335,10 @@ export default {
       const isDateValid = this.validateDate();
       const isCreditorValid = this.validateTextField("debtor_name");
 
-      if (
-        isAmountValid &&
-        isDescriptionValid &&
-        isDateValid &&
-        isCreditorValid
-      ) {
+      if (isAmountValid && isDescriptionValid && isDateValid && isCreditorValid) {
         const iconString = Array.isArray(this.editDebt.icon)
-          ? this.editDebt.icon.join(" ")
-          : this.editDebt.icon;
-        const debtData = {
-          ...this.editDebt,
-          icon: iconString,
-        };
-
+              ? this.editDebt.icon.join(" ") : this.editDebt.icon;
+        const debtData = { ...this.editDebt, icon: iconString };
         this.$emit("updateDebt", debtData);
         this.isEditing = false;
         this.fetchCategories();
@@ -395,12 +353,8 @@ export default {
         }
 
         this.loadingCategories = true;
-        const response = await axios.get(
-          "http://localhost:8000/api/debt-categories/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.get("http://localhost:8000/api/debt-categories/",
+                                         { headers: { Authorization: `Bearer ${token}` }});
         this.categoryOptions = response.data.categories || [];
         this.categoryOptions = [...new Set(this.categoryOptions)];
       } catch (error) {
@@ -412,21 +366,18 @@ export default {
     acceptNewCategory() {
       if (this.newCategory.trim()) {
         const newCategory = this.newCategory.trim();
-        if (!this.categoryOptions.includes(newCategory)) {
+        if (!this.categoryOptions.includes(newCategory))
           this.categoryOptions.push(newCategory);
-        }
-        if (!this.editDebt.categories.includes(newCategory)) {
+        if (!this.editDebt.categories.includes(newCategory))
           this.editDebt.categories.push(newCategory);
-        }
         this.newCategory = "";
         this.showNewCategory = false;
         this.dropdownOpen = false;
       }
     },
     addCategory(category) {
-      if (!this.editDebt.categories.includes(category)) {
+      if (!this.editDebt.categories.includes(category))
         this.editDebt.categories.push(category);
-      }
       this.dropdownOpen = false;
     },
     showNewCategoryDialog() {
@@ -456,8 +407,7 @@ export default {
     validateTextField(field) {
       this[`${field}Error`] = "";
       if (!this.editDebt[field]) {
-        this[`${field}Error`] =
-          `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        this[`${field}Error`] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
         return false;
       }
       if (this.editDebt[field].length > 120 && field === "creditor") {
@@ -504,7 +454,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background: #25262b;
+    background: #25262B;
     border: 2px solid white;
     border-radius: 20px;
     margin-bottom: 10px;
@@ -521,15 +471,13 @@ export default {
     justify-content: center;
     cursor: pointer;
     background-color: transparent;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    transition:	background-color 0.3s, border-color 0.3s;
     margin-left: 5px;
 }
 
 .debt-checkbox.checked {
-    border-color: #4dbec8;
-    background: #4dbec8;
+    border-color: #4DBEC8;
+    background: #4DBEC8;
 }
 
 .check-icon {
@@ -558,7 +506,7 @@ export default {
 
 .debt-details h4 {
     font-size: 22px;
-    color: #6092de;
+    color: #6092DE;
     font-weight: bold;
 }
 
@@ -569,7 +517,7 @@ export default {
 }
 
 .debt-date {
-    color: #bf9f00;
+    color: #BF9F00;
     font-weight: bold;
     font-size: 18px;
     margin-left: 10px;
@@ -620,7 +568,7 @@ export default {
 }
 
 .delete-button {
-    background-color: #d55c5c;
+    background-color: #D55C5C;
     color: white;
 }
 
@@ -631,7 +579,7 @@ export default {
 
 .edit-icon {
     font-size: 20px;
-    color: #25262b;
+    color: #25262B;
 }
 
 .trash-icon {
@@ -644,7 +592,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #25262b;
+    background: #25262B;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     padding: 20px;
@@ -704,12 +652,10 @@ input {
     outline: none;
     color: white;
     font-size: 18px;
-    background-color: #25262b;
+    background-color: #25262B;
     border-radius: 4px;
     border: 2px solid white;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    transition:	background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -719,7 +665,7 @@ input::placeholder {
 }
 
 .input-error {
-    border-color: #d55c5c;
+    border-color: #D55C5C;
     outline: none;
 }
 
@@ -743,7 +689,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .error-message {
-    color: #d55c5c;
+    color: #D55C5C;
     font-size: 16px;
     margin-top: -10px;
     margin-bottom: 10px;
@@ -758,7 +704,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-button {
-    background-color: #25262b;
+    background-color: #25262B;
     color: white;
     border: 2px solid white;
     padding: 15px 35px;
@@ -771,7 +717,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .submit-button {
     background-color: white;
-    color: #25262b;
+    color: #25262B;
     border: none;
     padding: 15px 35px;
     border-radius: 3px;
@@ -786,7 +732,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .submit-button:hover {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .categories-wrapper {
@@ -798,7 +744,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .categories-select {
     padding: 15px 30px;
-    border: 1px solid #ccc;
+    border: 1px solid #CCC;
     border-radius: 3px;
     cursor: pointer;
     display: flex;
@@ -806,14 +752,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 115px;
     font-size: 18px;
     font-weight: bold;
-    color: #25262b;
+    color: #25262B;
     background-color: white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
 }
 
 .categories-select:hover {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .dropdown-icon {
@@ -821,7 +767,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     height: 16px;
     margin-left: 16px;
     transform: translateY(-3px);
-    color: #25262b;
+    color: #25262B;
 }
 
 .categories-dropdown {
@@ -829,7 +775,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     top: 80%;
     left: 0;
     right: 0;
-    border: 1px solid #3f4049;
+    border: 1px solid #3F4049;
     border-radius: 12px;
     background-color: #404149;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -846,9 +792,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li {
     padding: 10px 20px;
     cursor: pointer;
-    transition:
-	background-color 0.3s,
-	color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
     text-align: left;
     color: white;
     font-weight: bold;
@@ -857,7 +801,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .categories-dropdown li:hover {
     background-color: white;
     border-radius: 12px;
-    color: #25262b;
+    color: #25262B;
     font-weight: bold;
 }
 
@@ -874,7 +818,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     border-radius: 16px;
     padding: 8px 20px;
     font-weight: bold;
-    color: #25262b;
+    color: #25262B;
     background-color: white;
     border: 1px solid white;
 }
@@ -889,7 +833,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .close-button .gg-close {
     font-size: 18px;
-    color: #25262b;
+    color: #25262B;
 }
 
 .new-category-dialog {
@@ -910,7 +854,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .new-category-dialog h4 {
     margin-top: 15px;
     font-size: 22px;
-    color: #25262b;
+    color: #25262B;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
@@ -920,19 +864,17 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     margin-bottom: 2px;
     border: none;
     outline: none;
-    color: #25262b;
+    color: #25262B;
     font-size: 18px;
     background-color: white;
     border-radius: 4px;
-    border: 2px solid #25262b;
-    transition:
-	background-color 0.3s,
-	border-color 0.3s;
+    border: 2px solid #25262B;
+    transition: background-color 0.3s, border-color 0.3s;
     font-family: "Wix Madefor Display", sans-serif;
 }
 
 .new-category-dialog input::placeholder {
-    color: #25262b;
+    color: #25262B;
 }
 
 .new-category-dialog .button-group {
@@ -953,19 +895,19 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-category {
-    background-color: #25262b;
+    background-color: #25262B;
     color: white;
 }
 
 .accept-category {
     background-color: white;
-    color: #25262b;
-    border: 2px solid #25262b;
+    color: #25262B;
+    border: 2px solid #25262B;
 }
 
 .submit-button:disabled,
 .accept-category:disabled {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
     cursor: not-allowed;
     opacity: 0.7;
 }
@@ -1006,7 +948,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #25262b;
+    background: #25262B;
     border-radius: 12px;
     padding: 20px;
     width: 650px;
@@ -1049,14 +991,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .quit-button {
-    background-color: #25262b;
+    background-color: #25262B;
     color: white;
     border: 2px solid white;
 }
 
 .confirm-button {
     background-color: white;
-    color: #25262b;
+    color: #25262B;
 }
 
 .icons-wrapper {

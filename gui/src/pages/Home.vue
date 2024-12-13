@@ -52,25 +52,19 @@ export default {
       if (amount && categories && description && date) {
         try {
           const response = await apiClient.post("/api/incomes", incomeData);
-          if (response.status === 201) {
+          if (response.status === 201)
             this.addMessage("New income added succesfully.", "success");
-          } else {
+          else
             this.addMessage("Failed adding the income.", "error");
-          }
         } catch (error) {
           console.error("New income error:", error);
           if (error.response && error.response.data) {
             const errors = [];
-            for (const key in error.response.data) {
+            for (const key in error.response.data)
               errors.push(`${key}: ${error.response.data[key]}`);
-            }
             this.addMessage(errors.join("\n"), "error");
-          } else {
-            this.addMessage(
-              "There was an issue while adding your income. Please try again.",
-              "error",
-            );
-          }
+          } else 
+            this.addMessage("There was an issue while adding your income. Please try again.", "error");
         }
       }
     },
@@ -79,25 +73,19 @@ export default {
       if (amount && description && categories && date) {
         try {
           const response = await apiClient.post("/api/expenses", expenseData);
-          if (response.status === 201) {
+          if (response.status === 201)
             this.addMessage("New expense added succesfully.", "success");
-          } else {
+          else
             this.addMessage("Failed adding the expense.", "error");
-          }
         } catch (error) {
           console.error("New expense error:", error);
           if (error.response && error.response.data) {
             const errors = [];
-            for (const key in error.response.data) {
+            for (const key in error.response.data)
               errors.push(`${key}: ${error.response.data[key]}`);
-            }
             this.addMessage(errors.join("\n"), "error");
-          } else {
-            this.addMessage(
-              "There was an issue while adding your expense. Please try again.",
-              "error",
-            );
-          }
+          } else
+            this.addMessage("There was an issue while adding your expense. Please try again.", "error");
         }
       }
     },
@@ -106,25 +94,19 @@ export default {
       if (amount && description && categories && date) {
         try {
           const response = await apiClient.post("/api/debts", debtData);
-          if (response.status === 201) {
+          if (response.status === 201)
             this.addMessage("New debt added succesfully.", "success");
-          } else {
+          else
             this.addMessage("Failed adding the debt.", "error");
-          }
         } catch (error) {
           console.error("New debt error:", error);
           if (error.response && error.response.data) {
             const errors = [];
-            for (const key in error.response.data) {
+            for (const key in error.response.data)
               errors.push(`${key}: ${error.response.data[key]}`);
-            }
             this.addMessage(errors.join("\n"), "error");
-          } else {
-            this.addMessage(
-              "There was an issue while adding your debt. Please try again.",
-              "error",
-            );
-          }
+          } else
+            this.addMessage("There was an issue while adding your debt. Please try again.", "error");
         }
       }
     },
