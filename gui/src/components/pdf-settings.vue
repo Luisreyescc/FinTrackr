@@ -1,75 +1,75 @@
 <template>
-  <div class="modal-overlay" @click="closeModal">
-    <div class="modal-content" @click.stop>
-      <h1>PDF Report Settings</h1>
-      <button @click="closeModal" class="modal-close-icon">
-        <font-awesome-icon :icon="['fas', 'xmark']"/>
-      </button>
-
-      <div class="section">
-        <h2>Set Time</h2>
-        <div class="time-selector">
-          <div class="time-unit">
-            <button @click="incrementTime('hour')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
-            </button>
-            <div class="time-value-container">
-              <span class="time-value">{{ formatNumber(time.hour) }}</span>
-            </div>
-            <button @click="decrementTime('hour')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
-            </button>
+<div class="modal-overlay" @click="closeModal">
+  <div class="modal-content" @click.stop>
+    <h1>PDF Report Settings</h1>
+    <button @click="closeModal" class="modal-close-icon">
+      <font-awesome-icon :icon="['fas', 'xmark']"/>
+    </button>
+    
+    <div class="section">
+      <h2>Set Time</h2>
+      <div class="time-selector">
+        <div class="time-unit">
+          <button @click="incrementTime('hour')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+          </button>
+          <div class="time-value-container">
+            <span class="time-value">{{ formatNumber(time.hour) }}</span>
           </div>
-          <span class="chars">:</span>
-          <div class="time-unit">
-            <button @click="incrementTime('minute')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
-            </button>
-            <div class="time-value-container">
-              <span class="time-value">{{ formatNumber(time.minute) }}</span>
-            </div>
-            <button @click="decrementTime('minute')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
-            </button>
+          <button @click="decrementTime('hour')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+          </button>
+        </div>
+        <span class="chars">:</span>
+        <div class="time-unit">
+          <button @click="incrementTime('minute')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+          </button>
+          <div class="time-value-container">
+            <span class="time-value">{{ formatNumber(time.minute) }}</span>
           </div>
-          <div class="time-unit">
-            <button @click="toggleAmPm" class="time-button">{{ time.amPm }}</button>
-          </div>
+          <button @click="decrementTime('minute')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+          </button>
+        </div>
+        <div class="time-unit">
+          <button @click="toggleAmPm" class="time-button">{{ time.amPm }}</button>
         </div>
       </div>
-
-      <div class="section">
-        <h2>Set Period</h2>
-        <div class="period-selector">
-          <div class="time-unit">
-            <button @click="incrementPeriod('type')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
-            </button>
-            <div class="time-value-container">
-              <span class="time-value">{{ period.type }}</span>
-            </div>
-            <button @click="decrementPeriod('type')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
-            </button>
-          </div>
-          <span class="chars">-</span>
-          <div class="time-unit">
-            <button @click="incrementPeriod('day')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
-            </button>
-            <div class="time-value-container">
-              <span class="time-value">{{ period.day }}</span>
-            </div>
-            <button @click="decrementPeriod('day')" class="arrow-button">
-              <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <button @click="confirmSettings" class="confirm-button">Set</button>
     </div>
+    
+    <div class="section">
+      <h2>Set Period</h2>
+      <div class="period-selector">
+        <div class="time-unit">
+          <button @click="incrementPeriod('type')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+          </button>
+          <div class="time-value-container">
+            <span class="time-value">{{ period.type }}</span>
+          </div>
+          <button @click="decrementPeriod('type')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+          </button>
+        </div>
+        <span class="chars">-</span>
+        <div class="time-unit">
+          <button @click="incrementPeriod('day')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-up']" class="arrow-icon"/>
+          </button>
+          <div class="time-value-container">
+            <span class="time-value">{{ period.day }}</span>
+          </div>
+          <button @click="decrementPeriod('day')" class="arrow-button">
+            <font-awesome-icon :icon="['fas', 'angle-down']" class="arrow-icon"/>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <button @click="confirmSettings" class="confirm-button">Set</button>
   </div>
+</div>
 </template>
 
 <script>
@@ -95,7 +95,7 @@ export default {
         amPm: 'AM'
       },
       period: {
-        type: 'Month',
+        type: 'Monthly',
         day: 1
       },
       periodTypes: ['Monthly', 'Bimester', 'Trimester'],

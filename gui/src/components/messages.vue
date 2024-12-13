@@ -1,6 +1,6 @@
 <template>
-  <transition name="fade-up" @after-leave="$emit('close')">
-  <div :class="['message', messageType]" v-if="visible" >
+<transition name="fade-up" @after-leave="$emit('close')">
+  <div :class="['message', messageType]" v-if="visible">
     <div class="message-content">
       <span class="message-text">{{ text }}</span>
     </div>
@@ -8,7 +8,7 @@
       <font-awesome-icon :icon="['fas', 'xmark']" class="close-button"/>
     </button>
   </div>
-  </transition>
+</transition>
 </template>
 
 <script>
@@ -47,7 +47,7 @@ export default {
     },
     autoClose() {
       setTimeout(() => {
-        this.visible = false;
+	this.visible = false;
       }, 6000);
     }
   }

@@ -91,7 +91,7 @@ import {
   faFutbol,
   faPersonSwimming,
   faBasketball,
-  faBicycle,
+  faBicycle
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -208,7 +208,7 @@ library.add(
   faApple,
   faAndroid,
   faXbox,
-  faPlaystation,
+  faPlaystation
 );
 
 const app = createApp(App)

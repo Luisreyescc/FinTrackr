@@ -1,24 +1,19 @@
 <template>
-  <header class="header">
-    <div class="header-content">
-      <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo"/>
-      <div class="nav-profile-wrapper">
-        <nav v-if="isLoggedIn" class="nav-menu">
-          <router-link to="/home" class="nav-item">Home<span></span></router-link>
-          <router-link to="/status" class="nav-item">Status<span></span></router-link>
-          <router-link to="/history" class="nav-item">History<span></span></router-link>
-          <router-link v-if="isAdmin" to="/users" class="nav-item">Users<span></span></router-link>
-          <router-link
-            v-if="isLoggedIn"
-            to="/edit-profile"
-            class="nav-item user-item">
-            {{ isAdmin ? `Hello, Admin ${userName}` : `Hello, ${userName}` }}
-            <span></span>
-         </router-link>
-	</nav>
-      </div>
+<header class="header">
+  <div class="header-content">
+    <img src="@/assets/title.svg" alt="FinTrackr Logo" class="logo"/>
+    <div class="nav-profile-wrapper">
+      <nav v-if="isLoggedIn" class="nav-menu">
+        <router-link to="/home" class="nav-item">Home<span></span></router-link>
+        <router-link to="/status" class="nav-item">Status<span></span></router-link>
+        <router-link to="/history" class="nav-item">History<span></span></router-link>
+        <router-link v-if="isAdmin" to="/users" class="nav-item">Users<span></span></router-link>
+        <router-link v-if="isLoggedIn" to="/edit-profile" class="nav-item user-item">
+          {{ isAdmin ? `Hello, Admin ${userName}` : `Hello, ${userName}` }}<span></span></router-link>
+      </nav>
     </div>
-  </header>
+  </div>
+</header>
 </template>
 
 <script>
@@ -79,8 +74,8 @@ export default {
       localStorage.removeItem("token");
       localStorage.removeItem("isAdmin"); //Clean admin status
       this.$router.push("/");
-    },
-  },
+    }
+  }
 };
 </script>
 

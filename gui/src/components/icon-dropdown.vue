@@ -58,10 +58,10 @@ export default {
 .icons-wrapper {
     position: relative;
 }
-   
+
 .icons-select {
     padding: 15px 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #CCC;
     border-radius: 3px;
     cursor: pointer;
     display: flex;
@@ -77,7 +77,7 @@ export default {
 }
 
 .icons-select:hover {
-    background-color: #f8f9fa;
+    background-color: #F8F9FA;
 }
 
 .dropdown-icon {
@@ -122,24 +122,24 @@ export default {
 }
 
 .icon-item {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  border: 1px solid transparent;
-  border-radius: 8px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    border: 1px solid transparent;
+    border-radius: 8px;
 }
 
 .icon-item.active {
-  background-color: #e9ecef;
-  border-color: #adb5bd;
+    background-color: #E9ECEF;
+    border-color: #ADB5BD;
 }
 
 .icon-item:hover {
-  background-color: #f1f3f5;
-  transform: scale(1.05);
+    background-color: #F1F3F5;
+    transform: scale(1.05);
 }
 </style>

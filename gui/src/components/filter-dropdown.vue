@@ -1,18 +1,18 @@
 <template>
-  <div class="filter-button-container" @click.stop="toggleDropdown">
-    <button class="filter-button">
-      <font-awesome-icon :icon="['fas', 'filter']" class="icon"/>
-    </button>
-    <ul v-if="dropdownOpen" class="filters-dropdown">
-      <li
-        v-for="(option, index) in filterOptions"
-        :key="index"
-        @click="selectFilter(option)"
-        :class="{ active: currentFilter === option }" >
-        {{ option }}
-      </li>
-    </ul>
-  </div>
+<div class="filter-button-container" @click.stop="toggleDropdown">
+  <button class="filter-button">
+    <font-awesome-icon :icon="['fas', 'filter']" class="icon"/>
+  </button>
+  <ul v-if="dropdownOpen" class="filters-dropdown">
+    <li
+      v-for="(option, index) in filterOptions"
+      :key="index"
+      @click="selectFilter(option)"
+      :class="{ active: currentFilter === option }">
+      {{ option }}
+    </li>
+  </ul>
+</div>
 </template>
 
 <script>
@@ -26,7 +26,7 @@ export default {
     currentFilter: {
       type: String,
       default: ""
-    },
+    }
   },
   data() {
     return {
@@ -44,7 +44,7 @@ export default {
     selectFilter(option) {
       this.$emit("filterSelected", option);
     }
-  },
+  }
 };
 </script>
 
