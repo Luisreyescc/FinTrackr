@@ -560,7 +560,6 @@ select {
     background-color: white;
     border: 2px solid white;
     width: 100%;
-    min-height: 200px;
     overflow: hidden;
 }
 
@@ -571,6 +570,7 @@ select {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    min-height: 200px;
 }
 
 .stats-content {
