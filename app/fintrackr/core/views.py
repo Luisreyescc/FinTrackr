@@ -44,6 +44,7 @@ def delete_user(request, user_id):
         user = Users.objects.get(user_id=user_id)
         email = user.email
         user_name = user.user_name
+        admin_user_name = request.user.user_name
 
         Incomes.objects.filter(user=user).delete()
         Expenses.objects.filter(user=user).delete()
@@ -57,6 +58,7 @@ def delete_user(request, user_id):
                 f"Dear {user_name},\n\n"
                 "We wanted to inform you that your user account has been successfully deleted from our system. "
                 "All your data, including incomes, expenses, and debts, have been removed.\n\n"
+                f"Your account has been deleted by the admin: {admin_user_name}.\n\n"
                 "If you have any questions or need further assistance, please do not hesitate to contact our support team.\n\n"
                 "Thank you for using FinTrackr.\n\n"
                 "Best regards,\n"
