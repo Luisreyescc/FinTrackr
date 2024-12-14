@@ -49,12 +49,15 @@ export default {
           if (response.status === 200) {
             const token = response.data.access;
             const isAdmin = response.data.is_admin;
+            const userId = response.data.user_id;
             localStorage.setItem("token", token);
             localStorage.setItem("isAdmin", isAdmin);
+            localStorage.setItem("user_id", userId);
             this.addMessage("Login successful", "success");
             this.$emit("login");
-          } else
+          } else {
             this.addMessage("Invalid username or password. Please try again.", "error");
+          }
         } catch (error) {
           console.error("Login failed:", error);
           this.addMessage("Password or Email incorrect. Please try again.", "error");
