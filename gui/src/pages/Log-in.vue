@@ -60,7 +60,7 @@ export default {
           }
         } catch (error) {
           console.error("Login failed:", error);
-          this.addMessage("Password or Email incorrect. Please try again.", "error");
+          this.addMessage("Username or Password incorrect. Please try again.", "error");
         }
       } else {
         this.addMessage("Please enter username and password", "neutral");
