@@ -1,6 +1,6 @@
-# README - Mass Posting Scripts
+# Mass Posting Scripts
 
-These scripts allow you to perform mass postings. Make sure you have the necessary credentials and comply with the usage policies of each platform.
+These scripts allow you to perform mass postings. Make sure you have the necessary credentials.
 
 ## Requirements
 
