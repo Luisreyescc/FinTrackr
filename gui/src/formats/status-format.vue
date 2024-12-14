@@ -83,7 +83,7 @@
           <div class="chart-sources">
              <span v-if="loadingGraphics">Loading graphic...</span>
             <apexchart
-              v-show="sourcesChartData.length > 0"
+              v-if="sourcesChartData.length > 0"
               type="donut"
               :options="sourcesChartOptions"
               :series="sourcesChartData"
@@ -94,7 +94,7 @@
           <div class="chart-categories">
             <span v-if="loadingGraphics">Loading graphic...</span>
             <apexchart
-              v-show="categoriesChartData.length > 0"
+              v-if="categoriesChartData.length > 0"
               type="donut"
               :options="categoriesChartOptions"
               :series="categoriesChartData"
