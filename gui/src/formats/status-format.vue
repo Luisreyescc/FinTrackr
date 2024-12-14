@@ -69,13 +69,7 @@
       <div class="header">
         <h2 class="section-title">Categories Charts Incomes/Expenses </h2>
         <div class="section-filter">
-          <h3>Status date:</h3>
-          <input id="end-date" type="date" class="date-input" v-model="selectedDate"/>
           <h3>Filtered by: {{ currentFilter }}</h3>
-          <FilterDropdown
-            :filterOptions="['All', 'Day', 'Fortnight', 'Month', 'Year']"
-            :currentFilter="currentFilter"
-            @filterSelected="applyFilter"/>
         </div>
       </div>
       <div class="main-content">
