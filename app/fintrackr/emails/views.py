@@ -204,6 +204,23 @@ class RegisterView(generics.CreateAPIView):
             recipient_list=[user.email],
         )
 
+# Edit profile view
+class CheckAvailabilityForEditProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_id = request.user.user_id
+        user_name = request.data.get("user_name")
+        email = request.data.get("email")
+        
+        if Users.objects.filter(user_name=user_name).exclude(user_id=user_id).exists():
+            return Response({"error": "Username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Users.objects.filter(email=email).exclude(user_id=user_id).exists():
+            return Response({"error": "Email is already in use."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Username and email are available."}, status=status.HTTP_200_OK)
+
 # PDF view
 class UniqueLineChart(Drawing):
     def __init__(self, width=400, height=200, data=None, colors=None, title=""):

@@ -173,6 +173,8 @@
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import isEmail from "validator/lib/isEmail";
+import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   name: "EditProfileForm",
@@ -213,7 +215,8 @@ export default {
       phoneError: "",
       passwordError: "",
       newPasswordError: "",
-      confirmPasswordError: ""
+      confirmPasswordError: "",
+      userId: null
     };
   },
   watch: {
@@ -242,42 +245,42 @@ export default {
     validateUser() {
       this.usernameError = "";
       if (!this.formData.user_name)
-	this.usernameError = "Username is required";
+        this.usernameError = "Username is required";
       else if (this.formData.user_name.length < 3 || this.formData.user_name.length > 16)
-	this.usernameError = "Username must be between 3 and 16 characters";
+        this.usernameError = "Username must be between 3 and 16 characters";
     },
     validateName() {
       this.nameError = "";
       if (!this.formData.name)
         this.nameError = "Name is required";
       else if (this.formData.name.length > 64)
-	this.nameError = "Name is too long";
+        this.nameError = "Name is too long";
     },
     validateLastName() {
       this.lastNameError = "";
       if (!this.formData.last_name)
         this.lastNameError = "Last name is required";
       else if (this.formData.last_name.length > 64)
-	this.lastNameError = "Last name is too long";
+        this.lastNameError = "Last name is too long";
     },
     validateEmail() {
       this.emailError = "";
       if (!this.formData.email)
-	this.emailError = "Email is required";
+        this.emailError = "Email is required";
       else if (!isEmail(this.formData.email))
-	this.emailError = "Invalid email format";
+        this.emailError = "Invalid email format";
     },
     validatePhone() {
       this.phoneError = "";
       if (this.formData.phone && !/^\d+$/.test(this.formData.phone))
-	this.phoneError = "Only digits accepted";
+        this.phoneError = "Only digits accepted";
       else if (this.formData.phone.length > 15)
-	this.phoneError = "Phone number is too long";
+        this.phoneError = "Phone number is too long";
     },
     validateChanges() {
       this.passwordError = "";
       if (!this.formData.password)
-	this.passwordError = "Your current password is required to save changes.";
+        this.passwordError = "Your current password is required to save changes.";
     },
     validatePasswords() {
       this.newPasswordError = "";
@@ -299,14 +302,14 @@ export default {
       const curp = event.target.value.toUpperCase();
       this.curpError = "";
       if (curp.length > 18)
-	this.curpError = "CURP can't have more than 18 characters";
+        this.curpError = "CURP can't have more than 18 characters";
       this.formData.curp = curp;
     },
     handleRfcInput(event) {
       const rfc = event.target.value.toUpperCase();
       this.rfcError = "";
       if (rfc.length > 13)
-	this.rfcError = "RFC can't have more than 13 characters";
+        this.rfcError = "RFC can't have more than 13 characters";
       this.formData.rfc = rfc;
     },
     clearError(field) {
@@ -328,7 +331,39 @@ export default {
         this.formData.confirm_password = "";
       }
     },
-    saveProfile() {
+    async checkAvailability() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post("http://localhost:8000/api/check-availability-edit-profile/", {
+          user_id: this.userId,
+          user_name: this.formData.user_name,
+          email: this.formData.email
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.status === 200) {
+          return true;
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          const errorData = error.response.data;
+          if (errorData.error) {
+            if (errorData.error.includes("Username"))
+              this.usernameError = errorData.error;
+            if (errorData.error.includes("Email"))
+              this.emailError = errorData.error;
+          } else {
+            this.usernameError = "An error occurred while checking availability.";
+            this.emailError = "An error occurred while checking availability.";
+          }
+        } else {
+          this.usernameError = "An error occurred while checking availability.";
+          this.emailError = "An error occurred while checking availability.";
+        }
+        return false;
+      }
+    },
+    async saveProfile() {
       this.validateChanges();
       this.validateUser();
       this.validateName();
@@ -342,6 +377,11 @@ export default {
           || this.rfcError || this.phoneError
           || this.newPasswordError || this.confirmPasswordError)
         return;
+
+      const isAvailable = await this.checkAvailability();
+      if (!isAvailable) {
+        return;
+      }
       
       const sanitizedData = Object.fromEntries(
         Object.entries(this.formData).map(([key, value]) => [key, value || null ]),
@@ -352,6 +392,13 @@ export default {
       this.$emit("goToHome");
     }
   },
+  created() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      this.userId = decodedToken.user_id;
+    }
+  }
 };
 </script>
 

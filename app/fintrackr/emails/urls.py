@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import CheckUserEmailAssociationView, SendCodeView, ValidateCodeView, ChangePasswordView, CheckAvailabilityView, SendCodeSignView, RegisterView, ValidateCodeSignView, IncomeExpensePDFView
-
+from .views import (
+    CheckUserEmailAssociationView, SendCodeView, ValidateCodeView, ChangePasswordView,
+    CheckAvailabilityView, CheckAvailabilityForEditProfileView, SendCodeSignView,
+    RegisterView, ValidateCodeSignView, IncomeExpensePDFView
+)
 urlpatterns = [
     # Recovery password views
     path("check-user-email-association/", CheckUserEmailAssociationView.as_view(), name="check-user-email-association"),
@@ -12,6 +15,8 @@ urlpatterns = [
     path("send-code-sign/", SendCodeSignView.as_view(), name="send-code-sign"),
     path("validate-code-sign/", ValidateCodeSignView.as_view(), name="validate-code-sign"),
     path("register/", RegisterView.as_view(), name="register"),
+    # Edit profile views
+    path("check-availability-edit-profile/", CheckAvailabilityForEditProfileView.as_view(), name="check-availability-edit-profile"),
 
     #pdf view
     path("pdf/", IncomeExpensePDFView.as_view(), name="send-pdf"),
