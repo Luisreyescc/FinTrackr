@@ -532,6 +532,7 @@ export default {
     gap: 15px;
     color: white;
     font-size: 18px;
+    min-height: 100px;
 }
 
 .date-input,
@@ -570,7 +571,6 @@ select {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    min-height: 200px;
 }
 
 .stats-content {
@@ -659,6 +659,7 @@ select {
     box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
     width: 100%;
     height: 100%;
+    min-height: 750px;
     overflow: hidden;
 }
 
@@ -666,6 +667,7 @@ select {
 .chart-categories {
     width: 100%;
     height: 100%;
+    min-height: 750px;
     display: flex;
     justify-content: center;
     align-items: center;
