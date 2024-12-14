@@ -85,6 +85,7 @@ https://docs.docker.com/engine/install/
     Record debts owed and monitor repayment status.
 - **View Reports** 📊:
     Access the dashboard to view visual reports of your financial data over different time periods.
+    To use the filters in the graphs, select the filter and date in the **Account Status** tab, it will automatically apply to both types of graphs.
 - **Configure Email Reports** ✉️:
     Set up periodic email reports and configure the frequency.
 
